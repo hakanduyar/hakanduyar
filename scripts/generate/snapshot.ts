@@ -152,13 +152,22 @@ async function main(): Promise<void> {
     if (day.contributionCount > peakDay) peakDay = day.contributionCount;
   }
 
-  // GitHub pads the first and last calendar week. -1 marks "this day is outside
-  // the window" so the renderer can leave a hole instead of drawing a zero.
-  const weeks = cal.weeks.map((w) => {
-    const column = new Array<number>(7).fill(-1);
-    for (const day of w.contributionDays) column[day.weekday] = day.contributionCount;
-    return column;
-  });
+  // GitHub pads the first and last calendar week with partial data. Drop any
+  // incomplete week so every rendered column represents the same span of time,
+  // then keep the most recent 52 so the axis label "12 months" is literally true.
+  const completeWeeks = cal.weeks.filter((w) => w.contributionDays.length === 7);
+  const recentWeeks = completeWeeks.slice(-52);
+  const weekly = recentWeeks.map((w) => w.contributionDays.reduce((sum, d) => sum + d.contributionCount, 0));
+  // The plotted total is the sum of the 52 complete weeks, which is slightly
+  // below GitHub's trailing-365-day figure because the partial current week is
+  // excluded. The caption quotes the plotted number, not the larger one — the
+  // axis must describe the bars that are actually drawn.
+  const weeklyTotal = weekly.reduce((a, b) => a + b, 0);
+  const activityMax = weekly.reduce((a, b) => Math.max(a, b), 0);
+  const activityMaxIndex = weekly.indexOf(activityMax);
+  const activityStart = recentWeeks[0]?.contributionDays[0]?.date ?? '';
+  const lastWeek = recentWeeks[recentWeeks.length - 1]?.contributionDays;
+  const activityEnd = lastWeek?.[lastWeek.length - 1]?.date ?? '';
 
   const repos = user.repositories.nodes.filter((r) => !r.isArchived);
   const [firstRepo] = repos;
@@ -172,6 +181,7 @@ async function main(): Promise<void> {
     }
   }
   const totalBytes = [...langBytes.values()].reduce((a, b) => a + b, 0);
+  const totalCommits = repos.reduce((sum, r) => sum + (r.defaultBranchRef?.target.history.totalCount ?? 0), 0);
   const languages = [...langBytes.entries()]
     .map(([name, bytes]) => ({ name, bytes, share: totalBytes ? bytes / totalBytes : 0 }))
     .sort((a, b) => b.bytes - a.bytes);
@@ -221,10 +231,28 @@ async function main(): Promise<void> {
       longestActiveRun,
       peakDay,
     },
-    calendar: { start: firstDay, end: lastDay, weeks },
+    activity: {
+      weekly,
+      total: weeklyTotal,
+      start: activityStart,
+      end: activityEnd,
+      max: activityMax,
+      maxIndex: activityMaxIndex,
+      activeWeeks: weekly.filter((w) => w > 0).length,
+    },
     languages,
+    totalSourceBytes: totalBytes,
+    totalCommits,
     lastPush: { repo: mostRecent.name, at: mostRecent.pushedAt },
     featured,
+    methods: {
+      publicRepos: `PUBLIC, NON-FORK, OWNED BY @${user.login}`,
+      totalCommits: `DEFAULT BRANCHES, ${repos.length} PUBLIC REPOSITORIES`,
+      primaryLanguage: `SHARE OF ${(totalBytes / 1_000_000).toFixed(2)} MB PUBLIC SOURCE`,
+      activity: `${weeklyTotal} PUBLIC CONTRIBUTIONS - 52 WEEKS TO ${activityEnd}`,
+      lastPush: 'MOST RECENT PUSH TO A PUBLIC REPOSITORY',
+      activeSince: `GITHUB ACCOUNT CREATED ${user.createdAt.slice(0, 10)}`,
+    },
   };
 
   mkdirSync(dirname(OUT), { recursive: true });

@@ -50,11 +50,41 @@ export interface Telemetry {
     peakDay: number;
   };
   /**
-   * 52-53 columns of 7 days, oldest week first, Sunday first within a column.
-   * `-1` marks a padded cell that falls outside the reporting window.
+   * Exactly 52 complete weekly totals, oldest first.
+   *
+   * A 53x7 daily grid is deliberately not produced. With 136 contributions
+   * across 365 days, roughly 340 cells would be empty: the graphic would say
+   * "nothing happened here" far louder than it said anything else, and it is
+   * the single most template-recognisable image on GitHub. Weekly aggregation
+   * over the same real data has legible variation and no invented values.
    */
-  calendar: { start: string; end: string; weeks: number[][] };
+  activity: {
+    /** 52 weekly contribution totals, oldest first. */
+    weekly: number[];
+    /** Sum of the 52 plotted weeks. Slightly below the trailing-365-day figure
+     *  because the partial current week is excluded; the caption quotes this. */
+    total: number;
+    /** ISO date of the Sunday starting the first complete week. */
+    start: string;
+    /** ISO date of the Saturday ending the last complete week. */
+    end: string;
+    /** Highest single-week total; the y-axis is scaled to exactly this. */
+    max: number;
+    /** Index of that week, so the renderer can mark it. */
+    maxIndex: number;
+    /** Weeks with at least one contribution. Public activity here is burst-shaped. */
+    activeWeeks: number;
+  };
   languages: LanguageShare[];
+  /** Sum of `languages[].bytes` — the denominator every share is quoted against. */
+  totalSourceBytes: number;
+  /** Commits on the default branch, summed across every counted repository. */
+  totalCommits: number;
   lastPush: { repo: string; at: string };
   featured: FeaturedRepo[];
+  /**
+   * Human-readable measurement method for each headline figure. Rendered
+   * beside the value so no number ever appears without saying what it counts.
+   */
+  methods: Record<'publicRepos' | 'totalCommits' | 'primaryLanguage' | 'activity' | 'lastPush' | 'activeSince', string>;
 }

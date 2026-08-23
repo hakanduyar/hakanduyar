@@ -45,8 +45,10 @@ export const MIN_TYPE_SIZE = 9;
  */
 const TURKISH_CHARS = /[ıİğĞşŞ]/g;
 
+// Unicode-aware boundaries: a plain \b splits at any accented letter, so
+// "naïve" would otherwise match the embedded Turkish word "ve".
 const TURKISH_WORDS =
-  /\b(ve|ile|için|bir|bu|olarak|geliştirici|merhaba|hakkımda|projelerim|teknolojiler|iletişim|ben)\b/gi;
+  /(?<!\p{L})(ve|ile|için|bir|bu|olarak|geliştirici|merhaba|hakkımda|projelerim|teknolojiler|iletişim|ben)(?!\p{L})/giu;
 
 export function checkEnglishOnly(text: string, label: string): Finding[] {
   const findings: Finding[] = [];

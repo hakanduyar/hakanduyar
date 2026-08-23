@@ -21,26 +21,19 @@ import { n } from './svg.js';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(HERE, '../..');
 
-/** The two families the design system is allowed to use. */
-export type FontId =
-  | 'display-600'
-  | 'display-700'
-  | 'ui-400'
-  | 'ui-500'
-  | 'ui-600'
-  | 'mono-400'
-  | 'mono-500'
-  | 'mono-700';
+/**
+ * Weights of the single vendored family. The design system uses one family
+ * everywhere inside assets (see docs/visual-system.md): monospace metrics keep
+ * value columns aligned without hand-tuning, and one family means one glyph
+ * subset to reason about.
+ */
+export type FontId = 'w400' | 'w500' | 'w700' | 'w800';
 
 const FONT_FILES: Record<FontId, string> = {
-  'display-600': 'node_modules/@fontsource/inter/files/inter-latin-600-normal.woff2',
-  'display-700': 'node_modules/@fontsource/inter/files/inter-latin-700-normal.woff2',
-  'ui-400': 'node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2',
-  'ui-500': 'node_modules/@fontsource/inter/files/inter-latin-500-normal.woff2',
-  'ui-600': 'node_modules/@fontsource/inter/files/inter-latin-600-normal.woff2',
-  'mono-400': 'node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2',
-  'mono-500': 'node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-500-normal.woff2',
-  'mono-700': 'node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2',
+  w400: 'assets/fonts/JetBrainsMono-400.woff2',
+  w500: 'assets/fonts/JetBrainsMono-500.woff2',
+  w700: 'assets/fonts/JetBrainsMono-700.woff2',
+  w800: 'assets/fonts/JetBrainsMono-800.woff2',
 };
 
 type LoadedFont = fontkit.Font;

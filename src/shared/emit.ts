@@ -32,14 +32,21 @@ const SVGO_CONFIG: Config = {
           collapseGroups: false,
           // Merging paths across animated groups changes what animates.
           mergePaths: false,
-          // <title>/<desc> are the accessibility contract for these assets.
-          removeTitle: false,
-          removeDesc: false,
-          // Keeps the viewBox so the asset scales inside GitHub's column.
-          removeViewBox: false,
-          // 2dp already applied at generation time; re-rounding shifts glyphs.
-          cleanupNumericValues: false,
+          // Critical. SVGO computes the stylesheet and deletes anything it
+          // resolves to opacity:0 or display:none. Every element in an entrance
+          // sequence starts at opacity:0, so leaving this on silently strips
+          // most of the animated hero - it shrank from 25 paths to 6 before
+          // this was turned off. tests/variants.test.ts asserts that the
+          // animated and static variants keep the same element count.
+          removeHiddenElems: false,
+          // role="img" is the accessibility contract; SVGO treats it as an
+          // unknown attribute and strips it without this flag.
+          removeUnknownsAndDefaults: { keepRoleAttr: true },
+          // 2dp is already applied at generation time; re-rounding shifts glyphs.
           convertPathData: { floatPrecision: 2, transformPrecision: 2 },
+          // <title>/<desc> are the accessibility contract for these assets, and
+          // the viewBox is what lets GitHub scale them: SVGO 4 keeps all three
+          // by default, so they need no override, only this note.
         },
       },
     },
@@ -54,6 +61,11 @@ export interface EmitResult {
   changed: boolean;
 }
 
+/** Run the optimiser without touching disk — used by the drift check. */
+export function optimizeSvg(svg: string): string {
+  return optimize(svg, SVGO_CONFIG).data;
+}
+
 /**
  * Optimise and write an SVG.
  *
@@ -64,8 +76,7 @@ export interface EmitResult {
  */
 export function emitSvg(relPath: string, svg: string): EmitResult {
   const bytesBefore = Buffer.byteLength(svg, 'utf8');
-  const result = optimize(svg, SVGO_CONFIG);
-  const output = result.data;
+  const output = optimizeSvg(svg);
 
   const absolute = resolve(REPO_ROOT, relPath);
   mkdirSync(dirname(absolute), { recursive: true });

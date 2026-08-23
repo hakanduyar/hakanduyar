@@ -1,0 +1,39 @@
+# Verifies every push and pull request:
+#   - the TypeScript compiles
+#   - the unit tests pass
+#   - the committed generated assets exactly match their source (drift gate)
+#   - the README and assets pass the validation harness
+name: ci
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Generated assets match their source
+        run: npm run render -- --check
+
+      - name: Validation harness
+        run: npm run validate

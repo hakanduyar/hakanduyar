@@ -26,6 +26,12 @@ export interface FeaturedRepoConfig {
   signals: string[];
   /** Stack labels, curated — not every dependency in the lockfile. */
   stack: string[];
+  /**
+   * The one line printed on the system plate. Max 27 characters: beyond that
+   * it collides with the right-aligned meta column, and the renderer throws.
+   * States what is implemented, never how good it is.
+   */
+  plateLine: string;
   /** Operational status. Must reflect the real state of the repository. */
   status: 'ACTIVE' | 'STABLE' | 'ARCHIVED';
 }
@@ -46,6 +52,7 @@ export const FEATURED_REPOS: FeaturedRepoConfig[] = [
       'Documented data model, API surface and seed generation',
     ],
     stack: ['Node.js', 'Express', 'MongoDB', 'React'],
+    plateLine: 'Idempotent claim handling',
     status: 'STABLE',
   },
   {
@@ -58,6 +65,7 @@ export const FEATURED_REPOS: FeaturedRepoConfig[] = [
       'Ships as a single built bundle for drop-in use',
     ],
     stack: ['JavaScript', 'GSAP', 'ES Modules'],
+    plateLine: 'Composable motion modules',
     status: 'ACTIVE',
   },
   {
@@ -70,6 +78,7 @@ export const FEATURED_REPOS: FeaturedRepoConfig[] = [
       'Stock-in / stock-out movements tracked as first-class records',
     ],
     stack: ['NestJS', 'Next.js', 'PostgreSQL', 'Prisma'],
+    plateLine: 'Role-based access control',
     status: 'STABLE',
   },
   {
@@ -82,6 +91,7 @@ export const FEATURED_REPOS: FeaturedRepoConfig[] = [
       'Optional AI layer is additive, never required to use the app',
     ],
     stack: ['React', 'TypeScript', 'Vite', 'Dexie'],
+    plateLine: 'Local-first, no backend',
     status: 'ACTIVE',
   },
 ];

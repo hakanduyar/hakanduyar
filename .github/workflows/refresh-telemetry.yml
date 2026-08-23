@@ -1,0 +1,65 @@
+# Regenerates data/telemetry.json and every derived asset from the live
+# GitHub API, then commits — but only when the underlying data materially
+# changed. A run where nothing moved but the clock produces no commit.
+#
+# Weekly cadence: often enough that "LAST PUSH" and the activity strip stay
+# honest, rare enough that the history is not noise.
+name: refresh-telemetry
+
+on:
+  schedule:
+    - cron: '17 6 * * 1' # Mondays 06:17 UTC; minute chosen off the busy :00
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Snapshot live telemetry
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run data:snapshot
+
+      - name: Detect material change
+        id: material
+        run: |
+          if node scripts/generate/material-change.mjs; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            git checkout -- data/telemetry.json
+          fi
+
+      - name: Rebuild assets and README
+        if: steps.material.outputs.changed == 'true'
+        run: |
+          npm run render
+          npm run readme
+
+      - name: Verify before committing
+        if: steps.material.outputs.changed == 'true'
+        run: |
+          npm run typecheck
+          npm test
+          npm run validate
+
+      - name: Commit refreshed telemetry
+        if: steps.material.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/telemetry.json assets/generated README.md
+          git commit -m "chore(telemetry): refresh measured data"
+          git push
