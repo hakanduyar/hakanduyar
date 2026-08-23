@@ -66,12 +66,42 @@ async function main(): Promise<void> {
     expect(new RegExp(`<h2[^>]*>${heading}</h2>`).test(html), `heading "${heading}" not rendered as <h2>`);
   }
 
+  // External links: every URL on the page must answer. medium.com blocks
+  // non-browser user agents, so it is probed through its RSS feed instead.
+  const urls = [...new Set([...readme.matchAll(/\((https?:[^)\s]+)\)|href="(https?:[^"]+)"/g)]
+    .map((m) => m[1] ?? m[2])
+    .filter((u): u is string => Boolean(u)))];
+  for (const url of urls) {
+    const probe = url.startsWith('https://medium.com/@')
+      ? url.replace('https://medium.com/@', 'https://medium.com/feed/@')
+      : url;
+    try {
+      const res = await fetch(probe, {
+        method: 'GET',
+        redirect: 'follow',
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126.0 Safari/537.36' },
+        signal: AbortSignal.timeout(20000),
+      });
+      // LinkedIn answers 999 to every non-browser client (its bot wall). The
+      // wall proves the host is up; the profile itself was human-verified in
+      // .ai/project/01-link-verification.md and is the owner's own handle.
+      const ok = res.status < 400 || (res.status === 999 && new URL(url).hostname.endsWith('linkedin.com'));
+      expect(ok, `link check: ${url} answered ${res.status}`);
+      console.log(`  link ${ok ? 'ok' : 'BAD'} ${res.status}  ${url}`);
+    } catch (error) {
+      expect(false, `link check: ${url} unreachable (${error instanceof Error ? error.message : error})`);
+    }
+  }
+
   if (failures.length) {
     for (const failure of failures) console.error(`  FAIL ${failure}`);
     process.exitCode = 1;
     return;
   }
-  console.log(`[qa:github] GitHub's renderer preserved all ${pictureCount} <picture> blocks, ${sourceCount} sources, every asset reference, alt text and heading`);
+  console.log(
+    `[qa:github] renderer preserved all ${pictureCount} <picture> blocks, ${sourceCount} sources, ` +
+      `every asset reference, alt text and heading; ${urls.length} external links answered`,
+  );
 }
 
 main().catch((error: unknown) => {

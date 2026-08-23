@@ -49,5 +49,10 @@ jobs:
           npm run readme
           git diff --exit-code README.md
 
+      - name: Token table matches its generator
+        run: |
+          npm run docs:tokens
+          git diff --exit-code docs/tokens.md
+
       - name: Validation harness
         run: npm run validate

@@ -1,9 +1,10 @@
 # GitHub README platform constraints — measured, not assumed
 
 Every rule below was verified on 2026-08-23 against real Chromium and GitHub's
-own Markdown pipeline. Reproduce with `npm run validate` and
-`npm run qa:visual`. Do not change the asset architecture on the basis of a
-blog post; re-run the probes.
+own Markdown pipeline, and every measurement is reproducible from a clean
+clone with **`npm run probe:platform`** (`scripts/probe/platform-probes.ts`).
+Do not change the asset architecture on the basis of a blog post; re-run the
+probes and update this file from their output.
 
 ## 1. How the assets are embedded
 

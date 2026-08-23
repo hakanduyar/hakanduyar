@@ -7,8 +7,11 @@
  * that move purely because the clock moved (the capture timestamp, the
  * trailing-window boundaries, and the week buckets that slide with them) are
  * excluded: a week in which nothing happened must produce no commit, or the
- * history becomes a metronome. Owner-driven changes always also touch one of
- * the whitelisted fields, so nothing real can slip through the exclusion.
+ * history becomes a metronome. Known, accepted exception: contributions that
+ * touch no owned public default branch (issues/PRs elsewhere, non-default
+ * branches) change only the excluded activity fields, so the strip refreshes
+ * with the next owned push rather than immediately. Documented in
+ * docs/maintenance.md.
  *
  * Exit codes (the workflow branches on these — keep them distinct):
  *   0 = material change            -> rebuild and commit

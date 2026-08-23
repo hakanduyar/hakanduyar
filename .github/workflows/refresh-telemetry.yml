@@ -39,7 +39,10 @@ jobs:
       # here, before anything can be committed.
       - name: Snapshot live telemetry
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Falls back to the repo token; PROFILE_READ_TOKEN is an optional
+          # fine-grained PAT for the day the repo token stops seeing the
+          # contribution calendar (docs/maintenance.md).
+          GITHUB_TOKEN: ${{ secrets.PROFILE_READ_TOKEN || secrets.GITHUB_TOKEN }}
         run: npm run data:snapshot
 
       # Exit 0 = material change; exit 3 = nothing owner-driven changed (skip);

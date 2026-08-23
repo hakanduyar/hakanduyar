@@ -32,8 +32,6 @@ export interface FeaturedRepoConfig {
    * States what is implemented, never how good it is.
    */
   plateLine: string;
-  /** Operational status. Must reflect the real state of the repository. */
-  status: 'ACTIVE' | 'STABLE' | 'ARCHIVED';
 }
 
 /**
@@ -53,7 +51,6 @@ export const FEATURED_REPOS: FeaturedRepoConfig[] = [
     ],
     stack: ['Node.js', 'Express', 'PostgreSQL', 'React'],
     plateLine: 'Idempotent claim handling',
-    status: 'STABLE',
   },
   {
     key: 'motion-system',
@@ -66,7 +63,6 @@ export const FEATURED_REPOS: FeaturedRepoConfig[] = [
     ],
     stack: ['JavaScript', 'GSAP', 'ES Modules'],
     plateLine: 'Composable motion modules',
-    status: 'ACTIVE',
   },
   {
     key: 'stock',
@@ -79,7 +75,6 @@ export const FEATURED_REPOS: FeaturedRepoConfig[] = [
     ],
     stack: ['NestJS', 'Next.js', 'PostgreSQL', 'Prisma'],
     plateLine: 'Role-based access control',
-    status: 'STABLE',
   },
   {
     key: 'spark',
@@ -92,7 +87,6 @@ export const FEATURED_REPOS: FeaturedRepoConfig[] = [
     ],
     stack: ['React', 'TypeScript', 'Vite', 'Dexie'],
     plateLine: 'Local-first, no backend',
-    status: 'ACTIVE',
   },
 ];
 

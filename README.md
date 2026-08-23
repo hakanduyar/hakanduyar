@@ -102,7 +102,7 @@ Stack: React · TypeScript · Vite · Dexie. Last public push: 2026-07.
 | Measure | Value | Method |
 |---|---:|---|
 | Public repositories | 55 | public, non-fork, owned by @hakanduyar |
-| Commits | 870 | default branches, 55 public repositories |
+| Commits | 870 | default branches, undefined public repositories |
 | TypeScript | 64.2% | share of 3.86 MB public source |
 | JavaScript | 17.0% | share of 3.86 MB public source |
 | HTML | 11.5% | share of 3.86 MB public source |
@@ -124,8 +124,8 @@ Measured 2026-08-23 from the GitHub API. No estimated or third-party figures.
 
 ## Active work
 
-- **[Hunnes-Academy-motion-system](https://github.com/hakanduyar/Hunnes-Academy-motion-system)** — Composable GSAP motion system for a storefront - nine motion modules over a shared base, behind one declarative config. Last push 2026-08.
-- **[spark](https://github.com/hakanduyar/spark)** — Personal Planning, Focus, and Growth System. Last push 2026-07.
+- **[Hunnes-Academy-motion-system](https://github.com/hakanduyar/Hunnes-Academy-motion-system)** — A reusable motion layer built as one system, not a pile of one-off animations. Last push 2026-08.
+- **[spark](https://github.com/hakanduyar/spark)** — Local-first planning system that works with no backend and no network. Last push 2026-07.
 
 Some current work is in private repositories, so public activity understates recent output.
 

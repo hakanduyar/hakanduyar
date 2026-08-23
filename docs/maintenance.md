@@ -10,6 +10,19 @@ language shift). The capture timestamp and the sliding 52-week window do not
 count, so quiet weeks produce no commit. `ci.yml` blocks any push where the
 committed assets or README no longer match their generators.
 
+Known refresh exception: contributions that touch no owned public default
+branch (issues or PRs on other accounts' repositories, work on non-default
+branches) change only the sliding activity fields, which are deliberately
+excluded from the material-change view. The activity strip then refreshes with
+the next owned public push rather than immediately. Accepted trade-off; the
+alternative is a weekly metronome commit.
+
+Token note: the refresh workflow reads public data with the repository's own
+`GITHUB_TOKEN`. If a run's snapshot step ever fails with empty contribution
+data under that token, create a fine-grained PAT with public-repository read
+access, store it as the `PROFILE_READ_TOKEN` secret, and the workflow will
+prefer it automatically.
+
 GitHub automatically disables cron-scheduled workflows after 60 days without
 repository activity. If the profile has been quiet for two months, re-enable
 the workflow from the Actions tab (one click) or push any commit.

@@ -34,6 +34,12 @@ export interface Telemetry {
   memberSince: string;
   followers: number;
   publicRepos: number;
+  /**
+   * Non-archived repositories the commit and language sums were computed
+   * over. Equal to publicRepos while nothing is archived; quoted in the
+   * Commits method cell so the two can never silently diverge.
+   */
+  countedRepos: number;
   contributions: {
     windowStart: string;
     windowEnd: string;

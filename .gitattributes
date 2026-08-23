@@ -1,0 +1,5 @@
+# Byte-stability of the drift gates depends on every text file hashing
+# identically on Windows-authored commits and the ubuntu CI runner.
+* text=auto eol=lf
+*.woff2 binary
+*.png binary

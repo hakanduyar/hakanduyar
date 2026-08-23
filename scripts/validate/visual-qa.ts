@@ -94,18 +94,38 @@ async function assertImgLiveness(browser: Browser): Promise<boolean> {
       `<img id="h" src="../../../assets/generated/hero-dark.svg" width="890"></body>`,
   );
   const page = await newPage(browser, { width: 900, height: 320, scheme: 'dark' });
-  await page.goto(pathToFileURL(host).href, { waitUntil: 'load' });
+  // Two independent signals, because timing under load is not guaranteed:
+  //   1. The entrance: first frame vs +1.5s. Large delta, but only if the
+  //      early capture lands inside the 2.4s sequence.
+  //   2. The drift loop: two frames 4.5s apart (half the 9s period, maximum
+  //      index displacement). Small but permanent delta — the loop runs
+  //      forever, so this signal cannot be missed by scheduling jitter.
+  await page.goto(pathToFileURL(host).href, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('img#h');
   const img = await page.$('img#h');
   const early = (await img!.screenshot({ type: 'png' })) as Buffer;
-  await new Promise((r) => setTimeout(r, 1200));
+  await new Promise((r) => setTimeout(r, 1500));
   const later = (await img!.screenshot({ type: 'png' })) as Buffer;
   writeFileSync(resolve(OUT, 'liveness-early.png'), early);
   writeFileSync(resolve(OUT, 'liveness-later.png'), later);
-  const diff = meanDiff(early, later);
+  const entranceDelta = meanDiff(early, later);
+
+  await new Promise((r) => setTimeout(r, 1500)); // past the 2.4s entrance
+  const driftA = (await img!.screenshot({ type: 'png' })) as Buffer;
+  await new Promise((r) => setTimeout(r, 4500));
+  const driftB = (await img!.screenshot({ type: 'png' })) as Buffer;
+  const driftDelta = meanDiff(driftA, driftB);
   await page.close();
-  console.log(`  <img> liveness: mean pixel delta ${diff.toFixed(3)} over 1.2s`);
-  return diff > 0.05;
+
+  // The drift moves a 2u line by up to 12u on an 890x300 canvas: mean deltas
+  // of ~0.02-0.05 are the expected signature, hence the low threshold.
+  const entranceSeen = entranceDelta > 1;
+  const driftSeen = driftDelta > 0.005;
+  console.log(
+    `  <img> liveness: entrance delta ${entranceDelta.toFixed(3)} (seen=${entranceSeen}), ` +
+      `drift delta over 4.5s ${driftDelta.toFixed(4)} (seen=${driftSeen})`,
+  );
+  return entranceSeen || driftSeen;
 }
 
 async function captureReadmePage(browser: Browser): Promise<void> {

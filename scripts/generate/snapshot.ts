@@ -242,6 +242,7 @@ async function main(): Promise<void> {
     memberSince: user.createdAt.slice(0, 10),
     followers: user.followers.totalCount,
     publicRepos: user.repositories.totalCount,
+    countedRepos: repos.length,
     contributions: {
       windowStart: firstDay,
       windowEnd: lastDay,

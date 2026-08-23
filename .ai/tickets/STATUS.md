@@ -82,8 +82,29 @@ returns.
     .ai/reports/cross-repo.md. The Turkish README inside the public spark
     repository is out of scope (do not rewrite unrelated repositories) and
     recorded there as an owner recommendation.
-12. **.ai/ project records ship in the public repository deliberately** —
+12. **The account changed under the project between audit and snapshot**
+    (same calendar day, 2026-08-23): three repositories left the public set
+    (AkademiGrup96, crm-fe, medyanes360-smartboardapplication — deleted or
+    made private by the owner), moving every headline figure: 58 -> 55
+    repositories, 962 -> 870 commits, TypeScript 62.9% -> 64.2%, and the
+    trailing-year total 136 -> 135 as the window slid. The audit's section-0
+    table and .ai/evidence/github-graphql-raw.json describe the pre-change
+    account and are superseded by data/telemetry.json; the published page
+    trusts the live measurement (RULE 3).
+13. **Toolchain substitutions vs the backlog's canonical commands**: npm in
+    place of pnpm (pnpm exists on the machine but npm lockfile discipline was
+    already established), tsx + vitest as the runner/test harness, fontkit in
+    place of opentype.js (deviation 1), and command names as documented in
+    docs/architecture.md. Functional coverage is one-to-one; T-004's URL
+    check lives in `npm run qa:github` (network step) rather than the
+    offline validator, so offline builds stay deterministic.
+14. **.ai/ project records ship in the public repository deliberately** —
     the audit trail (spec, rulings, reviews, evidence) is part of the
     profile's provenance argument. Residual exposure accepted: the documents
     contain no secrets, only local paths under the owner's own user
     directory and the reasoning behind public output.
+15. **Profile bio could not be set autonomously**: the backlog's T-008/T-012
+    bio criteria require `gh` with the "user" scope, which the stored token
+    lacks, and granting it needs an interactive browser login. This is the
+    one remaining owner action; the exact commands and drafted text are in
+    `.ai/reports/cross-repo.md`.

@@ -153,7 +153,7 @@ function main(): void {
     '| Measure | Value | Method |',
     '|---|---:|---|',
     `| Public repositories | ${t.publicRepos} | public, non-fork, owned by @${t.login} |`,
-    `| Commits | ${t.totalCommits} | default branches, ${t.publicRepos} public repositories |`,
+    `| Commits | ${t.totalCommits} | default branches, ${t.countedRepos} public repositories |`,
   );
   for (const language of t.languages.slice(0, 4)) {
     push(
@@ -191,14 +191,18 @@ function main(): void {
   // -- active work -----------------------------------------------------------------
 
   push('## Active work', '');
+  const featuredByName = new Map(FEATURED_REPOS.map((f) => [f.repo, f]));
   for (const pushEntry of t.recentPushes) {
     const month = pushEntry.at.slice(0, 7);
-    // Descriptions come from the repository settings; normalise the trailing
-    // period so the sentence join reads correctly.
+    // Prefer the curated headline when the repository is featured: it is
+    // sentence-cased and register-consistent, where raw GitHub descriptions
+    // import Title Case and their own dash conventions.
+    const curated = featuredByName.get(pushEntry.repo)?.headline;
     const trimmed = pushEntry.description?.trim() ?? '';
-    const description = trimmed ? (trimmed.endsWith('.') ? trimmed : `${trimmed}.`) : null;
-    const line = description
-      ? `**[${pushEntry.repo}](${pushEntry.url})** — ${description} Last push ${month}.`
+    const fallback = trimmed ? (trimmed.endsWith('.') ? trimmed : `${trimmed}.`) : null;
+    const summary = curated ?? fallback;
+    const line = summary
+      ? `**[${pushEntry.repo}](${pushEntry.url})** — ${summary} Last push ${month}.`
       : `**[${pushEntry.repo}](${pushEntry.url})** — last push ${month}.`;
     push(`- ${line}`);
   }
