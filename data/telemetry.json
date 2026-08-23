@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-08-23T17:45:00Z",
+  "capturedAt": "2026-08-23T17:55:00Z",
   "login": "hakanduyar",
   "name": "Hakan Duyar",
   "memberSince": "2021-02-20",
@@ -152,7 +152,7 @@
       "repo": "Hunnes-Academy-motion-system",
       "at": "2026-08-16T14:51:10Z",
       "url": "https://github.com/hakanduyar/Hunnes-Academy-motion-system",
-      "description": "Composable GSAP motion system for a production storefront - ten motion modules behind one declarative config"
+      "description": "Composable GSAP motion system for a storefront - nine motion modules over a shared base, behind one declarative config"
     },
     {
       "repo": "spark",
@@ -177,7 +177,7 @@
       "key": "motion-system",
       "name": "Hunnes-Academy-motion-system",
       "url": "https://github.com/hakanduyar/Hunnes-Academy-motion-system",
-      "description": "Composable GSAP motion system for a production storefront - ten motion modules behind one declarative config",
+      "description": "Composable GSAP motion system for a storefront - nine motion modules over a shared base, behind one declarative config",
       "language": "JavaScript",
       "commits": 9,
       "stars": 0,

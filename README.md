@@ -124,7 +124,7 @@ Measured 2026-08-23 from the GitHub API. No estimated or third-party figures.
 
 ## Active work
 
-- **[Hunnes-Academy-motion-system](https://github.com/hakanduyar/Hunnes-Academy-motion-system)** — Composable GSAP motion system for a production storefront - ten motion modules behind one declarative config. Last push 2026-08.
+- **[Hunnes-Academy-motion-system](https://github.com/hakanduyar/Hunnes-Academy-motion-system)** — Composable GSAP motion system for a storefront - nine motion modules over a shared base, behind one declarative config. Last push 2026-08.
 - **[spark](https://github.com/hakanduyar/spark)** — Personal Planning, Focus, and Growth System. Last push 2026-07.
 
 Some current work is in private repositories, so public activity understates recent output.
