@@ -108,6 +108,10 @@ function main(): void {
     }
   };
   collect(telemetry);
+  // Display convention: the language table shows the top four plus an
+  // "all other languages" row, whose count is the only derived integer on
+  // the page (languages.length - 4).
+  known.add(String(Math.max(0, telemetry.languages.length - 4)));
   const prose = readme
     .replace(/<!--[\s\S]*?-->/g, '')
     .replace(/\((?:https?:|mailto:)[^)]*\)/g, '')

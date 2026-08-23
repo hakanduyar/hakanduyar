@@ -29,6 +29,7 @@ describe('structure', () => {
       '## Selected systems',
       '## Telemetry',
       '## Activity',
+      '## Active work',
       '## Operating principles',
       '## Channels',
     ];

@@ -75,7 +75,10 @@ export function renderTelemetryPanel(input: TelemetryPanelInput, palette: Palett
     {
       key: primary.name.toUpperCase(),
       value: `${(primary.share * 100).toFixed(1)}%`,
-      method: `SHARE OF ${megabytes} MB`,
+      // Scale-proof: the megabyte figure lives in the caption below and in
+      // the Markdown table; a number here overflows the cell as the account
+      // grows (it did, at 14.89 MB).
+      method: 'BY SOURCE BYTES',
     },
   ];
 
@@ -147,7 +150,9 @@ export function renderTelemetryPanel(input: TelemetryPanelInput, palette: Palett
     }),
   );
 
-  const caption = `SHARE OF ${megabytes} MB ACROSS ${t.publicRepos} PUBLIC REPOSITORIES`;
+  // countedRepos, not publicRepos: the byte aggregate excludes archived
+  // repositories, so the caption must count the same set it describes.
+  const caption = `SHARE OF ${megabytes} MB ACROSS ${t.countedRepos} PUBLIC REPOSITORIES`;
   const captionWidth = canvas.measureText(caption, TYPE.micro);
   if (captionWidth > GRID.contentWidth) {
     throw new Error(`Telemetry caption measures ${captionWidth.toFixed(0)}u, wider than ${GRID.contentWidth}u`);
@@ -163,7 +168,7 @@ export function renderTelemetryPanel(input: TelemetryPanelInput, palette: Palett
     `Measured telemetry: ${t.publicRepos} public non-fork repositories, ` +
     `${t.totalCommits} commits on default branches, and a language distribution of ${breakdown}, ` +
     `with ${(remainderShare * 100).toFixed(1)} percent across all other languages, ` +
-    `measured over ${megabytes} MB of public source on ${t.capturedAt.slice(0, 10)}.`;
+    `measured over ${megabytes} MB of public source across ${t.countedRepos} repositories on ${t.capturedAt.slice(0, 10)}.`;
 
   return canvas.build({ id: 'telemetry', title: 'Measured repository telemetry', desc });
 }

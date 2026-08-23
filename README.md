@@ -7,7 +7,7 @@
   <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/hero-static-dark.svg">
   <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/hero-static-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/generated/hero-dark.svg">
-  <img src="assets/generated/hero-light.svg" alt="HDU engineering record. Hakan Duyar, interface and systems engineering. 55 public repositories, 870 commits on default branches, TypeScript 64.2 percent of public source. Active since 2021, last public push 2026-08-23." width="890">
+  <img src="assets/generated/hero-light.svg" alt="HDU engineering record. Hakan Duyar, interface and systems engineering. 59 public repositories, 4194 commits on default branches, TypeScript 49.1 percent of public source. Active since 2021, last public push 2026-08-23." width="890">
 </picture>
 
 **Hakan Duyar — interface and systems engineer. TypeScript, React, Node.**
@@ -96,18 +96,18 @@ Stack: React · TypeScript · Vite · Dexie. Last public push: 2026-07.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/generated/telemetry-dark.svg">
-  <img src="assets/generated/telemetry-light.svg" alt="Measured telemetry: 55 public repositories, 870 commits on default branches, TypeScript 64.2 percent of 3.86 MB of public source." width="890">
+  <img src="assets/generated/telemetry-light.svg" alt="Measured telemetry: 59 public repositories, 4194 commits on default branches, TypeScript 49.1 percent of 14.89 MB of public source." width="890">
 </picture>
 
 | Measure | Value | Method |
 |---|---:|---|
-| Public repositories | 55 | public, non-fork, owned by @hakanduyar |
-| Commits | 870 | default branches, 55 public repositories |
-| TypeScript | 64.2% | share of 3.86 MB public source |
-| JavaScript | 17.0% | share of 3.86 MB public source |
-| HTML | 11.5% | share of 3.86 MB public source |
-| CSS | 3.4% | share of 3.86 MB public source |
-| All other languages | 3.9% | 8 languages |
+| Public repositories | 59 | public, non-fork, owned by @hakanduyar |
+| Commits | 4194 | default branches, 59 public repositories |
+| TypeScript | 49.1% | share of 14.89 MB public source |
+| Go | 20.4% | share of 14.89 MB public source |
+| Vue | 16.9% | share of 14.89 MB public source |
+| JavaScript | 4.5% | share of 14.89 MB public source |
+| All other languages | 9.1% | 15 languages |
 | Active since | 2021 | GitHub account created 2021-02-20 |
 | Last public push | 2026-08-23 | most recent push to a public repository |
 
@@ -124,8 +124,8 @@ Measured 2026-08-23 from the GitHub API. No estimated or third-party figures.
 
 ## Active work
 
-- **[hakanduyar](https://github.com/hakanduyar/hakanduyar)** — last push 2026-08.
-- **[Hunnes-Academy-motion-system](https://github.com/hakanduyar/Hunnes-Academy-motion-system)** — A reusable motion layer built as one system, not a pile of one-off animations. Last push 2026-08.
+- **[hunnes-ikas-theme](https://github.com/hakanduyar/hunnes-ikas-theme)** — Hunnes storefront — ikas Studio Code Mode theme. Last push 2026-08.
+- **[software-factory](https://github.com/hakanduyar/software-factory)** — last push 2026-08.
 
 Some current work is in private repositories, so public activity understates recent output.
 

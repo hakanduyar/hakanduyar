@@ -268,7 +268,10 @@ async function main(): Promise<void> {
     totalSourceBytes: totalBytes,
     totalCommits,
     lastPush: { repo: mostRecent.name, at: mostRecent.pushedAt },
+    // The profile repository is the page itself; listing it under Active
+    // work would be self-reference, not information.
     recentPushes: [...repos]
+      .filter((r) => r.name !== LOGIN)
       .sort((a, b) => (a.pushedAt < b.pushedAt ? 1 : -1))
       .slice(0, 2)
       .map((r) => ({ repo: r.name, at: r.pushedAt, url: r.url, description: r.description })),

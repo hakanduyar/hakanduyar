@@ -103,7 +103,18 @@ returns.
     profile's provenance argument. Residual exposure accepted: the documents
     contain no secrets, only local paths under the owner's own user
     directory and the reasoning behind public output.
-15. **Profile bio could not be set autonomously**: the backlog's T-008/T-012
+15. **The account changed again on 2026-08-24**: the owner made four
+    previously private repositories public (hunnes-ikas-theme,
+    software-factory, portfolio, jointledger). Headline figures moved with
+    the measurement, as designed: 55 -> 59 repositories, 870 -> 4194 commits,
+    14.89 MB of source, TypeScript 49.1% with Go 20.4% and Vue 16.9%
+    entering the distribution. The pipeline absorbed the change; the one
+    scale bug it exposed (a per-cell method label that embedded the megabyte
+    figure) was made scale-proof, and the profile repository itself is now
+    excluded from Active work as self-reference. The newly public
+    repositories are candidates for a future re-curation of Selected
+    systems - an editorial decision left to the owner.
+16. **Profile bio could not be set autonomously**: the backlog's T-008/T-012
     bio criteria require `gh` with the "user" scope, which the stored token
     lacks, and granting it needs an interactive browser login. This is the
     one remaining owner action; the exact commands and drafted text are in

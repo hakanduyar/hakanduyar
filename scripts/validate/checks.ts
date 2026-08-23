@@ -42,9 +42,6 @@ export function sizeBudgetFor(fileName: string): number {
   return isAnimatedHero ? SIZE_LIMITS.heroAnimated : SIZE_LIMITS.staticAsset;
 }
 
-/** Smallest type size, in user units, that survives the ~2.4x mobile downscale. */
-export const MIN_TYPE_SIZE = 9;
-
 // ---------------------------------------------------------------------------
 // Markdown / README checks
 // ---------------------------------------------------------------------------

@@ -108,6 +108,12 @@ export function renderActivityStrip(input: ActivityStripInput, palette: Palette)
 
   // The scale is stated, never implied.
   const maxLabel = `MAX ${t.activity.max} IN ONE WEEK`;
+  const captionWidth = canvas.measureText(t.methods.activity, TYPE.micro);
+  if (captionWidth > GRID.contentWidth) {
+    throw new Error(
+      `Activity caption measures ${captionWidth.toFixed(0)}u, wider than ${GRID.contentWidth}u - shorten methods.activity`,
+    );
+  }
   canvas.add(
     canvas.text(maxLabel, TYPE.label, { x: R, y: MAX_LABEL_BASELINE, anchor: 'end', fill: p.text.tertiary }),
     // Mirrored word for word in the Markdown line beneath the image.

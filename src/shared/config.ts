@@ -3,13 +3,10 @@
  *
  * This file holds the few values that are *decisions* rather than data:
  * whose profile is being built, and which repositories are promoted into
- * Mission Control. Everything else is measured from the GitHub API.
+ * Selected systems. Everything else is measured from the GitHub API.
  */
 
 export const LOGIN = 'hakanduyar';
-
-/** Canonical raw base for asset URLs referenced from the README. */
-export const RAW_BASE = `https://raw.githubusercontent.com/${LOGIN}/${LOGIN}/main`;
 
 export interface FeaturedRepoConfig {
   /** Stable identifier used in the snapshot and by the renderers. */
