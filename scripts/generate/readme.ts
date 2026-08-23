@@ -203,7 +203,7 @@ function main(): void {
     const summary = curated ?? fallback;
     const line = summary
       ? `**[${pushEntry.repo}](${pushEntry.url})** — ${summary} Last push ${month}.`
-      : `**[${pushEntry.repo}](${pushEntry.url})** — last push ${month}.`;
+      : `**[${pushEntry.repo}](${pushEntry.url})** — Last push ${month}.`;
     push(`- ${line}`);
   }
   push('', PROFILE.privateWork, '');

@@ -62,6 +62,13 @@ export function renderCoreModules(input: CoreModulesInput, palette: Palette): Re
       );
     }
 
+    const evidenceWidth = canvas.measureText(featured ? featured.name : '', TYPE.label);
+    if (featured && evidenceWidth > R - EVIDENCE_X) {
+      throw new Error(
+        `Evidence name "${featured.name}" measures ${evidenceWidth.toFixed(0)}u, wider than ${R - EVIDENCE_X}u`,
+      );
+    }
+
     // The index bar: a marker that spans the row's cap height, not a bullet.
     const capTop = baseline - TYPE.label.size * 0.73;
     names.push(
@@ -72,7 +79,7 @@ export function renderCoreModules(input: CoreModulesInput, palette: Palette): Re
         fill: 'none',
       }),
       canvas.text(module.name, TYPE.label, { x: NAME_X, y: baseline, fill: p.text.primary }),
-      canvas.text(featured.name, TYPE.micro, { x: EVIDENCE_X, y: baseline, fill: p.text.tertiary, decorative: true }),
+      canvas.text(featured.name, TYPE.label, { x: EVIDENCE_X, y: baseline, fill: p.text.tertiary }),
     );
 
     if (index < input.modules.length - 1) {

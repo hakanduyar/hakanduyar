@@ -12,6 +12,11 @@ on:
   schedule:
     - cron: '17 6 * * 1' # Mondays 06:17 UTC; minute chosen off the busy :00
   workflow_dispatch:
+    inputs:
+      allow_metric_drop:
+        description: 'Accept a >50% metric decrease (repositories changed visibility, etc.)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -33,10 +38,12 @@ jobs:
 
       - run: npm ci
 
-      # snapshot.ts enforces its own sanity floor (non-zero repositories,
-      # commits, languages, exactly 52 week buckets, complete featured set)
-      # and exits non-zero otherwise — a degraded API response fails the job
-      # here, before anything can be committed.
+      # snapshot.ts enforces a structural sanity floor (non-zero repositories,
+      # commits, languages, exactly 52 week buckets, complete featured set).
+      # A structurally complete but collapsed response — the signature of a
+      # token that stops seeing the contribution calendar — is caught by the
+      # material-change step's collapse guard below, against the committed
+      # snapshot.
       - name: Snapshot live telemetry
         env:
           # Falls back to the repo token; PROFILE_READ_TOKEN is an optional
@@ -48,8 +55,13 @@ jobs:
       # Exit 0 = material change; exit 3 = nothing owner-driven changed (skip);
       # anything else = real error and the job fails. A crash must never be
       # mistaken for "no change".
+      # Exit 0 = commit; 3 = quiet week, skip; 4 = suspicious collapse, FAIL
+      # (release a legitimate large swing by dispatching with
+      # allow_metric_drop); anything else = real error, FAIL.
       - name: Detect material change
         id: material
+        env:
+          ALLOW_METRIC_DROP: ${{ inputs.allow_metric_drop && '1' || '0' }}
         run: |
           set +e
           node scripts/generate/material-change.mjs
@@ -60,6 +72,9 @@ jobs:
           elif [ "$code" -eq 3 ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             git checkout -- data/telemetry.json
+          elif [ "$code" -eq 4 ]; then
+            echo "::error::Metric collapse detected - refusing to publish. Re-run with allow_metric_drop if the account really changed this much."
+            exit 1
           else
             exit "$code"
           fi
@@ -69,6 +84,7 @@ jobs:
         run: |
           npm run render
           npm run readme
+          npm run docs:tokens
 
       - name: Verify before committing
         if: steps.material.outputs.changed == 'true'
@@ -82,6 +98,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/telemetry.json assets/generated README.md
-          git commit -m "chore(telemetry): refresh measured data" -m "Automated weekly refresh; committed only because owner-driven data changed."
+          MEASURED=$(node -p "require('./data/telemetry.json').capturedAt.slice(0,10)")
+          git add data/telemetry.json assets/generated README.md docs/tokens.md
+          git commit -m "chore(telemetry): refresh measured data ${MEASURED} [skip ci]" -m "Automated weekly refresh; committed only because owner-driven data changed. Fully verified (typecheck, tests, validate) before this commit."
           git push

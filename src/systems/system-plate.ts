@@ -25,7 +25,7 @@ const NAME_BASELINE = 42;
 const META_BASELINE = 72;
 
 /** Longest implementation line that clears the right-aligned language label. */
-const MAX_IMPLEMENTATION_CHARS = 27;
+const MAX_IMPLEMENTATION_CHARS = 25;
 
 export interface SystemPlateInput {
   telemetry: Telemetry;
@@ -72,14 +72,13 @@ export function renderSystemPlate(input: SystemPlateInput, palette: Palette): Re
   const lang = (featured.language ?? 'UNKNOWN').toUpperCase();
   const pushMonth = featured.pushedAt.slice(0, 7);
 
-  // Row 1: repository name + last-push month. Row 2: what is implemented + the
-  // language. Names and implementation lines sit at the 26u information floor;
-  // the month and language are annotation, duplicated in the Markdown line
-  // directly beneath the plate.
+  // Row 1: repository name + last-push month. Row 2: what is implemented +
+  // the language. Everything on the plate sits at the 26u information floor,
+  // so nothing here depends on a Markdown mirror to be legible.
   const nameWidth = canvas.measureText(featured.name, TYPE.label);
-  const monthWidth = canvas.measureText(pushMonth, TYPE.micro);
+  const monthWidth = canvas.measureText(pushMonth, TYPE.label);
   const implWidth = canvas.measureText(implementation, TYPE.label);
-  const langWidth = canvas.measureText(lang, TYPE.micro);
+  const langWidth = canvas.measureText(lang, TYPE.label);
   if (nameWidth + 24 + monthWidth > R - NAME_X) {
     throw new Error(`Plate row 1 for "${featured.name}" overflows: ${nameWidth.toFixed(0)}u name + month`);
   }
@@ -92,14 +91,14 @@ export function renderSystemPlate(input: SystemPlateInput, palette: Palette): Re
 
   canvas.add(
     canvas.text(featured.name, TYPE.label, { x: NAME_X, y: NAME_BASELINE, fill: p.text.primary }),
-    canvas.text(pushMonth, TYPE.micro, { x: R, y: NAME_BASELINE, anchor: 'end', fill: p.text.tertiary, decorative: true }),
+    canvas.text(pushMonth, TYPE.label, { x: R, y: NAME_BASELINE, anchor: 'end', fill: p.text.tertiary }),
     canvas.text(implementation, TYPE.label, { x: NAME_X, y: META_BASELINE, fill: p.text.secondary }),
-    canvas.text(lang, TYPE.micro, { x: R, y: META_BASELINE, anchor: 'end', fill: p.text.tertiary, decorative: true }),
+    canvas.text(lang, TYPE.label, { x: R, y: META_BASELINE, anchor: 'end', fill: p.text.tertiary }),
   );
 
   return canvas.build({
     id: `system-${input.key}`,
     title: `${featured.name} - ${implementation}`,
-    desc: `${featured.name}: ${config.headline} Primary language ${lang}, last public push ${pushMonth}.`,
+    desc: `${featured.name}: ${config.headline} Primary language ${featured.language ?? 'unknown'}, last public push ${pushMonth}.`,
   });
 }

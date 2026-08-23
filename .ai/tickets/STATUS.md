@@ -114,7 +114,26 @@ returns.
     excluded from Active work as self-reference. The newly public
     repositories are candidates for a future re-curation of Selected
     systems - an editorial decision left to the owner.
-16. **Profile bio could not be set autonomously**: the backlog's T-008/T-012
+16. **Two annotation strings remain at 22u where the brief specifies 26u**,
+    with measured grounds and full Markdown mirrors: (a) the hero top-rail
+    LAST PUSH pair - at 26u the header row measures 360.4u + 24u + ~401u =
+    785u against 770u available (mirrored in the telemetry table's "Last
+    public push" row); (b) the activity caption - at 26u it measures ~993u
+    against 810u (mirrored word-for-word in the Activity section's Markdown
+    line). The other two demotions round 1 flagged were promoted to 26u
+    instead (core-modules evidence names, both system-plate meta columns),
+    and the 18u segment labels were removed (deviation 6). The telemetry
+    caption uses the snapshot's own method string 'SHARE OF N MB PUBLIC
+    SOURCE'; the brief's appended 'ACROSS N PUBLIC REPOSITORIES' no longer
+    fits at annotation size at 14+ MB and lives in the panel's first cell
+    and the Markdown table.
+17. **Refresh commit template**: 'chore(telemetry): refresh measured data
+    YYYY-MM-DD [skip ci]' - the measurement date from capturedAt, [skip ci]
+    per T-010 AC4. The collapse guard (exit 4) implements T-010's >50%
+    decrease constraint against the committed snapshot, with the
+    allow_metric_drop dispatch input as the documented release for
+    legitimate visibility changes (which deviations 12 and 15 show happen).
+18. **Profile bio could not be set autonomously**: the backlog's T-008/T-012
     bio criteria require `gh` with the "user" scope, which the stored token
     lacks, and granting it needs an interactive browser login. This is the
     one remaining owner action; the exact commands and drafted text are in

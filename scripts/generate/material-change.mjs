@@ -16,6 +16,12 @@
  * Exit codes (the workflow branches on these — keep them distinct):
  *   0 = material change            -> rebuild and commit
  *   3 = no material change         -> skip the commit
+ *   4 = suspicious collapse        -> FAIL the job; a metric fell to zero or
+ *       by more than half, which is the signature of a degraded API response
+ *       (most likely: the Actions token returning an empty contribution
+ *       calendar), not of normal account activity. Legitimate large swings
+ *       (repositories changing visibility) are released by re-running the
+ *       workflow with the allow_metric_drop input (ALLOW_METRIC_DROP=1).
  *   1 = error (bad file, bad git)  -> FAIL the job; never treat as "no change"
  */
 
@@ -47,8 +53,32 @@ try {
     process.exit(0);
   }
 
-  const committed = materialView(JSON.parse(committedRaw));
-  const current = materialView(JSON.parse(readFileSync('data/telemetry.json', 'utf8')));
+  const committedFull = JSON.parse(committedRaw);
+  const currentFull = JSON.parse(readFileSync('data/telemetry.json', 'utf8'));
+  const committed = materialView(committedFull);
+  const current = materialView(currentFull);
+
+  // Collapse guard (T-010): a zeroed-but-well-formed API response must never
+  // be committed unattended. Checked against the committed snapshot before
+  // the change verdict, so a collapse coinciding with a real push still fails.
+  if (process.env.ALLOW_METRIC_DROP !== '1') {
+    const gauges = [
+      ['publicRepos', committedFull.publicRepos, currentFull.publicRepos],
+      ['totalCommits', committedFull.totalCommits, currentFull.totalCommits],
+      ['totalSourceBytes', committedFull.totalSourceBytes, currentFull.totalSourceBytes],
+      ['contributions.total', committedFull.contributions.total, currentFull.contributions.total],
+    ];
+    for (const [name, before, after] of gauges) {
+      const collapsed = before > 0 && (after === 0 || after < before * 0.5);
+      if (collapsed) {
+        console.error(
+          `[material-change] SUSPICIOUS COLLAPSE: ${name} fell ${before} -> ${after}. ` +
+            'Refusing to publish; if the account really changed this much, re-run with allow_metric_drop.',
+        );
+        process.exit(4);
+      }
+    }
+  }
 
   if (JSON.stringify(committed) !== JSON.stringify(current)) {
     console.log('[material-change] material change detected');

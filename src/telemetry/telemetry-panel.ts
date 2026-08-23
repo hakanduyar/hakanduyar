@@ -150,9 +150,11 @@ export function renderTelemetryPanel(input: TelemetryPanelInput, palette: Palett
     }),
   );
 
-  // countedRepos, not publicRepos: the byte aggregate excludes archived
-  // repositories, so the caption must count the same set it describes.
-  const caption = `SHARE OF ${megabytes} MB ACROSS ${t.countedRepos} PUBLIC REPOSITORIES`;
+  // The snapshot's own method string ('SHARE OF N MB PUBLIC SOURCE'). The
+  // brief's full form appends 'ACROSS N PUBLIC REPOSITORIES', which no longer
+  // fits at annotation size now the account measures 14+ MB; the repository
+  // count is the panel's first cell and the Markdown table's first row.
+  const caption = t.methods.primaryLanguage;
   const captionWidth = canvas.measureText(caption, TYPE.micro);
   if (captionWidth > GRID.contentWidth) {
     throw new Error(`Telemetry caption measures ${captionWidth.toFixed(0)}u, wider than ${GRID.contentWidth}u`);

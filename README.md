@@ -54,7 +54,7 @@ Stack: Node.js · Express · PostgreSQL · React. Last public push: 2025-11.
 </picture>
 </a>
 
-**[Hunnes-Academy-motion-system](https://github.com/hakanduyar/Hunnes-Academy-motion-system)** — A reusable motion layer built as one system, not a pile of one-off animations.
+**[Hunnes-Academy-motion-system](https://github.com/hakanduyar/Hunnes-Academy-motion-system)** — A reusable motion layer, built as one system behind a declarative configuration.
 
 - Nine motion modules over a shared base, behind one declarative config
 - Page-scoped router activates only the motions a route needs
@@ -125,7 +125,7 @@ Measured 2026-08-23 from the GitHub API. No estimated or third-party figures.
 ## Active work
 
 - **[hunnes-ikas-theme](https://github.com/hakanduyar/hunnes-ikas-theme)** — Hunnes storefront — ikas Studio Code Mode theme. Last push 2026-08.
-- **[software-factory](https://github.com/hakanduyar/software-factory)** — last push 2026-08.
+- **[software-factory](https://github.com/hakanduyar/software-factory)** — Last push 2026-08.
 
 Some current work is in private repositories, so public activity understates recent output.
 

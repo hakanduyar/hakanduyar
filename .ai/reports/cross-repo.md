@@ -21,8 +21,9 @@ the repository's own README/source documents.
 The motion-system description above was revised after the data-honesty review:
 "production storefront" is unverifiable from the public record and the strict
 module count is nine over a shared base. Live description since round 1:
-"Composable GSAP motion system for a storefront - nine motion modules over a
-shared base, behind one declarative config" (verified via gh).
+"Composable GSAP motion system - nine motion modules over a shared base,
+behind one declarative config" (second revision 2026-08-24, dropping the
+deployment-target claim entirely; verified via gh).
 
 ## Topics added (2026-08-23, additive - every topic list was previously empty)
 

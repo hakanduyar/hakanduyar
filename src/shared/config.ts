@@ -52,7 +52,7 @@ export const FEATURED_REPOS: FeaturedRepoConfig[] = [
   {
     key: 'motion-system',
     repo: 'Hunnes-Academy-motion-system',
-    headline: 'A reusable motion layer built as one system, not a pile of one-off animations.',
+    headline: 'A reusable motion layer, built as one system behind a declarative configuration.',
     signals: [
       'Nine motion modules over a shared base, behind one declarative config',
       'Page-scoped router activates only the motions a route needs',

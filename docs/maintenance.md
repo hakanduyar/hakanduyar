@@ -17,6 +17,13 @@ excluded from the material-change view. The activity strip then refreshes with
 the next owned public push rather than immediately. Accepted trade-off; the
 alternative is a weekly metronome commit.
 
+Collapse guard: the refresh refuses to commit (and fails loudly) if any
+headline gauge (repositories, commits, source bytes, trailing-year
+contributions) falls to zero or by more than half against the committed
+snapshot - the signature of a degraded API response, not of normal activity.
+If the account genuinely changed that much (repositories made private or
+deleted), re-run the workflow manually with the allow_metric_drop input.
+
 Token note: the refresh workflow reads public data with the repository's own
 `GITHUB_TOKEN`. If a run's snapshot step ever fails with empty contribution
 data under that token, create a fine-grained PAT with public-repository read
