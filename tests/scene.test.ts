@@ -160,8 +160,8 @@ describe('data honesty', () => {
     const strip = builds.find((b) => b.id === 'activity' && b.theme === 'dark')!;
     const nonZeroWeeks = telemetry.activity.weekly.filter((w) => w > 0).length;
     const rects = (strip.asset.svg.match(/<rect/g) ?? []).length;
-    // One ground rect + one bar per non-zero week.
-    expect(rects).toBe(1 + nonZeroWeeks);
+    // Ground rect + frame rect + one bar per non-zero week.
+    expect(rects).toBe(2 + nonZeroWeeks);
     const signalBars = countInsensitive(strip.asset.svg, DARK.signal);
     expect(signalBars).toBe(1);
   });

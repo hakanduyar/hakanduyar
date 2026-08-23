@@ -10,11 +10,11 @@
   <img src="assets/generated/hero-light.svg" alt="HDU engineering record. Hakan Duyar, interface and systems engineering. 55 public repositories, 870 commits on default branches, TypeScript 64.2 percent of public source. Active since 2021, last public push 2026-08-16." width="890">
 </picture>
 
-**Hakan Duyar — front-end and systems engineer. TypeScript, React, Node.**
+**Hakan Duyar — interface and systems engineer. TypeScript, React, Node.**
 
 ## Identity
 
-I build interfaces in TypeScript and React, and the services behind them when a project needs one. My public repositories are whole applications rather than exercises — a limited-stock drop platform with idempotent claim handling, a role-aware inventory service, a local-first planning app that runs with no backend at all.
+I build interfaces in TypeScript and React, and the services behind them when a project needs one. The work I lead with here is complete applications - a limited-stock drop platform with idempotent claim handling, a role-aware inventory service, a local-first planning app that runs with no backend at all. The rest of the account is the practice that got me there.
 
 The parts I care about are the ones that decide whether software survives real use: data integrity under concurrency, honest state management, performance, and accessibility treated as correctness rather than as a later pass.
 
@@ -26,7 +26,7 @@ The parts I care about are the ones that decide whether software survives real u
 </picture>
 
 - **Interface** — Component architecture, routing and form/state handling in React, Next.js and TypeScript, built against real backends rather than mock data. Evidence: [stock-management-system](https://github.com/hakanduyar/stock-management-system).
-- **Systems** — Server-side design where correctness is the hard part: transactional writes, idempotency keys, priority-scored queues and role-based access control. Evidence: [dropspot-project](https://github.com/hakanduyar/dropspot-project).
+- **Systems** — Server-side design where correctness is the hard part: transactional writes, idempotent operations, priority-scored queues and role-based access control. Evidence: [dropspot-project](https://github.com/hakanduyar/dropspot-project).
 - **Data** — Client-side persistence and offline behaviour — IndexedDB schemas, local-first sync boundaries, and deciding what genuinely needs a server. Evidence: [spark](https://github.com/hakanduyar/spark).
 - **Motion** — Animation as a system: composable modules behind one configuration, scoped per route and shipped as a single bundle. Evidence: [Hunnes-Academy-motion-system](https://github.com/hakanduyar/Hunnes-Academy-motion-system).
 
@@ -42,10 +42,10 @@ The parts I care about are the ones that decide whether software survives real u
 **[dropspot-project](https://github.com/hakanduyar/dropspot-project)** — Limited-stock drop platform with fair, idempotent claim distribution.
 
 - Priority-scored waitlist decides who converts when stock is scarce
-- Idempotency keys and transactional claims keep concurrent buyers consistent
+- Idempotent claim operations and ACID transactions keep concurrent buyers consistent
 - Documented data model, API surface and seed generation
 
-Stack: Node.js · Express · MongoDB · React. Last public push: 2025-11.
+Stack: Node.js · Express · PostgreSQL · React. Last public push: 2025-11.
 
 <a href="https://github.com/hakanduyar/Hunnes-Academy-motion-system">
 <picture>
@@ -54,9 +54,9 @@ Stack: Node.js · Express · MongoDB · React. Last public push: 2025-11.
 </picture>
 </a>
 
-**[Hunnes-Academy-motion-system](https://github.com/hakanduyar/Hunnes-Academy-motion-system)** — A reusable motion layer for a production storefront, not a pile of one-off animations.
+**[Hunnes-Academy-motion-system](https://github.com/hakanduyar/Hunnes-Academy-motion-system)** — A reusable motion layer built as one system, not a pile of one-off animations.
 
-- Ten composable motion modules behind one declarative config
+- Nine motion modules over a shared base, behind one declarative config
 - Page-scoped router activates only the motions a route needs
 - Ships as a single built bundle for drop-in use
 
@@ -108,7 +108,7 @@ Stack: React · TypeScript · Vite · Dexie. Last public push: 2026-07.
 | HTML | 11.5% | share of 3.86 MB public source |
 | CSS | 3.4% | share of 3.86 MB public source |
 | All other languages | 3.9% | 8 languages |
-| Active since | 2021 | github account created 2021-02-20 |
+| Active since | 2021 | GitHub account created 2021-02-20 |
 | Last public push | 2026-08-16 | most recent push to a public repository |
 
 Measured 2026-08-23 from the GitHub API. No estimated or third-party figures.
@@ -117,10 +117,17 @@ Measured 2026-08-23 from the GitHub API. No estimated or third-party figures.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/generated/activity-dark.svg">
-  <img src="assets/generated/activity-light.svg" alt="Weekly public contributions for the 52 weeks to 2026-08-22: 135 total across 9 active weeks, peak week 46. Work arrives in bursts." width="890">
+  <img src="assets/generated/activity-light.svg" alt="Weekly public contributions for the 52 weeks to 2026-08-22: 135 total across 9 active weeks, at most 46 in one week." width="890">
 </picture>
 
-135 public contributions in the 52 weeks to 2026-08-22, concentrated in 9 active weeks with a peak of 46 in one week. Some current work is in private repositories, so the public activity below understates recent output.
+135 public contributions in the 52 weeks to 2026-08-22, concentrated in 9 active weeks with a peak of 46 in one week.
+
+## Active work
+
+- **[Hunnes-Academy-motion-system](https://github.com/hakanduyar/Hunnes-Academy-motion-system)** — Composable GSAP motion system for a production storefront - ten motion modules behind one declarative confi. Last push 2026-08.
+- **[spark](https://github.com/hakanduyar/spark)** — Personal Planning, Focus, and Growth Syste. Last push 2026-07.
+
+Some current work is in private repositories, so public activity understates recent output.
 
 ## Operating principles
 
@@ -132,11 +139,9 @@ Measured 2026-08-23 from the GitHub API. No estimated or third-party figures.
 
 ## Channels
 
-- Linkedin: [in/hakanduyar](https://www.linkedin.com/in/hakanduyar)
+- GitHub: [@hakanduyar](https://github.com/hakanduyar)
+- LinkedIn: [in/hakanduyar](https://www.linkedin.com/in/hakanduyar)
 - Medium: [@hakanduyar](https://medium.com/@hakanduyar)
 - Email: [iamhakanduyar@gmail.com](mailto:iamhakanduyar@gmail.com)
-- Github: [@hakanduyar](https://github.com/hakanduyar)
-
----
 
 *Every image on this page is generated from source in this repository. Nothing is fetched from a third-party service. Data measured 2026-08-23. Source: [hakanduyar/hakanduyar](https://github.com/hakanduyar/hakanduyar). Build: `npm run build`.*

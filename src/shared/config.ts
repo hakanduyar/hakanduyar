@@ -48,19 +48,19 @@ export const FEATURED_REPOS: FeaturedRepoConfig[] = [
     headline: 'Limited-stock drop platform with fair, idempotent claim distribution.',
     signals: [
       'Priority-scored waitlist decides who converts when stock is scarce',
-      'Idempotency keys and transactional claims keep concurrent buyers consistent',
+      'Idempotent claim operations and ACID transactions keep concurrent buyers consistent',
       'Documented data model, API surface and seed generation',
     ],
-    stack: ['Node.js', 'Express', 'MongoDB', 'React'],
+    stack: ['Node.js', 'Express', 'PostgreSQL', 'React'],
     plateLine: 'Idempotent claim handling',
     status: 'STABLE',
   },
   {
     key: 'motion-system',
     repo: 'Hunnes-Academy-motion-system',
-    headline: 'A reusable motion layer for a production storefront, not a pile of one-off animations.',
+    headline: 'A reusable motion layer built as one system, not a pile of one-off animations.',
     signals: [
-      'Ten composable motion modules behind one declarative config',
+      'Nine motion modules over a shared base, behind one declarative config',
       'Page-scoped router activates only the motions a route needs',
       'Ships as a single built bundle for drop-in use',
     ],
@@ -96,10 +96,14 @@ export const FEATURED_REPOS: FeaturedRepoConfig[] = [
   },
 ];
 
-/** Verified public contact channels. Anything unverified must not ship. */
+/**
+ * Verified public contact channels, in the order the brief fixes
+ * (GitHub, LinkedIn, Medium, Email). `display` carries the correct brand
+ * casing - deriving it from the uppercase label produced "Linkedin".
+ */
 export const CHANNELS = [
-  { label: 'LINKEDIN', detail: 'in/hakanduyar', href: 'https://www.linkedin.com/in/hakanduyar' },
-  { label: 'MEDIUM', detail: '@hakanduyar', href: 'https://medium.com/@hakanduyar' },
-  { label: 'EMAIL', detail: 'iamhakanduyar@gmail.com', href: 'mailto:iamhakanduyar@gmail.com' },
-  { label: 'GITHUB', detail: `@${LOGIN}`, href: `https://github.com/${LOGIN}` },
+  { label: 'GITHUB', display: 'GitHub', detail: `@${LOGIN}`, href: `https://github.com/${LOGIN}` },
+  { label: 'LINKEDIN', display: 'LinkedIn', detail: 'in/hakanduyar', href: 'https://www.linkedin.com/in/hakanduyar' },
+  { label: 'MEDIUM', display: 'Medium', detail: '@hakanduyar', href: 'https://medium.com/@hakanduyar' },
+  { label: 'EMAIL', display: 'Email', detail: 'iamhakanduyar@gmail.com', href: 'mailto:iamhakanduyar@gmail.com' },
 ] as const;

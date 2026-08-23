@@ -18,7 +18,7 @@
  */
 
 import { Canvas, type RenderedAsset } from '../shared/canvas.js';
-import { el, chamferRect, linePath } from '../shared/svg.js';
+import { el, linePath } from '../shared/svg.js';
 import { TYPE, GRID, STROKE, RADIUS, type Palette } from '../shared/tokens.js';
 import type { Telemetry } from '../shared/telemetry-types.js';
 
@@ -47,12 +47,15 @@ export function renderActivityStrip(input: ActivityStripInput, palette: Palette)
   const p = palette;
 
   canvas.add(
-    el('path', {
-      d: chamferRect(0.5, 0.5, W - 1, H - 1, 0, {}),
+    el('rect', {
+      x: 0.5,
+      y: 0.5,
+      width: W - 1,
+      height: H - 1,
+      rx: RADIUS,
       fill: 'none',
       stroke: p.rule.hairline,
       'stroke-width': STROKE.hairline,
-      rx: RADIUS,
     }),
   );
 
@@ -104,7 +107,7 @@ export function renderActivityStrip(input: ActivityStripInput, palette: Palette)
   );
 
   // The scale is stated, never implied.
-  const maxLabel = `PEAK WEEK ${t.activity.max}`;
+  const maxLabel = `MAX ${t.activity.max} IN ONE WEEK`;
   canvas.add(
     canvas.text(maxLabel, TYPE.label, { x: R, y: MAX_LABEL_BASELINE, anchor: 'end', fill: p.text.tertiary }),
     // Mirrored word for word in the Markdown line beneath the image.
@@ -114,7 +117,7 @@ export function renderActivityStrip(input: ActivityStripInput, palette: Palette)
   const desc =
     `Weekly public contribution counts for the 52 weeks ending ${t.activity.end}: ` +
     `${t.activity.total} contributions across ${t.activity.activeWeeks} active weeks, ` +
-    `with a peak week of ${t.activity.max}. Activity is concentrated in bursts rather than spread evenly.`;
+    `at most ${t.activity.max} in a single week.`;
 
   return canvas.build({ id: 'activity', title: 'Weekly public contribution activity', desc });
 }

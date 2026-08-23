@@ -81,6 +81,8 @@ export interface Telemetry {
   /** Commits on the default branch, summed across every counted repository. */
   totalCommits: number;
   lastPush: { repo: string; at: string };
+  /** The two most recently pushed public repositories, for the Active work section. */
+  recentPushes: { repo: string; at: string; url: string; description: string | null }[];
   featured: FeaturedRepo[];
   /**
    * Human-readable measurement method for each headline figure. Rendered

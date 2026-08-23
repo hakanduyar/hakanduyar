@@ -152,8 +152,8 @@ function main(): void {
     '',
     '| Measure | Value | Method |',
     '|---|---:|---|',
-    `| Public repositories | ${t.publicRepos} | ${t.methods.publicRepos.toLowerCase()} |`,
-    `| Commits | ${t.totalCommits} | ${t.methods.totalCommits.toLowerCase()} |`,
+    `| Public repositories | ${t.publicRepos} | public, non-fork, owned by @${t.login} |`,
+    `| Commits | ${t.totalCommits} | default branches, ${t.publicRepos} public repositories |`,
   );
   for (const language of t.languages.slice(0, 4)) {
     push(
@@ -163,8 +163,8 @@ function main(): void {
   const remainder = 1 - t.languages.slice(0, 4).reduce((sum, l) => sum + l.share, 0);
   push(
     `| All other languages | ${(remainder * 100).toFixed(1)}% | ${t.languages.length - 4} languages |`,
-    `| Active since | ${t.memberSince.slice(0, 4)} | ${t.methods.activeSince.toLowerCase()} |`,
-    `| Last public push | ${t.lastPush.at.slice(0, 10)} | ${t.methods.lastPush.toLowerCase()} |`,
+    `| Active since | ${t.memberSince.slice(0, 4)} | GitHub account created ${t.memberSince} |`,
+    `| Last public push | ${t.lastPush.at.slice(0, 10)} | most recent push to a public repository |`,
     '',
     `Measured ${capturedDate} from the GitHub API. No estimated or third-party figures.`,
     '',
@@ -180,14 +180,28 @@ function main(): void {
       animated: false,
       alt:
         `Weekly public contributions for the 52 weeks to ${t.activity.end}: ${t.activity.total} total across ` +
-        `${t.activity.activeWeeks} active weeks, peak week ${t.activity.max}. Work arrives in bursts.`,
+        `${t.activity.activeWeeks} active weeks, at most ${t.activity.max} in one week.`,
     }),
     '',
     `${t.activity.total} public contributions in the 52 weeks to ${t.activity.end}, concentrated in ` +
-      `${t.activity.activeWeeks} active weeks with a peak of ${t.activity.max} in one week. ` +
-      PROFILE.privateWork,
+      `${t.activity.activeWeeks} active weeks with a peak of ${t.activity.max} in one week.`,
     '',
   );
+
+  // -- active work -----------------------------------------------------------------
+
+  push('## Active work', '');
+  for (const pushEntry of t.recentPushes) {
+    const month = pushEntry.at.slice(0, 7);
+    // Descriptions come from the repository settings; normalise the trailing
+    // period so the sentence join reads correctly.
+    const description = pushEntry.description ? pushEntry.description.trim().replace(/.?$/, '.') : null;
+    const line = description
+      ? `**[${pushEntry.repo}](${pushEntry.url})** — ${description} Last push ${month}.`
+      : `**[${pushEntry.repo}](${pushEntry.url})** — last push ${month}.`;
+    push(`- ${line}`);
+  }
+  push('', PROFILE.privateWork, '');
 
   // -- operating principles ----------------------------------------------------------
 
@@ -199,16 +213,13 @@ function main(): void {
 
   push('## Channels', '');
   for (const channel of CHANNELS) {
-    const label = channel.label.charAt(0) + channel.label.slice(1).toLowerCase();
-    push(`- ${label}: [${channel.detail}](${channel.href})`);
+    push(`- ${channel.display}: [${channel.detail}](${channel.href})`);
   }
   push('');
 
   // -- provenance ------------------------------------------------------------------------
 
   push(
-    '---',
-    '',
     `*${PROFILE.provenanceNote} Data measured ${capturedDate}. ` +
       `Source: [${LOGIN}/${LOGIN}](https://github.com/${LOGIN}/${LOGIN}). Build: \`npm run build\`.*`,
     '',

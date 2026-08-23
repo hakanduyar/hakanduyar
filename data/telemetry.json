@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-08-23T10:03:00Z",
+  "capturedAt": "2026-08-23T17:45:00Z",
   "login": "hakanduyar",
   "name": "Hakan Duyar",
   "memberSince": "2021-02-20",
@@ -147,12 +147,26 @@
     "repo": "Hunnes-Academy-motion-system",
     "at": "2026-08-16T14:51:10Z"
   },
+  "recentPushes": [
+    {
+      "repo": "Hunnes-Academy-motion-system",
+      "at": "2026-08-16T14:51:10Z",
+      "url": "https://github.com/hakanduyar/Hunnes-Academy-motion-system",
+      "description": "Composable GSAP motion system for a production storefront - ten motion modules behind one declarative config"
+    },
+    {
+      "repo": "spark",
+      "at": "2026-07-02T13:06:47Z",
+      "url": "https://github.com/hakanduyar/spark",
+      "description": "Personal Planning, Focus, and Growth System"
+    }
+  ],
   "featured": [
     {
       "key": "dropspot",
       "name": "dropspot-project",
       "url": "https://github.com/hakanduyar/dropspot-project",
-      "description": null,
+      "description": "Limited-stock drop platform with priority-scored waitlists and idempotent, transactional claim handling",
       "language": "JavaScript",
       "commits": 31,
       "stars": 0,
@@ -163,7 +177,7 @@
       "key": "motion-system",
       "name": "Hunnes-Academy-motion-system",
       "url": "https://github.com/hakanduyar/Hunnes-Academy-motion-system",
-      "description": null,
+      "description": "Composable GSAP motion system for a production storefront - ten motion modules behind one declarative config",
       "language": "JavaScript",
       "commits": 9,
       "stars": 0,
@@ -174,7 +188,7 @@
       "key": "stock",
       "name": "stock-management-system",
       "url": "https://github.com/hakanduyar/stock-management-system",
-      "description": null,
+      "description": "Role-aware inventory system - NestJS, Next.js, PostgreSQL/Prisma, JWT auth with three-role access control",
       "language": "TypeScript",
       "commits": 10,
       "stars": 0,

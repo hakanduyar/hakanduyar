@@ -24,7 +24,7 @@ export const PROFILE = {
   discipline: 'INTERFACE AND SYSTEMS ENGINEERING',
 
   /** Bold line directly under the hero — the first thing search and screen readers get. */
-  strapline: 'Hakan Duyar — front-end and systems engineer. TypeScript, React, Node.',
+  strapline: 'Hakan Duyar — interface and systems engineer. TypeScript, React, Node.',
 
   /**
    * Two paragraphs. No location, employer, job title or years-of-experience
@@ -33,9 +33,9 @@ export const PROFILE = {
    */
   identity: [
     'I build interfaces in TypeScript and React, and the services behind them when a project needs one. ' +
-      'My public repositories are whole applications rather than exercises — a limited-stock drop platform ' +
-      'with idempotent claim handling, a role-aware inventory service, a local-first planning app that runs ' +
-      'with no backend at all.',
+      'The work I lead with here is complete applications - a limited-stock drop platform with idempotent ' +
+      'claim handling, a role-aware inventory service, a local-first planning app that runs with no backend ' +
+      'at all. The rest of the account is the practice that got me there.',
     'The parts I care about are the ones that decide whether software survives real use: data integrity under ' +
       'concurrency, honest state management, performance, and accessibility treated as correctness rather than ' +
       'as a later pass.',
@@ -52,8 +52,8 @@ export const PROFILE = {
     {
       name: 'SYSTEMS',
       summary:
-        'Server-side design where correctness is the hard part: transactional writes, idempotency keys, ' +
-        'priority-scored queues and role-based access control.',
+        'Server-side design where correctness is the hard part: transactional writes, idempotent ' +
+        'operations, priority-scored queues and role-based access control.',
       evidence: 'dropspot',
     },
     {
@@ -88,7 +88,7 @@ export const PROFILE = {
    * metrics — anything more would be unverifiable by the reader.
    */
   privateWork:
-    'Some current work is in private repositories, so the public activity below understates recent output.',
+    'Some current work is in private repositories, so public activity understates recent output.',
 
   /** Rendered as the final line of the README, replacing any sign-off. */
   provenanceNote:

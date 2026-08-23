@@ -1,9 +1,11 @@
-# Regenerates data/telemetry.json and every derived asset from the live
-# GitHub API, then commits — but only when the underlying data materially
-# changed. A run where nothing moved but the clock produces no commit.
+# Regenerates data/telemetry.json and every derived output from the live
+# GitHub API, then commits — but only when something the owner did changed
+# (a push, new commits, a new repository, a language shift). A week where
+# only the clock moved produces no commit; the sliding-window fields alone
+# never trigger one. See scripts/generate/material-change.mjs.
 #
-# Weekly cadence: often enough that "LAST PUSH" and the activity strip stay
-# honest, rare enough that the history is not noise.
+# Weekly cadence. Note: GitHub disables scheduled workflows after 60 days
+# without repository activity; docs/maintenance.md covers re-enabling.
 name: refresh-telemetry
 
 on:
@@ -14,32 +16,49 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: refresh-telemetry
+  cancel-in-progress: false
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
           cache: npm
 
       - run: npm ci
 
+      # snapshot.ts enforces its own sanity floor (non-zero repositories,
+      # commits, languages, exactly 52 week buckets, complete featured set)
+      # and exits non-zero otherwise — a degraded API response fails the job
+      # here, before anything can be committed.
       - name: Snapshot live telemetry
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run data:snapshot
 
+      # Exit 0 = material change; exit 3 = nothing owner-driven changed (skip);
+      # anything else = real error and the job fails. A crash must never be
+      # mistaken for "no change".
       - name: Detect material change
         id: material
         run: |
-          if node scripts/generate/material-change.mjs; then
+          set +e
+          node scripts/generate/material-change.mjs
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
-          else
+          elif [ "$code" -eq 3 ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             git checkout -- data/telemetry.json
+          else
+            exit "$code"
           fi
 
       - name: Rebuild assets and README
@@ -61,5 +80,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/telemetry.json assets/generated README.md
-          git commit -m "chore(telemetry): refresh measured data"
+          git commit -m "chore(telemetry): refresh measured data" -m "Automated weekly refresh; committed only because owner-driven data changed."
           git push

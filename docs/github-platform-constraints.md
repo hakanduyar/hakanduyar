@@ -2,7 +2,7 @@
 
 Every rule below was verified on 2026-08-23 against real Chromium and GitHub's
 own Markdown pipeline. Reproduce with `npm run validate` and
-`npm run qa:platform`. Do not change the asset architecture on the basis of a
+`npm run qa:visual`. Do not change the asset architecture on the basis of a
 blog post; re-run the probes.
 
 ## 1. How the assets are embedded
@@ -34,8 +34,8 @@ technique that gives per-glyph stagger without an element explosion.
 Consequence: **reduced motion cannot be honoured from inside the SVG.** A
 `no-preference` guard silently disables the animation for everyone; a `reduce`
 override silently disables it for everyone. Both were measured. Any code that
-reintroduces either guard is a bug — `tests/motion.test.ts` fails the build if
-a generated asset contains a `prefers-reduced-motion` media query.
+reintroduces either guard is a bug — the validation harness (`scripts/validate/checks.ts`) and `tests/scene.test.ts` fail the build if
+an asset contains a `prefers-reduced-motion` media query.
 
 ## 4. Where reduced motion *is* honoured
 
@@ -80,8 +80,8 @@ scales down cleanly to mobile (~360px) without horizontal overflow. Nothing in
 an asset may rely on a fixed pixel size.
 
 Because assets scale down by roughly 2.4x on mobile, the smallest type in any
-asset is sized so that it stays legible at that scale — enforced by
-`tests/legibility.test.ts`.
+asset is sized so that it stays legible at that scale — enforced by the
+legibility checks in `scripts/validate/validate-all.ts`.
 
 ## 7. Fonts
 

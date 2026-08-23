@@ -34,7 +34,7 @@ function resolveToken(): string {
 }
 
 const QUERY = `
-query($login: String!) {
+query($login: String!, $cursor: String) {
   user(login: $login) {
     login
     name
@@ -50,8 +50,9 @@ query($login: String!) {
         weeks { contributionDays { date contributionCount weekday } }
       }
     }
-    repositories(first: 100, privacy: PUBLIC, isFork: false, ownerAffiliations: OWNER, orderBy: {field: PUSHED_AT, direction: DESC}) {
+    repositories(first: 100, after: $cursor, privacy: PUBLIC, isFork: false, ownerAffiliations: OWNER, orderBy: {field: PUSHED_AT, direction: DESC}) {
       totalCount
+      pageInfo { hasNextPage endCursor }
       nodes {
         name
         url
@@ -103,11 +104,14 @@ interface UserPayload {
       weeks: { contributionDays: { date: string; contributionCount: number; weekday: number }[] }[];
     };
   };
-  repositories: { totalCount: number; nodes: RepoNode[] };
+  repositories: {
+    totalCount: number;
+    pageInfo: { hasNextPage: boolean; endCursor: string | null };
+    nodes: RepoNode[];
+  };
 }
 
-async function main(): Promise<void> {
-  const token = resolveToken();
+async function fetchPage(token: string, cursor: string | null): Promise<UserPayload> {
   const response = await fetch('https://api.github.com/graphql', {
     method: 'POST',
     headers: {
@@ -115,9 +119,8 @@ async function main(): Promise<void> {
       'Content-Type': 'application/json',
       'User-Agent': 'hdu-profile-system',
     },
-    body: JSON.stringify({ query: QUERY, variables: { login: LOGIN } }),
+    body: JSON.stringify({ query: QUERY, variables: { login: LOGIN, cursor } }),
   });
-
   if (!response.ok) {
     throw new Error(`GitHub API responded ${response.status} ${response.statusText}`);
   }
@@ -130,6 +133,26 @@ async function main(): Promise<void> {
   }
   const user = payload.data?.user;
   if (!user) throw new Error(`User ${LOGIN} not found`);
+  return user;
+}
+
+async function main(): Promise<void> {
+  const token = resolveToken();
+
+  // First page carries everything; further pages only add repository nodes.
+  const user = await fetchPage(token, null);
+  let pageInfo = user.repositories.pageInfo;
+  while (pageInfo.hasNextPage) {
+    const next = await fetchPage(token, pageInfo.endCursor);
+    user.repositories.nodes.push(...next.repositories.nodes);
+    pageInfo = next.repositories.pageInfo;
+  }
+  if (user.repositories.nodes.length !== user.repositories.totalCount) {
+    throw new Error(
+      `Pagination bug: fetched ${user.repositories.nodes.length} repositories but totalCount is ` +
+        `${user.repositories.totalCount} - refusing to publish inconsistent numbers`,
+    );
+  }
 
   const cc = user.contributionsCollection;
   const cal = cc.contributionCalendar;
@@ -244,6 +267,10 @@ async function main(): Promise<void> {
     totalSourceBytes: totalBytes,
     totalCommits,
     lastPush: { repo: mostRecent.name, at: mostRecent.pushedAt },
+    recentPushes: [...repos]
+      .sort((a, b) => (a.pushedAt < b.pushedAt ? 1 : -1))
+      .slice(0, 2)
+      .map((r) => ({ repo: r.name, at: r.pushedAt, url: r.url, description: r.description })),
     featured,
     methods: {
       publicRepos: `PUBLIC, NON-FORK, OWNED BY @${user.login}`,
@@ -254,6 +281,19 @@ async function main(): Promise<void> {
       activeSince: `GITHUB ACCOUNT CREATED ${user.createdAt.slice(0, 10)}`,
     },
   };
+
+  // Sanity floor: an API hiccup that zeroes the profile must fail loudly
+  // here, not ship a plausible-looking empty instrument. The refresh workflow
+  // relies on this throw to abort before its commit step.
+  if (telemetry.publicRepos < 1) throw new Error('Sanity: zero public repositories');
+  if (telemetry.totalCommits < 1) throw new Error('Sanity: zero commits on default branches');
+  if (telemetry.languages.length < 2) throw new Error('Sanity: language distribution collapsed');
+  if (telemetry.activity.weekly.length !== 52) {
+    throw new Error(`Sanity: expected 52 weekly buckets, got ${telemetry.activity.weekly.length}`);
+  }
+  if (telemetry.featured.length !== FEATURED_REPOS.length) {
+    throw new Error('Sanity: featured repository set incomplete');
+  }
 
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, JSON.stringify(telemetry, null, 2) + '\n', 'utf8');

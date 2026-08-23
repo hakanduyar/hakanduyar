@@ -22,13 +22,25 @@ export interface CheckContext {
   assetPaths: string[];
 }
 
-/** Size ceilings, in bytes. Chosen from what the README actually needs to load. */
+/**
+ * Size budgets, in bytes — the design brief's figures (section 9), not
+ * comfortable multiples of them. The whole payload is meant to cost roughly
+ * one medium photograph.
+ */
 export const SIZE_LIMITS = {
-  /** Any single generated asset. */
-  perAsset: 160 * 1024,
+  /** The animated hero, per theme. */
+  heroAnimated: 90 * 1024,
+  /** Any static asset, hero included. */
+  staticAsset: 45 * 1024,
   /** Everything the README pulls in, combined. */
-  totalPayload: 700 * 1024,
+  totalPayload: 400 * 1024,
 };
+
+/** Budget that applies to a generated file, by name. */
+export function sizeBudgetFor(fileName: string): number {
+  const isAnimatedHero = /^hero-(dark|light).svg$/.test(fileName);
+  return isAnimatedHero ? SIZE_LIMITS.heroAnimated : SIZE_LIMITS.staticAsset;
+}
 
 /** Smallest type size, in user units, that survives the ~2.4x mobile downscale. */
 export const MIN_TYPE_SIZE = 9;
@@ -171,11 +183,12 @@ export function checkSvg(relPath: string): Finding[] {
     return findings;
   }
 
-  if (bytes > SIZE_LIMITS.perAsset) {
+  const budget = sizeBudgetFor(relPath.split('/').pop() ?? relPath);
+  if (bytes > budget) {
     findings.push({
       level: 'error',
       check: 'svg-size',
-      message: `${relPath} is ${(bytes / 1024).toFixed(1)} KB, over the ${SIZE_LIMITS.perAsset / 1024} KB ceiling`,
+      message: `${relPath} is ${(bytes / 1024).toFixed(1)} KB, over its ${budget / 1024} KB budget`,
     });
   }
 

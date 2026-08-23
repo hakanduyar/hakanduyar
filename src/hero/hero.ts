@@ -17,7 +17,7 @@
  */
 
 import { Canvas, type RenderedAsset } from '../shared/canvas.js';
-import { el, chamferRect, linePath, n } from '../shared/svg.js';
+import { el, linePath, n } from '../shared/svg.js';
 import { TYPE, GRID, STROKE, RADIUS, DUR, EASE, type Palette, type TypeStyle } from '../shared/tokens.js';
 import type { Telemetry } from '../shared/telemetry-types.js';
 
@@ -81,17 +81,21 @@ export function renderHero(input: HeroInput, palette: Palette, animated: boolean
 
   // -- structure ------------------------------------------------------------
 
-  // Frame. Drawn as an explicit path rather than a <rect> so the entrance can
-  // stroke it on with a dash offset whose length we can compute exactly.
-  const framePerimeter = 2 * (W - 1 + (H - 1));
+  // Frame: a <rect> so the corner radius actually renders (rx on a <path>
+  // is ignored). The entrance strokes it on with a dash offset, so the
+  // perimeter accounts for the rounded corners: 2(w+h) - 8r + 2*pi*r.
+  const framePerimeter = 2 * (W - 1 + (H - 1)) - 8 * RADIUS + 2 * Math.PI * RADIUS;
   canvas.add(
-    el('path', {
-      d: chamferRect(0.5, 0.5, W - 1, H - 1, 0, {}),
+    el('rect', {
+      x: 0.5,
+      y: 0.5,
+      width: W - 1,
+      height: H - 1,
+      rx: RADIUS,
       fill: 'none',
       stroke: p.rule.hairline,
       'stroke-width': STROKE.hairline,
       class: 'fr',
-      rx: RADIUS,
     }),
   );
 
@@ -143,12 +147,15 @@ export function renderHero(input: HeroInput, palette: Palette, animated: boolean
 
   canvas.addGroup(
     { class: 'hd' },
-    el('path', {
-      d: chamferRect(markX, Y.markTop, Y.markSize, Y.markSize, 0, {}),
+    el('rect', {
+      x: markX,
+      y: Y.markTop,
+      width: Y.markSize,
+      height: Y.markSize,
+      rx: RADIUS,
       fill: 'none',
       stroke: p.rule.strong,
       'stroke-width': STROKE.strong,
-      rx: RADIUS,
     }),
     canvas.text('HDU', markStyle, {
       x: markX + Y.markSize / 2,
@@ -204,7 +211,7 @@ export function renderHero(input: HeroInput, palette: Palette, animated: boolean
     fit(`readout key ${readout.key}`, canvas.measureText(readout.key, TYPE.label), limit);
     fit(`readout value ${readout.value}`, canvas.measureText(readout.value, TYPE.metric), limit);
     canvas.addGroup(
-      { class: `ro r${index}` },
+      { class: `r${index}` },
       canvas.text(readout.key, TYPE.label, { x, y: Y.keyBaseline, fill: p.text.tertiary }),
       canvas.text(readout.value, TYPE.metric, { x, y: Y.valueBaseline, fill: p.text.primary }),
     );
@@ -285,11 +292,15 @@ export function renderHero(input: HeroInput, palette: Palette, animated: boolean
         `@keyframes fr{to{stroke-dashoffset:0}}`,
     );
     canvas.rule(
-      `.rl{opacity:0;animation:fade ${ms(DUR.short)} ${EASE.standard} ${ms(200)} forwards}` +
+      `.rl,.br1{opacity:0;animation:fade ${ms(DUR.short)} ${EASE.standard} ${ms(200)} forwards}` +
         `.hd{opacity:0;animation:rise ${ms(DUR.short)} ${EASE.entrance} ${ms(320)} forwards}` +
         `.sb{opacity:0;animation:rise ${ms(DUR.short)} ${EASE.entrance} ${ms(760)} forwards}` +
-        `.r0{animation-delay:${ms(900)}}.r1{animation-delay:${ms(960)}}.r2{animation-delay:${ms(1020)}}` +
-        `.ro{opacity:0;animation:rise ${ms(DUR.short)} ${EASE.entrance} forwards}` +
+        // One complete shorthand per readout row. A separate delay class
+        // before the shorthand once reset animation-delay to 0 and killed
+        // the stagger (found in review round 1) - never split these again.
+        `.r0{opacity:0;animation:rise ${ms(DUR.short)} ${EASE.entrance} ${ms(900)} forwards}` +
+        `.r1{opacity:0;animation:rise ${ms(DUR.short)} ${EASE.entrance} ${ms(960)} forwards}` +
+        `.r2{opacity:0;animation:rise ${ms(DUR.short)} ${EASE.entrance} ${ms(1020)} forwards}` +
         `.sc{opacity:0;animation:fade ${ms(DUR.short)} ${EASE.standard} ${ms(1200)} forwards}` +
         `.ft{opacity:0;animation:fade ${ms(DUR.short)} ${EASE.entrance} ${ms(1700)} forwards}`,
     );
@@ -318,8 +329,9 @@ export function renderHero(input: HeroInput, palette: Palette, animated: boolean
     );
   }
 
+  const disciplineSentence = input.discipline.charAt(0) + input.discipline.slice(1).toLowerCase();
   const desc =
-    `Identity plate for ${telemetry.name}. ${input.discipline}. ` +
+    `Identity plate for ${telemetry.name}. ${disciplineSentence}. ` +
     `${telemetry.publicRepos} public repositories, ${telemetry.totalCommits} commits on default branches, ` +
     `${primaryLanguage.name} ${(sharePct * 100).toFixed(1)} percent of ${(telemetry.totalSourceBytes / 1e6).toFixed(2)} MB of public source. ` +
     `Active since ${telemetry.memberSince.slice(0, 4)}. Last public push ${pushValue}. Measured ${telemetry.capturedAt.slice(0, 10)}.`;

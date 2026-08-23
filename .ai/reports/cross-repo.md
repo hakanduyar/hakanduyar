@@ -16,6 +16,15 @@ No repository content, branches, topics or settings other than the empty
 description field were touched. Each claim in each description restates what
 the repository's own README/source documents.
 
+## Topics added (2026-08-23, additive - every topic list was previously empty)
+
+| Repository | Topics |
+|---|---|
+| dropspot-project | express, nodejs, postgresql, react, waitlist |
+| stock-management-system | nestjs, nextjs, postgresql, prisma, rbac |
+| Hunnes-Academy-motion-system | animation, gsap, javascript, motion-design |
+| spark | indexeddb, local-first, pwa, react, typescript |
+
 ## Recommendations left to the owner (not automated)
 
 1. **Pinned repositories**: pin `dropspot-project`, `spark`,

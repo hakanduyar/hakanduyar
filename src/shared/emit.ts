@@ -36,7 +36,7 @@ const SVGO_CONFIG: Config = {
           // resolves to opacity:0 or display:none. Every element in an entrance
           // sequence starts at opacity:0, so leaving this on silently strips
           // most of the animated hero - it shrank from 25 paths to 6 before
-          // this was turned off. tests/variants.test.ts asserts that the
+          // this was turned off. tests/scene.test.ts asserts that the
           // animated and static variants keep the same element count.
           removeHiddenElems: false,
           // role="img" is the accessibility contract; SVGO treats it as an

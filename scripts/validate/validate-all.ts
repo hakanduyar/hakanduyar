@@ -5,7 +5,7 @@
  * build failure; there are no advisory warnings that scroll past unread.
  */
 
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { REPO_ROOT } from '../../src/shared/emit.js';
 import { buildAll, loadTelemetry } from '../../src/build.js';
@@ -27,11 +27,14 @@ import { MIN_INFO_TYPE_SIZE } from '../../src/shared/tokens.js';
  * README and against every string drawn inside every asset.
  */
 const BANNED_LEXICON = [
+  // The full build-failing list from the design brief, section 5.2.
   'MISSION CONTROL', 'DIRECTIVES', 'END TRANSMISSION', 'INITIALIZING', 'INITIALISING',
-  'BOOT SEQUENCE', 'ACCESS GRANTED', 'SYSTEM ONLINE', 'NOMINAL', 'STATUS: OK',
-  'UPLINK', 'DOWNLINK', 'SUBSYSTEM', 'NEURAL', 'QUANTUM', 'CLASSIFIED', 'CLEARANCE',
-  'AI-POWERED', 'NEXT-GEN', 'CYBER', 'MATRIX', 'HACKER', 'NINJA', 'ROCKSTAR', 'GURU',
-  'WIZARD', '10X', 'PASSIONATE', 'PIXEL-PERFECT', 'WELCOME', 'LOADING',
+  'BOOT', 'BOOT SEQUENCE', 'ACCESS GRANTED', 'SYSTEM ONLINE', 'ONLINE', 'NOMINAL',
+  'STATUS: OK', '[OK]', '[FAIL]', 'UPLINK', 'DOWNLINK', 'SUBSYSTEM', 'PROTOCOL',
+  'NEURAL', 'QUANTUM', 'CLASSIFIED', 'CLEARANCE', 'TARGET', 'LOCKED', 'ENGAGE',
+  'OPERATOR', 'WELCOME', 'LOADING', 'SYNCING', 'AI-POWERED', 'NEXT-GEN', 'CYBER',
+  'MATRIX', 'HACKER', 'NINJA', 'ROCKSTAR', 'GURU', 'WIZARD', '10X', 'PASSIONATE',
+  'PIXEL-PERFECT',
 ] as const;
 
 function checkLexicon(text: string, label: string): Finding[] {
@@ -118,6 +121,27 @@ function main(): void {
         message: `README.md states "${whole}", which does not occur anywhere in data/telemetry.json`,
       });
     }
+  }
+
+  // -- vendored fonts must carry their licence --------------------------------------
+  // Ruled in .ai/project/02-audit.md section 3.4: font binaries with no licence
+  // file alongside them fail the build.
+  const fontsDir = resolve(REPO_ROOT, 'assets/fonts');
+  const fontFiles = readdirSync(fontsDir).filter((f) => /.(woff2?|ttf|otf)$/i.test(f));
+  const licenceFiles = readdirSync(fontsDir).filter((f) => /licen[cs]e/i.test(f));
+  if (fontFiles.length > 0 && licenceFiles.length === 0) {
+    findings.push({
+      level: 'error',
+      check: 'font-licence',
+      message: `assets/fonts contains ${fontFiles.length} font binaries but no licence file`,
+    });
+  }
+  if (fontFiles.length > 0 && !existsSync(resolve(fontsDir, 'PROVENANCE.md'))) {
+    findings.push({
+      level: 'error',
+      check: 'font-licence',
+      message: 'assets/fonts has no PROVENANCE.md recording where the binaries came from',
+    });
   }
 
   // -- generated assets -----------------------------------------------------------

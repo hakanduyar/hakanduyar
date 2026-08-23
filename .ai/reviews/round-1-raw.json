@@ -1,0 +1,598 @@
+{
+ "results": [
+  {
+   "dimension": "visual-design",
+   "verdict": "FAIL",
+   "summary": "I read the binding brief, audit, platform-constraints doc and STATUS deviations ledger, studied all 42 evidence PNGs (every asset in both themes, 16 hero timeline frames, page and liveness captures), cross-checked every rendered number against data/telemetry.json, read the emitted SVG CSS and the generator sources, and ran npm test (62 passing), npm run validate (0 errors, 338.6 KB total) and npm run render -- --check (no drift). The design language is genuinely achieved: the resting compositions are finished instruments, the light theme is real ink-on-paper rather than an inversion, ramp directions reverse correctly, amber is rationed, budgets and lexicon bans hold, and mobile captures stay legible -- this does not look like a template. However, the hero's signature entrance choreography is broken by a confirmed CSS cascade bug (the readout delay classes are dead, so the metrics pop in first instead of sixth, without their stagger -- proven by the t=0.3s frame and the liveness capture), one band rail floats alone at t=0, several composition deviations from the binding spec (core-modules 240u row layout, telemetry 224u, hero rail swap, plate bar height) are absent from the deviations ledger that the review contract treats as the only legitimizing record, and the README omits the mandated Active work section. The verdict is FAIL until the motion bug is fixed and the deviation ledger is reconciled; with those addressed this would pass, since the underlying visual system is strong.",
+   "confirmedMajors": [
+    {
+     "severity": "major",
+     "title": "Hero entrance choreography broken: readout stagger delays are dead CSS, rows enter first instead of sixth",
+     "location": "C:\\GitHub\\hakanduyar\\src\\hero\\hero.ts lines 291-292 (emitted into assets\\generated\\hero-dark.svg and hero-light.svg style block); evidence .ai\\evidence\\visual\\hero-dark-t0_3s.png and liveness-early.png",
+     "detail": "The emitted CSS declares `.r0{animation-delay:900ms}.r1{960ms}.r2{1020ms}` BEFORE `.ro{animation:rise 240ms ... forwards}`. The `animation` shorthand resets animation-delay to 0s, and since .ro appears later at equal specificity, all three readout rows animate at 0-240ms instead of 900/960/1020ms, and the specified 60ms sibling stagger never happens. The timeline frames prove it: at t=0.3s REPOSITORIES/COMMITS/TYPESCRIPT are fully visible while the header (320ms) and wordmark (480ms) have not started; liveness-early.png shows the real <img> embedding painting three floating numbers in a void as the banner's first content. This inverts the choreography specified in 03-design-brief.md section 6.2 (rows are element #6 at 900ms) and contradicts the implementer's own docs/visual-system.md element order (readouts staggered after the discipline line). The 'instruments report in after the identity' narrative -- the centerpiece of the motion design -- does not happen.",
+     "recommendation": "Emit the per-row delay classes AFTER the .ro shorthand rule, or fold the delay into per-row shorthand rules (e.g. `.r0{animation:rise 240ms var(--ease) 900ms forwards}`). Re-capture the timeline frames and confirm rows appear at 900-1260ms with visible 60ms stagger.",
+     "confirmed": true,
+     "votes": []
+    },
+    {
+     "severity": "major",
+     "title": "README omits the required '## Active work' section",
+     "location": "C:\\GitHub\\hakanduyar\\README.md (between Activity, line ~127, and Operating principles); generator scripts\\generate\\readme.ts",
+     "detail": "03-design-brief.md section 8 fixes the README order and item 7 requires '## Active work -- two bullets derived from the two most recent pushes, plus one sentence about private work'. The generated README goes straight from ## Activity to ## Operating principles. The private-work sentence was folded into the Activity paragraph, but the two most-recent-push bullets do not exist anywhere. This deviation is not recorded in .ai\\tickets\\STATUS.md 'Deviations' nor justified by docs\\github-platform-constraints.md, so under the review contract it is non-compliant, not a documented trade-off.",
+     "recommendation": "Either generate the Active work section from the two most recent pushes in data/telemetry.json (both are already snapshotted), or record the merge into Activity as an explicit deviation with grounds in STATUS.md.",
+     "confirmed": true,
+     "votes": []
+    },
+    {
+     "severity": "major",
+     "title": "Undocumented composition deviations from the binding canvas spec (core modules, telemetry, plates, hero rails)",
+     "location": "C:\\GitHub\\hakanduyar\\src\\modules\\core-modules.ts line 19 (H=240) and lines 5-9; src\\telemetry\\telemetry-panel.ts line 21 (H=224); src\\hero\\hero.ts lines 137-166 and 256-266; ledger .ai\\tickets\\STATUS.md 'Deviations'",
+     "detail": "Measured against 03-design-brief.md sections 3.3, 6.1, 7.1, 7.2: (a) core modules ships 890x240 as four stacked rows instead of the specified 890x132 four-cells-across with a 2u marker above each name; (b) telemetry ships 890x224 vs the specified 890x200; (c) the plate index bar spans only the two text lines, not 'the plate's inner height'; (d) the hero swaps LAST PUSH (now top rail, at t-micro instead of t-label) with MEASURED (now bottom rail) and drops the specified 'SHARE OF ... PUBLIC SOURCE' method line beneath the scale entirely. The core-modules rationale is sound (repo names measure up to 453u and cannot fit 184u cells) but lives only in a code comment. STATUS.md's deviation ledger records four deviations and none of these; docs/github-platform-constraints.md documents none of them as measured constraints. Per the review contract, an undocumented deviation is a finding regardless of visual merit -- and the visual merit here is real: the rendered results look good.",
+     "recommendation": "Add these to STATUS.md 'Deviations' with the measured grounds (string widths vs cell widths for core modules, the re-derived band heights for telemetry, the label/rail rebalance for the hero), so a future reviewer can distinguish decisions from drift.",
+     "confirmed": true,
+     "votes": []
+    }
+   ],
+   "refutedMajors": [],
+   "unverifiedOverflow": [],
+   "minors": [
+    {
+     "severity": "minor",
+     "title": "Identity/instrument band rail is visible from t=0, before the frame draws",
+     "location": "C:\\GitHub\\hakanduyar\\src\\hero\\hero.ts line 190 (rail(Y.bandRail,'br1')); evidence .ai\\evidence\\visual\\hero-dark-t0s.png",
+     "detail": "The class br1 has no CSS rule in the emitted hero (verified by extracting the full style block), so this one hairline renders at full opacity from frame zero. The t=0 capture shows exactly that: an otherwise empty dark canvas with a single floating horizontal line mid-plate. Its siblings hr (inside the .hd header group) and br2 (inside the .ft footer group) both fade in. This is a half-state artifact of the kind the brief's motion rules exist to prevent, visible for roughly the first 300ms.",
+     "recommendation": "Wrap the identity-band rail in an entrance class (e.g. join the ruling's .rl fade at 200ms, or the header's .hd rise) so no isolated stroke precedes the frame draw."
+    },
+    {
+     "severity": "minor",
+     "title": "Telemetry bar segment labels use an 18u type size that does not exist in the binding type scale, with visually arbitrary label selection",
+     "location": "C:\\GitHub\\hakanduyar\\src\\telemetry\\telemetry-panel.ts lines 33-37 and 130-141; evidence .ai\\evidence\\visual\\asset-telemetry-dark.png",
+     "detail": "SEGMENT_LABEL is 18u. The brief's type scale (section 2.2) bottoms out at t-micro 22u, and section 2.3 sets 26u as the floor for information-carrying text; 'Where a value is given, it is a specification.' docs/visual-system.md invents an 'absolute floor 16u' that has no basis in the brief. At a 390px viewport 18u renders at ~7.9 CSS px -- illegible. Mitigated by the Markdown table mirroring every figure, but aggravated by the fit rule's output: TYPESCRIPT (64.2%) and HTML (11.5%) are labelled while the larger JAVASCRIPT segment (17.0%) is not, because 'JAVASCRIPT' at tracked 18u misses its 135u segment by ~3u. A reviewer who does not know the deterministic rule reads the labelling as random.",
+     "recommendation": "Either drop segment labels entirely (the Markdown table already carries them, and RULE 4 favours fewer marks) or set them at t-micro 22u and accept that only TYPESCRIPT fits; do not label a smaller segment when a larger one is unlabelled."
+    },
+    {
+     "severity": "minor",
+     "title": "'PEAK WEEK 46' is off-lexicon and reads as a week number, and sits far from the bar it annotates",
+     "location": "C:\\GitHub\\hakanduyar\\src\\activity\\activity-strip.ts line 107; evidence .ai\\evidence\\visual\\asset-activity-dark.png",
+     "detail": "'PEAK' is not in the permitted lexicon of 03-design-brief.md section 5.1 ('MAX' is the sanctioned term for this exact concept, and section 7.4 says to label the maximum). The phrase 'PEAK WEEK 46' naturally parses as 'week number 46' when 46 is actually the contribution count of the maximum week -- the README prose has to disambiguate it ('a peak of 46 in one week'). The annotation also sits top-right while the amber maximum bar it describes is at the far left of the strip, so the eye has to hunt for the datum being labelled.",
+     "recommendation": "Use lexicon-compliant, self-disambiguating copy such as 'MAX 46 / WEEK' or 'MAX WEEK: 46 CONTRIBUTIONS' (fits 40 chars), and consider anchoring the label toward the maximum bar."
+    },
+    {
+     "severity": "minor",
+     "title": "Channels section: wrong order and wrong brand casing ('Linkedin', 'Github')",
+     "location": "C:\\GitHub\\hakanduyar\\README.md lines 135-138",
+     "detail": "Section 8.9 of the brief fixes the order as GitHub, LinkedIn, Medium, Email; the generated README ships Linkedin, Medium, Email, Github. Separately, 'Linkedin' and 'Github' are incorrect brand casing (LinkedIn, GitHub). On a profile whose entire thesis is measured precision -- and whose own audit (02-audit.md section 1.4) condemned the old README for proofreading lapses -- wrong casing of the host platform's own name is the kind of detail the target audience notices.",
+     "recommendation": "Fix casing to LinkedIn/GitHub and reorder to the specified sequence in scripts/generate/readme.ts."
+    },
+    {
+     "severity": "minor",
+     "title": "Explicit horizontal rule before the provenance footer violates the README composition rules",
+     "location": "C:\\GitHub\\hakanduyar\\README.md line 140",
+     "detail": "Section 8 of the brief: 'No horizontal rules other than the ones Markdown headings already imply.' The generated README inserts a literal '---' between Channels and the provenance line. Verified by reading the generated file; no deviation is recorded for it.",
+     "recommendation": "Remove the '---' from the readme generator; the italic provenance line is sufficient separation."
+    },
+    {
+     "severity": "minor",
+     "title": "Amber rationing is internally inconsistent with the brief's own checklist: six of nine assets ship zero signal elements",
+     "location": "C:\\GitHub\\hakanduyar\\assets\\generated\\telemetry-dark.svg, core-modules-*.svg, system-*-*.svg (evidence asset-telemetry-dark.png etc.); spec conflict between 03-design-brief.md section 1.4 rule 5 ('at most one') and section 10 checklist item 6 ('exactly one')",
+     "detail": "Only the hero (index line) and activity strip (max week bar) carry amber. Core modules, all four plates, and the telemetry panel have none. The implementation follows the 'at most one' reading (docs/visual-system.md says so explicitly), which is defensible -- but the brief's own review checklist is written as 'exactly one amber element per asset', a line a reviewer 'must be able to fail the work on'. Most visibly, the telemetry panel's single most important value (TYPESCRIPT 64.2%) is unmarked while the identical value gets the amber index in the hero one screen above -- the same datum is 'the most important value' in one asset and not in the other.",
+     "recommendation": "Have the spec authority reconcile the checklist wording with rule 1.4.5, and record the zero-amber reading as a deliberate decision; alternatively give the telemetry panel one signal mark on the 64.2% value (e.g. amber tick on the bar boundary)."
+    },
+    {
+     "severity": "minor",
+     "title": "Page evidence is an asset-only montage, not the assembled README -- checklist item 14 is only half-evidenced",
+     "location": "C:\\GitHub\\hakanduyar\\scripts\\validate\\visual-qa.ts lines 111-145; evidence .ai\\evidence\\visual\\page-{dark,light}-{desktop,mobile}.png",
+     "detail": "The page-*.png captures are generated from a synthetic HTML column containing only the ten <img> tags with 16px spacing. None of the README's actual content -- headings, prose, the four-bullet module list, the telemetry table, the plate description lines, links -- appears in any capture. Checklist item 10.14 asks whether 'the page' is legible and complete at 890px and 390px in both themes; what was evidenced is that the images are. The Markdown layer (RULE 2's carrier, half the design) has no visual evidence at either width or theme.",
+     "recommendation": "Render the real generated README (e.g. via GitHub's /markdown API output wrapped in gh-like CSS, which qa:github already exercises) at 890 and 390 in both themes and capture that; otherwise re-title the current captures as asset montages so the evidence does not overclaim."
+    }
+   ]
+  },
+  {
+   "dimension": "github-compat",
+   "verdict": "FAIL",
+   "summary": "I mechanically inspected README.md (8 picture blocks; the hero's reduced-motion sources correctly precede the colour-scheme source; all 18 referenced SVGs resolve to committed files; every img carries unique descriptive alt and width=890; only sanitizer-safe HTML per the measured constraints doc), audited all 18 generated SVGs (outlined text only, no <text>/font-family/scripts/external refs, viewBox-only roots, unguarded keyframes confined to the hero pair with a 2400ms entrance and a single 9000ms loop), and ran every gate from the repo root: npm run validate (0 errors), npm run render -- --check (18/18 match), npx tsc --noEmit (clean), npm test (62/62), and npm run qa:github (GitHub's real POST /markdown preserved every construct). The asset pipeline and the README as rendered are genuinely platform-safe, and a live GraphQL cross-check confirmed the committed telemetry numbers (55 repos) are real. The verdict is FAIL on build-and-automation integrity, not on the assets: the material-change guard compares clock-derived window dates and therefore can never skip a commit (its entire stated purpose), the T-010-specified defence against zeroed/collapsed API data before an unattended push does not exist, CI cannot catch a hand-edited README, both workflows ignore the binding SHA-pinning and concurrency requirements, the audit's blocking publish precondition is unmet (no topics on any featured repo, stale null descriptions in the committed snapshot), and the spec'd '## Active work' section is silently missing — none of these recorded in STATUS.md's deviation list, whose own ledger (T-008 IN_PROGRESS, T-012 PLANNED) already contradicts the 'finished' claim.",
+   "confirmedMajors": [
+    {
+     "severity": "major",
+     "title": "material-change.mjs skip logic can never skip: clock-derived fields defeat it",
+     "location": "C:\\GitHub\\hakanduyar\\scripts\\generate\\material-change.mjs lines 18-22 (stripVolatile)",
+     "detail": "stripVolatile deletes only capturedAt, but data/telemetry.json contains other purely clock-derived fields: contributions.windowStart/windowEnd (first/last day of the trailing-year contribution calendar, i.e. the run date), activity.start/end (moves one week forward every Monday run), and methods.activity which embeds the end date as a string. Verified against scripts/generate/snapshot.ts (firstDay/lastDay come from the calendar day series, which always ends on the query date) and the committed snapshot (windowEnd 2026-08-23 = capture date). Therefore every scheduled run on a later date compares as a 'material change' even when zero contributions occurred, and the exit-1 skip branch is unreachable in practice. This directly contradicts the script's own header ('If only the clock moved, the refresh workflow skips the commit'), the workflow comment ('A run where nothing moved but the clock produces no commit'), docs/maintenance.md ('commits only if something material changed'), and BACKLOG T-010 AC2. The result is a guaranteed weekly bot commit — exactly the history noise the design says it prevents.",
+     "recommendation": "Strip all clock-derived fields (contributions.windowStart/windowEnd, activity.start/end, methods.activity — or compare only the value-bearing fields: weekly array contents, totals, languages, repos, featured, lastPush) before comparing, and add a test that two snapshots differing only in dates compare as unchanged.",
+     "confirmed": true,
+     "votes": [
+      {
+       "reasoning": "CONFIRMED by direct inspection and simulation.\n\n1. The skip logic strips only one field. C:\\GitHub\\hakanduyar\\scripts\\generate\\material-change.mjs lines 18-22: stripVolatile deletes only `capturedAt`, then line 35 compares full JSON.stringify of the rest.\n\n2. The other date fields are clock-derived, exactly as claimed. C:\\GitHub\\hakanduyar\\scripts\\generate\\snapshot.ts queries `contributionsCollection` with no from/to arguments (lines 43-51), so GitHub returns the trailing year ending on the query date. Lines 212-213/223-224 set contributions.windowStart/windowEnd from the first/last calendar day; lines 168-170/237-238 set activity.start/end from the last 52 complete weeks; line 252 embeds activityEnd in the methods.activity string. The committed C:\\GitHub\\hakanduyar\\data\\telemetry.json proves it: windowEnd \"2026-08-23\" equals the capturedAt date \"2026-08-23T10:03:00Z\"; activity.end \"2026-08-22\" is the last complete week's Saturday; methods.activity reads \"...52 WEEKS TO 2026-08-22\".\n\n3. Reproduced the failure concretely. I ran a scratchpad simulation (outside the repo) replicating stripVolatile exactly against the committed snapshot versus a simulated next-Monday run (2026-08-31) with ZERO new contributions and identical totals: the comparison reports MATERIAL CHANGE, with `contributions`, `activity`, and `methods` all differing purely from date movement. Since windowEnd always equals the run date, the exit-1 skip branch can only fire for a same-day re-run — never on the weekly schedule (cron '17 6 * * 1' in .github/workflows/refresh-telemetry.yml). Every scheduled run therefore commits.\n\n4. This contradicts the binding texts the claim cites, verified verbatim: material-change.mjs header lines 5-8 (\"If only the clock moved, the refresh workflow skips the commit\"); refresh-telemetry.yml header comment (\"A run where nothing moved but the clock produces no commit\"); docs/architecture.md lines 101-102 (\"timestamp-only runs produce no commit\"); docs/maintenance.md lines 7-8 (\"commits only if something material changed\"); and .ai/tickets/BACKLOG.md T-010 AC2 (\"when data is unchanged, produces no commit\"). The script's own rationale explicitly accepts a stale window (\"the plate's MEASURED date stays true either way\"), so the counter-argument that a shifted 52-week window is legitimately material is foreclosed by the design's own words.\n\n5. Not a documented deviation. .ai/tickets/STATUS.md \"Deviations\" lists only four items (fontkit, reduced-motion guard placement, hero geometry, lint number floor); docs/github-platform-constraints.md contains no mention of the contribution window, refresh cadence, or material-change behavior (grep for trailing/window/material/refresh/weekly returns nothing).\n\nNo scheduled runs exist yet in git history (repo first committed today), so the defect cannot be observed in past commits, but the mechanism is deterministic: the first Monday run and every one after will produce a bot commit regardless of activity. Severity major is appropriate: it is guaranteed weekly history noise that the design explicitly promises to prevent, and four separate documents state behavior the code cannot deliver.",
+       "refuted": false
+      },
+      {
+       "reasoning": "Confirmed by direct inspection and empirical reproduction. stripVolatile (material-change.mjs:18-22) removes only capturedAt, but data/telemetry.json carries four other clock-derived fields: contributions.windowStart/windowEnd (lines 9-10; committed windowEnd 2026-08-23 equals the capture date), activity.start/end (lines 76-77), and methods.activity embedding the end date (line 200). snapshot.ts proves these track the run date: contributionsCollection is queried with no from/to (trailing year ending at query time), windowStart/windowEnd are the first/last calendar days (snapshot.ts:212-213, 223-224), and activity.start/end come from the last 52 complete weeks, which advance every Sunday (lines 167-169, 233-234). Reproduced in a scratchpad git repo using the actual script: a simulated next-Monday run with zero new contributions (only date fields advanced) exits 0 \"material change detected\"; even a one-day windowEnd bump alone exits 0; only a capturedAt-only change exits 1. Since refresh-telemetry.yml runs weekly (cron '17 6 * * 1'), consecutive scheduled runs always differ in windowEnd, so the skip branch is unreachable for scheduled runs — guaranteeing a weekly bot commit. This contradicts the script's own header, the workflow comment (\"A run where nothing moved but the clock produces no commit\"), docs/maintenance.md lines 7-8, and BACKLOG T-010 AC2. STATUS.md's Deviations section (4 entries) and docs/github-platform-constraints.md document nothing about this behaviour, so it is an undocumented defect, not an accepted deviation.",
+       "refuted": false
+      }
+     ]
+    },
+    {
+     "severity": "major",
+     "title": "No guard against collapsed/zeroed telemetry before an automated commit (T-010 binding constraint)",
+     "location": "C:\\GitHub\\hakanduyar\\scripts\\generate\\snapshot.ts (no decrease check); .github\\workflows\\refresh-telemetry.yml",
+     "detail": "BACKLOG T-010 (lines 865-868) binds the implementer: 'The refresh must fail the workflow rather than commit … if any metric decreased by more than 50%', and its regression-risks section names GITHUB_TOKEN returning a zeroed contributionsCollection as the most likely failure, which 'would silently publish an empty activity strip'. I verified snapshot.ts throws only on HTTP errors, GraphQL errors, missing user, and an empty repository list — a response with zeroed contributions or collapsed language bytes passes, registers as a material change, rebuilds, passes validate (all consistency checks compare the README against the same corrupted snapshot, so they cannot catch it), and is committed and pushed to the live profile unattended. STATUS.md's deviation list does not document dropping this guard.",
+     "recommendation": "Implement the specified guard: after snapshot, compare key metrics (contributions total, totalCommits, publicRepos, totalSourceBytes) against the committed snapshot and fail the workflow on a >50% drop; also fail on contributionCalendar.totalContributions === 0.",
+     "confirmed": true,
+     "votes": [
+      {
+       "reasoning": "Confirmed by direct inspection. (1) The binding constraint is real: .ai/tickets/BACKLOG.md lines 865-868 (T-010) require the refresh to fail the workflow rather than commit \"if any metric decreased by more than 50%\", and lines 904-907 name zeroed contributionsCollection under GITHUB_TOKEN as the most likely failure, which \"would silently publish an empty activity strip\". (2) scripts/generate/snapshot.ts (read in full) throws only on missing token, HTTP error, GraphQL errors array, null user, and empty repo list; a structurally valid zeroed response is written to data/telemetry.json without complaint (line 186 even tolerates zero total language bytes via `totalBytes ? ... : 0`), and the script never reads the previous snapshot, so no decrease check exists. (3) .github/workflows/refresh-telemetry.yml gates the commit only on scripts/generate/material-change.mjs, which is a timestamp-excluding equality diff against HEAD:data/telemetry.json — zeroed data registers as a material change (exit 0) and proceeds to rebuild, validate, commit, and push unattended. (4) scripts/validate/validate-all.ts checks README claims against the same freshly written telemetry.json, so internally consistent corruption passes; repo-wide grep found no decrease/zero guard in scripts, src, .github, or tests (the T-001-required zeroed-response fail-loud test is also absent). (5) STATUS.md's Deviations section lists exactly four items, none covering this guard, and docs/github-platform-constraints.md (97 lines) contains no token/API measurement that would excuse it. The defect is real, undocumented, and reproduces exactly as claimed; major severity is appropriate since a single bad API response would silently publish a zeroed live profile.",
+       "refuted": false
+      },
+      {
+       "reasoning": "CONFIRMED by direct inspection of every link in the claimed failure chain.\n\n1. The binding constraint exists exactly as quoted. C:\\GitHub\\hakanduyar\\.ai\\tickets\\BACKLOG.md lines 865-868 (T-010 IMPLEMENTATION CONSTRAINTS): \"The refresh must fail the workflow rather than commit if `pnpm run fetch` fails its fail-loud guard, if `pnpm run validate` fails, or if any metric decreased by more than 50%.\" It is bound twice: T-001 (lines 71-75) defines the fail-loud guard as non-zero exit with NO file write if any of the four key metrics is \"absent, zero, or lower than 50% of the value currently in data/profile.json\" — \"A partial or unauthenticated response must never overwrite good data with zeros.\" T-010's regression risks (lines 906-908) name zeroed contributionsCollection under GITHUB_TOKEN as the most likely failure that \"would silently publish an empty activity strip.\"\n\n2. C:\\GitHub\\hakanduyar\\scripts\\generate\\snapshot.ts (read in full, 270 lines) throws only on: missing token (line ~29), HTTP !ok (line 120-122), GraphQL errors array (127-129), null user (131), empty non-fork repo list (line ~173 \"No public non-fork repositories returned\"), and a missing featured repo (~192). It never reads the committed snapshot, so no decrease comparison is possible; contributionCalendar.totalContributions === 0 and all-zero weeks pass silently and overwrite data/telemetry.json unconditionally (writeFileSync at line ~262).\n\n3. C:\\GitHub\\hakanduyar\\scripts\\generate\\material-change.mjs is a pure equality diff that strips only capturedAt — a collapse to zero IS a difference, so it exits 0 (\"material change detected\"), which the workflow maps to changed=true.\n\n4. C:\\GitHub\\hakanduyar\\.github\\workflows\\refresh-telemetry.yml steps are: snapshot -> material-change gate -> rebuild -> typecheck/test/validate -> commit and push. No step compares old vs new metric magnitudes, so the zeroed snapshot proceeds to an unattended push.\n\n5. The verification steps cannot catch it: the numbers check in scripts/validate/validate-all.ts (lines ~87-121) collects the set of numbers from data/telemetry.json and requires README numbers to exist in that set — with a zeroed snapshot the rebuilt README is self-consistently traceable. tests/readme.test.ts (lines 80-88) and tests/scene.test.ts (line 121+) likewise assert README/asset values match loadTelemetry() output, i.e., the same corrupted file. No test or check asserts any metric > 0 or within a band of the previous value.\n\n6. Rendering does not crash to save it: src/activity/activity-strip.ts explicitly draws all-zero weeks as ZERO_STUB baseline stubs (lines 34-35, 72), so an empty activity strip renders and commits cleanly — precisely the outcome T-010's regression-risks section warned about.\n\n7. The omission is undocumented: the Deviations section of C:\\GitHub\\hakanduyar\\.ai\\tickets\\STATUS.md (lines 30-50) lists exactly four deviations (fontkit, reduced-motion via picture sources, hero geometry, 2-digit number floor) — nothing about the decrease/zero guard. Greps of docs/github-platform-constraints.md, docs/maintenance.md and docs/architecture.md found no mention of contributionsCollection, GITHUB_TOKEN zeroing, or any measured constraint that would legitimise dropping it. STATUS.md line 26 even lists T-010 as CLAUDE_TESTED citing the \"material-change guard\", which is a change detector, not the mandated decrease guard.\n\nThe claim is accurate in every particular; severity major is fair (an unattended weekly job can publish a zeroed profile to the live README).",
+       "refuted": false
+      }
+     ]
+    },
+    {
+     "severity": "major",
+     "title": "CI has no README drift gate — a hand-edited README passes CI, then is silently reverted weekly",
+     "location": "C:\\GitHub\\hakanduyar\\.github\\workflows\\ci.yml (verify job); scripts/render/render-all.ts --check covers assets only",
+     "detail": "BACKLOG T-010 AC7 (line 888) requires 'ci.yml fails on a branch where README.md has been hand-edited', and T-009's regression-risks section names 'the CI drift gate in T-010' as the guard against the 'obvious failure' of hand-editing the generated README. The implemented gate (npm run render -- --check) byte-compares only assets/generated/*.svg; tests/readme.test.ts checks invariants (sections, numbers) but not byte-identity, so a prose edit to Identity or a signal bullet passes CI green. Combined with finding 1 (every weekly refresh runs npm run readme and commits), any such edit is silently clobbered by the next 'chore(telemetry)' commit. No deviation is recorded in STATUS.md.",
+     "recommendation": "Add a CI step that regenerates the README from the committed snapshot and fails on diff (e.g. npm run readme && git diff --exit-code -- README.md), which also proves generator idempotence (T-009 AC12).",
+     "confirmed": true,
+     "votes": []
+    },
+    {
+     "severity": "major",
+     "title": "T-010 workflow hardening absent: no SHA-pinned actions, no concurrency group, commit message off-template",
+     "location": "C:\\GitHub\\hakanduyar\\.github\\workflows\\ci.yml lines 20-22; refresh-telemetry.yml lines 21-23 and commit step",
+     "detail": "BACKLOG T-010 implementation constraints require actions 'each pinned to a commit SHA' (line 870, re-asserted by AC10 'verified by inspection'), 'a concurrency group so two refreshes cannot race' (line 862), and a deterministic commit message that 'must include the measurement date' and end with '[skip ci]' (lines 863-864, AC4). Inspected both files line by line: all four action references are tag-pinned (@v4), neither workflow declares concurrency, and the commit message is 'chore(telemetry): refresh measured data' with no date and no [skip ci]. (The missing [skip ci] causes no loop in practice — GITHUB_TOKEN pushes do not trigger workflows — but the SHA-pinning gap is a real supply-chain exposure on a contents:write workflow, and none of these deviations is recorded in STATUS.md's deviation list.)",
+     "recommendation": "Pin actions/checkout and actions/setup-node to full commit SHAs, add a concurrency group (e.g. group: refresh, cancel-in-progress: false) to refresh-telemetry.yml, and emit the spec'd commit message template including the capturedAt date.",
+     "confirmed": true,
+     "votes": [
+      {
+       "reasoning": "Verified by direct inspection. (1) SHA pinning: BACKLOG.md T-010 lines 869-870 require actions \"each pinned to a commit SHA\" and AC10 requires \"pinned action SHAs, verified by inspection\"; ci.yml lines 20/22 and refresh-telemetry.yml lines 21/23 all use tag pins (@v4), not SHAs. (2) Concurrency: BACKLOG.md line 862 requires \"a `concurrency` group so two refreshes cannot race\"; neither workflow file contains a concurrency key (confirmed by full-file read and grep). (3) Commit message: BACKLOG.md lines 863-864 and AC4 require a deterministic message including the measurement date and ending in `[skip ci]`; refresh-telemetry.yml line 64 commits with \"chore(telemetry): refresh measured data\" — no date, no [skip ci]. (4) Undocumented: STATUS.md's Deviations section lists four deviations (fontkit, reduced-motion placement, hero geometry, lint number floor) — none covers T-010 — and docs/github-platform-constraints.md contains no mention of pinning, concurrency, or skip ci; yet STATUS.md line 26 marks T-010 CLAUDE_TESTED despite AC10 failing on inspection. The claim's caveat that GITHUB_TOKEN pushes don't retrigger CI is correct but mitigates only the [skip ci] gap; the SHA-pinning gap on a contents:write workflow remains a real supply-chain exposure and an explicit acceptance-criterion failure. Defect upheld at severity major.",
+       "refuted": false
+      },
+      {
+       "reasoning": "Confirmed by direct inspection. BACKLOG.md T-010 requires (line 862) a concurrency group, (lines 863-864, AC4 line 883) a deterministic commit message including the measurement date and ending in [skip ci], and (lines 869-870, AC10 line 892) all actions pinned to commit SHAs. Reading both workflow files in full: ci.yml lines 20/22 and refresh-telemetry.yml lines 21/23 all use mutable tag pins (@v4); neither file contains a concurrency key; refresh-telemetry.yml line 64 commits with \"chore(telemetry): refresh measured data\" — no date, no [skip ci] — under contents:write permissions. STATUS.md's deviation list (4 entries: fontkit, reduced-motion, hero geometry, number floor) records none of this, and docs/github-platform-constraints.md contains no relevant measured constraint (nor could one exist — these are plain workflow-YAML features, not platform-rendering behaviour). STATUS.md line 26 nevertheless marks T-010 CLAUDE_TESTED. The claim is factually accurate on every cited line, correctly discounts the [skip ci] loop risk, and correctly identifies the SHA-pinning gap on a write-permission workflow as the substantive exposure. Severity major is appropriate.",
+       "refuted": false
+      }
+     ]
+    }
+   ],
+   "refutedMajors": [],
+   "unverifiedOverflow": [
+    {
+     "severity": "major",
+     "title": "Audit §7.10 blocking publish precondition unmet: no topics on any featured repository; ledger confirms work unfinished",
+     "location": "C:\\GitHub\\hakanduyar\\.ai\\project\\02-audit.md §7 ruling 10; .ai\\reports\\cross-repo.md; .ai\\tickets\\STATUS.md (T-008 IN_PROGRESS, T-012 PLANNED)",
+     "detail": "The audit binds: 'Blocking precondition: English descriptions and topics on all four selected repositories before publish.' I verified live via read-only GraphQL: all four featured repos now have English descriptions, but repositoryTopics is empty on all four (dropspot-project, Hunnes-Academy-motion-system, stock-management-system, spark). cross-repo.md explicitly states topics were not touched. Additionally the committed data/telemetry.json still carries description: null for three of the four repos (snapshot taken before the descriptions were set), so the published 'measured' snapshot is stale against its own inputs. STATUS.md itself lists T-008 as IN_PROGRESS and T-012 (final acceptance) as PLANNED — the repository's own ledger contradicts the claim that the system is finished.",
+     "recommendation": "Add topics to the four repositories, re-run npm run data:snapshot so the committed telemetry reflects the descriptions, and only then close T-008 and run T-012 acceptance."
+    },
+    {
+     "severity": "major",
+     "title": "'## Active work' section omitted from the README — undocumented deviation from the binding brief and T-009 AC9",
+     "location": "C:\\GitHub\\hakanduyar\\README.md / scripts\\generate\\readme.ts; spec at .ai\\project\\03-design-brief.md line 480 (§8.7) and .ai\\tickets\\BACKLOG.md line 796 (AC9)",
+     "detail": "The design brief's README composition is explicitly 'Order is fixed' and item 7 requires '## Active work — two bullets derived from the two most recent pushes, plus one sentence about private work'; BACKLOG T-009 AC9 lists the exact heading set including 'Active work' (and AC3 expects nine <picture> blocks; the README has eight). The generated README has no Active work section — the private-work sentence was folded into ## Activity and the two recent-push bullets do not exist anywhere. STATUS.md's 'Deviations' section records four deviations; this structural omission is not among them, and docs/github-platform-constraints.md documents no platform constraint forcing it, so under the review rules it is a non-compliant, undocumented deviation. tests/readme.test.ts was written to the implemented section list rather than the spec'd one, so no gate catches it.",
+     "recommendation": "Either implement the Active work section per brief §8.7, or record the omission with grounds in STATUS.md's deviation list and reconcile BACKLOG T-009 AC3/AC9."
+    }
+   ],
+   "minors": [
+    {
+     "severity": "minor",
+     "title": "A crash in material-change.mjs is indistinguishable from 'no change' — refresh silently stops forever",
+     "location": "C:\\GitHub\\hakanduyar\\.github\\workflows\\refresh-telemetry.yml, 'Detect material change' step",
+     "detail": "The step branches on the script's exit code: exit 0 = changed, anything else = skip. An uncaught exception in Node also exits 1 (e.g. corrupt JSON, a future refactor bug), so a broken guard script makes every weekly run report 'no material change' and finish green — telemetry goes permanently stale with no failing signal, violating T-010's rationale (R4: maintenance decay must fail loudly).",
+     "recommendation": "Use distinct exit codes (0 = changed, 3 = timestamp-only, anything else = failure) and fail the workflow on unexpected codes."
+    },
+    {
+     "severity": "minor",
+     "title": "Brand names mis-cased by wholesale lowercasing: 'Linkedin', 'Github', 'github account created'",
+     "location": "C:\\GitHub\\hakanduyar\\scripts\\generate\\readme.ts line 202 (channels) and telemetry-table method lowercasing; visible in README.md Channels section and '| Active since | 2021 | github account created … |'",
+     "detail": "The generator renders channel labels via charAt(0) + slice(1).toLowerCase(), turning the config's LINKEDIN/GITHUB into 'Linkedin' and 'Github', and lowercases method strings wholesale, producing 'github account created 2021-02-20' — while the adjacent footer correctly writes 'the GitHub API'. The brief (03-design-brief.md line 484) names the channels as 'GitHub, LinkedIn, Medium, Email' with correct trademark casing. On a page whose stated premise is precise professional English, inconsistent brand casing is exactly what its target audience notices.",
+     "recommendation": "Store display-cased labels in config (LinkedIn, GitHub) and stop title-casing them at render time; special-case brand tokens when lowercasing method strings."
+    },
+    {
+     "severity": "minor",
+     "title": "Docs and code cite enforcement artifacts that do not exist: tests/motion.test.ts, tests/variants.test.ts, npm run qa:platform",
+     "location": "C:\\GitHub\\hakanduyar\\docs\\github-platform-constraints.md lines 5 and 37; src\\shared\\emit.ts line 39; src\\shared\\motion.ts line 129",
+     "detail": "The binding constraints doc says 'tests/motion.test.ts fails the build if a generated asset contains a prefers-reduced-motion media query' and tells readers to reproduce probes with 'npm run qa:platform'; emit.ts cites 'tests/variants.test.ts'. Verified: the tests directory contains only checks/readme/scene/tokens/type test files, and package.json has no qa:platform script (only qa:visual and qa:github). The enforcement itself does exist — tests/scene.test.ts covers the reduced-motion ban and variant parity, and checks.ts covers emitted files — but the named artifacts are wrong, which undermines a document whose authority rests on being reproducible as written.",
+     "recommendation": "Update the three references to tests/scene.test.ts (and scripts/validate/checks.ts) and change qa:platform to the actual script names, or add the missing aliases."
+    },
+    {
+     "severity": "minor",
+     "title": "Validator size ceilings are looser than the brief's binding budgets (160/700 KB vs 45-90/400 KB)",
+     "location": "C:\\GitHub\\hakanduyar\\scripts\\validate\\checks.ts lines 27-31 (SIZE_LIMITS); budgets at .ai\\project\\03-design-brief.md §9",
+     "detail": "The brief's budget table caps the animated hero at 90 KB per theme, any section asset at 45 KB, and the total at 400 KB. The harness enforces 160 KB per asset and 700 KB total. The committed assets currently comply with the brief (largest 33.5 KB, total 338.6 KB per npm run validate), so nothing is broken today, but the gate as written would pass a 150 KB section asset or a 650 KB payload — both brief violations. No documented deviation covers the looser thresholds.",
+     "recommendation": "Encode the brief's per-class budgets (hero animated 90 KB, hero static 45 KB, section assets 45 KB, total 400 KB) in SIZE_LIMITS, or document why the harness ceilings differ."
+    },
+    {
+     "severity": "minor",
+     "title": "package.json resurrects the audit-rejected name 'HDU // Personal Development System' in a public file",
+     "location": "C:\\GitHub\\hakanduyar\\package.json line 6",
+     "detail": "Audit §6.1 rejects 'PERSONAL DEVELOPMENT SYSTEM' as an objective defect ('a life-coaching product, not a software engineering practice') and §6.2 rules the mark is 'HDU // ENGINEERING RECORD'. The public repository's package.json description reads 'HDU // Personal Development System — the source system that generates the hakanduyar GitHub profile' — the exact rejected construction, visible to anyone who opens the repo the README footer links to. The validator only lints the README and asset manifests, so it cannot catch this.",
+     "recommendation": "Change the description to reference the ruled name (e.g. 'HDU engineering record — the source system that generates the hakanduyar GitHub profile')."
+    },
+    {
+     "severity": "minor",
+     "title": "T-010-mandated documentation disclosures missing; maintenance.md repeats the unachievable no-op-skip claim",
+     "location": "C:\\GitHub\\hakanduyar\\docs\\maintenance.md; requirements at .ai\\tickets\\BACKLOG.md T-010 regression risks (lines ~905-916)",
+     "detail": "T-010's regression risks require docs to disclose (a) that weekly bot commits inflate the very contribution graph the profile displays ('must be disclosed in docs/ — a profile that measures itself should say so'), (b) GitHub's auto-disabling of scheduled workflows after 60 days of repository inactivity plus the workflow_dispatch remedy, and (c) a review cadence for pinned action SHAs. Grep across docs/ finds none of these. Instead maintenance.md asserts 'commits only if something material changed', which finding 1 shows is not what the implementation delivers. Separately, no link check exists anywhere in the harness despite T-009 AC11 ('including the link check') and the brief's §8.9 instruction that any automated Medium check must use a browser UA.",
+     "recommendation": "Add the three disclosures to docs/maintenance.md, correct the material-change claim once finding 1 is fixed, and either implement the channel link check (browser UA for Medium) or record its omission as a deviation."
+    }
+   ]
+  },
+  {
+   "dimension": "a11y-language",
+   "verdict": "FAIL",
+   "summary": "I read the four binding documents, the full README, profile.ts, tokens.ts, the readme generator, all 18 generated SVGs (titles, descs, animation blocks, text-element counts), the text/size/decorative manifests dumped from src/build.ts, and the visual evidence PNGs; I ran the test suite (62/62 pass), the validator (0 errors, 338.6 KB total), the render drift gate (clean), and independently recomputed the WCAG contrast ratios (all match the brief: text tokens 5.38:1 or better, data fills 3.62+/4.26+). The accessibility core is genuinely strong — every SVG has role=img, aria-labelledby, informative title/desc, all text is outlined with real Markdown mirrors, static variants are verifiably animation-free, only the hero animates (2400ms entrance, one 9s linear loop, no flashing), the picture-source ordering matches the measured reduced-motion constraint, and no Turkish or banned-lexicon string appears anywhere. But the English layer and spec compliance do not survive close reading: the Identity section makes a blanket claim about all 55 public repositories that the owner's own record disproves in one click, the required Active work section is silently missing, the private-work sentence points 'below' at a chart that sits above it, brand names ship as 'Linkedin'/'Github'/'github', several spec'd t-label strings were demoted below the legibility floor (including an off-scale 18u size) without a deviation record, and the ledger's own T-008 blocking precondition (descriptions on the featured repos) is still open. The defects are individually small and cheap to fix, but a critical false claim plus five majors — two of them undocumented deviations from a fixed spec — means the work is not finished by its own binding standard.",
+   "confirmedMajors": [
+    {
+     "severity": "critical",
+     "title": "Falsifiable false claim: \"My public repositories are whole applications rather than exercises\"",
+     "location": "C:\\GitHub\\hakanduyar\\src\\shared\\profile.ts line 36 (rendered at README.md line 17)",
+     "detail": "The blanket claim covers all 55 public repositories, but the binding audit (.ai/project/02-audit.md section 4.2) bans dozens of those same repositories precisely because they are course and tutorial output: Flutter-Tutorial, Frontend-Dersleri (88 commits of lessons), Simon-Game, Drum-Kit, Dicee-Game, To-Do-List-App, all bootstrap-* and *-clone repos. A recruiter who clicks the Repositories tab disproves the sentence in one click, on a page whose entire thesis is verifiable fact. This is the exact 'stylist, not engineer' failure the audit's R2 warns about, and it is a claim phrased as fact that the owner's own public record contradicts.",
+     "recommendation": "Scope the claim to what is true, e.g. 'The repositories featured here are whole applications rather than exercises — ...' or 'My recent public work is whole applications ...'. One-word fix in profile.ts, then rebuild.",
+     "confirmed": true,
+     "votes": []
+    },
+    {
+     "severity": "major",
+     "title": "Required '## Active work' section is missing from the README",
+     "location": "C:\\GitHub\\hakanduyar\\README.md (absent between Activity and Operating principles); generator C:\\GitHub\\hakanduyar\\scripts\\generate\\readme.ts",
+     "detail": "Design brief section 8 fixes the README order and item 7 requires '## Active work — two bullets derived from the two most recent pushes, plus one sentence about private work'. The section does not exist anywhere in README.md or readme.ts (verified by grep; .ai/tickets/BACKLOG.md line 796 also lists it as required). The private-work sentence was folded into '## Activity' instead. STATUS.md's Deviations list (items 1-4) does not document this omission, so under the review rules it is a non-compliant undocumented deviation.",
+     "recommendation": "Either add the Active work section per spec, or record the omission with grounds in STATUS.md Deviations and get it ruled on. As shipped it silently drops a spec-mandated section.",
+     "confirmed": true,
+     "votes": [
+      {
+       "reasoning": "Confirmed by direct inspection. (1) The binding requirement exists: .ai/project/03-design-brief.md line 480, §8 item 7 requires '## Active work — two bullets derived from the two most recent pushes, plus one sentence about private work', and §8 states 'Order is fixed.' (2) README.md contains no '## Active work' section — it goes directly from '## Activity' (line 116) to '## Operating principles' (line 125), the exact slot the brief assigns to item 7. (3) The required private-work sentence was folded into '## Activity' instead (README.md line 123: 'Some current work is in private repositories...'). (4) The generator scripts/generate/readme.ts emits only Identity, Core modules, Selected systems, Telemetry, Activity, Operating principles, and Channels; grep for 'Active work' in it returns nothing. (5) STATUS.md's Deviations section (line 30) lists exactly four deviations (fontkit, reduced-motion guard placement, hero geometry, lint number floor) — none covers this omission — and docs/github-platform-constraints.md contains no measured constraint mentioning Active work or private-repo data. (6) BACKLOG.md line 796 independently lists 'Active work' among required sections. Under the review rules, this is an undocumented deviation from the fixed section order, i.e. a real major defect. The claim stands.",
+       "refuted": false
+      },
+      {
+       "reasoning": "Confirmed by direct inspection. The binding spec (03-design-brief.md §8, line 480) fixes the README order and requires item 7 '## Active work' (two bullets from the two most recent pushes + one private-work sentence); 02-audit.md line 502 and BACKLOG.md line 796 (AC9 listing the exact required headings, including 'Active work') corroborate it is required. README.md goes directly from '## Activity' (line 117) to '## Operating principles' (line 125), with the private-work sentence folded into the Activity paragraph (line 123). The generator scripts/generate/readme.ts emits only seven headings (lines 96/102/122/143/176/194/200) with no Active work section, appending PROFILE.privateWork to the Activity paragraph instead. STATUS.md's Deviations section lists only four deviations, none covering this omission, and docs/github-platform-constraints.md contains no mention of 'active' — so this is an undocumented deviation, not a measured platform constraint. The defect is real as described.",
+       "refuted": false
+      }
+     ]
+    },
+    {
+     "severity": "major",
+     "title": "Direction error: 'the public activity below' — the activity strip is above the sentence",
+     "location": "C:\\GitHub\\hakanduyar\\src\\shared\\profile.ts line 91 (rendered at README.md line 123)",
+     "detail": "The sentence 'Some current work is in private repositories, so the public activity below understates recent output' is emitted in the Activity section immediately AFTER the activity image (readme.ts line ~188 appends PROFILE.privateWork after the picture block). There is nothing below it but Operating principles and Channels. A native reader trips on this immediately; it reads as a copy-paste artifact from a draft with different ordering.",
+     "recommendation": "Change 'below' to 'above', or drop the deictic entirely: '... so public activity understates recent output.'",
+     "confirmed": true,
+     "votes": []
+    },
+    {
+     "severity": "major",
+     "title": "Brand names miscapitalized: 'Linkedin', 'Github', 'github account'",
+     "location": "C:\\GitHub\\hakanduyar\\README.md lines 135, 138, 111; root cause scripts\\generate\\readme.ts line 202 and lines 155-167",
+     "detail": "The Channels section renders 'Linkedin:' and 'Github:' because readme.ts line 202 title-cases the uppercase config labels with charAt(0) + slice(1).toLowerCase(), which destroys camel-case trademarks. The telemetry table's method column renders 'github account created 2021-02-20' because line 166 blanket-lowercases the uppercase method string from data/telemetry.json. Correct forms are LinkedIn and GitHub. On a profile whose premise is precision in professional English, wrong trademark casing is the kind of detail the target audience notices.",
+     "recommendation": "Store display-cased labels in config (label: 'LinkedIn') instead of derived casing, and keep proper nouns cased in the methods map (or maintain a proper-noun exception list in the lowercasing step).",
+     "confirmed": true,
+     "votes": [
+      {
+       "reasoning": "Directly confirmed the rendered defect in C:\\GitHub\\hakanduyar\\README.md: line 135 renders \"Linkedin:\", line 138 renders \"Github:\", and line 111 renders \"github account created 2021-02-20\" in the telemetry table. Confirmed the claimed root cause: scripts\\generate\\readme.ts line 202 title-cases the all-caps CHANNELS labels ('LINKEDIN', 'GITHUB' in src\\shared\\config.ts lines 101/104) via charAt(0) + slice(1).toLowerCase(), which destroys camel-case trademarks; and line 166 blanket-lowercases telemetry.json's \"GITHUB ACCOUNT CREATED 2021-02-20\" method string (data\\telemetry.json line 202). The binding spec itself uses correct casing — .ai\\project\\03-design-brief.md line 484 specifies the Channels section as \"GitHub, LinkedIn, Medium, Email\" — so the output contradicts the brief. No entry in .ai\\tickets\\STATUS.md Deviations or docs\\github-platform-constraints.md documents or excuses this. The defect is real exactly as claimed.",
+       "refuted": false
+      }
+     ]
+    }
+   ],
+   "refutedMajors": [],
+   "unverifiedOverflow": [
+    {
+     "severity": "major",
+     "title": "Blocking precondition T-008 unmet: three of four featured repos still have no description",
+     "location": "C:\\GitHub\\hakanduyar\\data\\telemetry.json (featured[].description: null for dropspot-project, Hunnes-Academy-motion-system, stock-management-system); .ai\\tickets\\STATUS.md (T-008 IN_PROGRESS, T-012 PLANNED)",
+     "detail": "Audit consolidated ruling 10 makes English descriptions and topics on all four selected repositories a blocking precondition for publish. The repo's own data snapshot shows description null on three of four, and the ticket ledger records T-008 as IN_PROGRESS and final acceptance T-012 as PLANNED — contradicting the claim that the system is finished. Additionally, the one description that does exist (spark: 'Personal Planning, Focus, and Growth System') is the exact 'personal ... system' idiom the audit's section 6.1 ruled reads as life-coaching to a native English reader; visitors sent to spark from this profile will land on that phrasing.",
+     "recommendation": "Complete T-008: set concise English descriptions and topics on all four repos (and reword spark's description) before treating the profile as publishable."
+    },
+    {
+     "severity": "major",
+     "title": "Undocumented type-scale demotions below the legibility floor, including an off-scale 18u size",
+     "location": "C:\\GitHub\\hakanduyar\\src\\telemetry\\telemetry-panel.ts line 37 (SEGMENT_LABEL size 18); also core-modules evidence names, plate LANGUAGE/LAST PUSH stacks, activity caption, hero LAST PUSH — all 22u (verified via text-manifest dump)",
+     "detail": "The brief specifies t-label (26u) for the core-modules evidence line (7.1), the plate LANGUAGE and LAST PUSH stack (7.2), the activity axis caption (7.4), and the hero bottom-rail LAST PUSH (6.1). All ship at 22u t-micro, flagged decorative:true to bypass the validator's 26u floor (scripts/validate/validate-all.ts line 153). The telemetry bar's TYPESCRIPT/HTML segment labels ship at 18u — a size that does not exist in the binding type scale at all (~7.3 CSS px at a 360px viewport). None of this appears in STATUS.md's Deviations list, and the t-micro escape hatch requires literal Markdown duplication, which fails for two strings: the stock plate's 'TYPESCRIPT' (README line 78 stack says only 'NestJS · Next.js · PostgreSQL · Prisma') and the dropspot plate's 'JAVASCRIPT' (line 48 says 'Node.js · Express · MongoDB · React'); both exist only in alt text, which is not Markdown text under RULE 2.",
+     "recommendation": "Document the demotions with measured grounds in STATUS.md (the fontkit-width rationale used for deviation 3 may extend here), remove or upsize the off-scale 18u labels, and add the plates' primary language to their visible Markdown lines (e.g. 'Stack: TypeScript · NestJS · ...')."
+    }
+   ],
+   "minors": [
+    {
+     "severity": "minor",
+     "title": "'PEAK WEEK 46' is ambiguous — reads as week number 46",
+     "location": "C:\\GitHub\\hakanduyar\\src\\activity\\activity-strip.ts (manifest string 'PEAK WEEK 46'); README.md line 120 alt 'peak week 46'; SVG desc 'a peak week of 46'",
+     "detail": "The label means 'the busiest week had 46 contributions', but on a strip of 52 numbered weeks 'PEAK WEEK 46' naturally parses as an index — and the amber peak bar actually sits near week 10, so the misreading is actively contradicted by the picture. The alt text repeats the same ambiguity; the visible prose ('a peak of 46 in one week') is the only clear phrasing of the three.",
+     "recommendation": "Use 'PEAK 46 IN ONE WEEK' or 'MAX WEEK: 46' in the asset, and 'peak of 46 contributions in the busiest week' in alt and desc."
+    },
+    {
+     "severity": "minor",
+     "title": "Alt text and desc editorialize beyond the image content",
+     "location": "C:\\GitHub\\hakanduyar\\scripts\\generate\\readme.ts line ~183 ('Work arrives in bursts.'); system-motion-system SVG desc and README line 57 ('not a pile of one-off animations')",
+     "detail": "The activity alt ends with the free-standing judgement 'Work arrives in bursts.', which is not a mark in the image and is immediately restated in the adjacent visible prose, so a screen-reader user hears the interpretation twice. The motion-system description 'A reusable motion layer for a production storefront, not a pile of one-off animations' breaks the brief's 5.4 tone rule (state what was built, never how good it is) — the negative comparison is an implicit quality claim in a casual register ('a pile of').",
+     "recommendation": "Trim the alt to what the chart shows; reword the motion line declaratively, e.g. 'A reusable motion layer for a production storefront: ten composable modules behind one configuration.'"
+    },
+    {
+     "severity": "minor",
+     "title": "Channels order deviates from the fixed spec order",
+     "location": "C:\\GitHub\\hakanduyar\\src\\shared\\config.ts lines 100-105 (rendered README.md lines 135-138)",
+     "detail": "Brief section 8 item 9 specifies 'GitHub, LinkedIn, Medium, Email'. Shipped order is LinkedIn, Medium, Email, GitHub. Not listed in STATUS.md Deviations.",
+     "recommendation": "Reorder the CHANNELS array to GitHub, LinkedIn, Medium, Email, or document the deviation."
+    },
+    {
+     "severity": "minor",
+     "title": "package.json still carries the rejected name 'HDU // Personal Development System'",
+     "location": "C:\\GitHub\\hakanduyar\\package.json line 6",
+     "detail": "Audit section 6.1 rejected 'PERSONAL DEVELOPMENT SYSTEM' as an objective defect (a fixed English idiom meaning self-improvement/life-coaching) and section 6.2 bans '//' outside the hero wordmark. The provenance footer links every visitor to this public repository, where the first descriptive string they can read is the rejected name.",
+     "recommendation": "Change the description to 'HDU // ENGINEERING RECORD — source for the hakanduyar GitHub profile' or plain 'Source system that generates the hakanduyar GitHub profile'."
+    },
+    {
+     "severity": "minor",
+     "title": "Platform constraints doc cites two test files that do not exist",
+     "location": "C:\\GitHub\\hakanduyar\\docs\\github-platform-constraints.md lines 37 and 84",
+     "detail": "The doc states 'tests/motion.test.ts fails the build if a generated asset contains a prefers-reduced-motion media query' and 'enforced by tests/legibility.test.ts'. Neither file exists (tests/ contains checks, readme, scene, tokens, type). The actual enforcement lives in tests/scene.test.ts line 79 and scripts/validate/validate-all.ts line 153 — the guarantees are real, but the binding constraints document points reviewers at phantom files.",
+     "recommendation": "Update the two references to the real enforcement locations."
+    },
+    {
+     "severity": "minor",
+     "title": "Discipline named inconsistently: 'interface and systems engineering' vs 'front-end and systems engineer'",
+     "location": "C:\\GitHub\\hakanduyar\\src\\shared\\profile.ts lines 24 and 27 (hero sub-line vs strapline, adjacent in the README)",
+     "detail": "The hero image and its alt say 'interface and systems engineering' (per audit 6.2); the bold Markdown line directly beneath the hero says 'front-end and systems engineer'. Two different names for the same discipline within two lines of each other reads as unsettled terminology; screen-reader users hear both back to back.",
+     "recommendation": "Pick one term — 'interface' is the ruled wording — and use it in both the strapline and the plate."
+    },
+    {
+     "severity": "minor",
+     "title": "SVG <desc> prose mixes shouted uppercase tokens into sentences",
+     "location": "C:\\GitHub\\hakanduyar\\assets\\generated\\hero-dark.svg desc ('INTERFACE AND SYSTEMS ENGINEERING.'); system-*.svg descs ('Primary language JAVASCRIPT')",
+     "detail": "The accessible descriptions are otherwise excellent sentences, but they interpolate the raw uppercase manifest strings: 'Identity plate for Hakan Duyar. INTERFACE AND SYSTEMS ENGINEERING. ...' and 'Primary language JAVASCRIPT, last public push 2025-11.' Descs are prose for assistive technology, not rendered marks — sentence case ('interface and systems engineering', 'JavaScript') is the natural register and reads better in braille and speech.",
+     "recommendation": "Case-normalize interpolated values when composing <desc> strings in the asset modules."
+    },
+    {
+     "severity": "minor",
+     "title": "Telemetry method line and hero drop the words 'PUBLIC SOURCE' from the mandatory method label",
+     "location": "C:\\GitHub\\hakanduyar\\assets\\generated\\telemetry-dark.svg ('SHARE OF 3.86 MB' / 'SHARE OF 3.86 MB ACROSS 55 PUBLIC REPOSITORIES'); hero omits the brief 6.1 'SHARE OF ... PUBLIC SOURCE' micro-line under the scale",
+     "detail": "Audit 5.2 makes the method label for the language share mandatory 'because language-by-bytes is a famously misleading metric when unlabelled', and brief 7.3 spells it as 'SHARE OF 3.94 MB PUBLIC SOURCE ACROSS 58 PUBLIC REPOSITORIES'. The shipped lines say 3.86 MB of an unstated quantity — megabytes of what is only answered in the Markdown table and alt text. The hero's 64.2% likewise carries no in-image method line (the deviation-3 geometry note covers coordinates, not content omissions).",
+     "recommendation": "Restore 'PUBLIC SOURCE' to the telemetry caption ('SHARE OF 3.86 MB PUBLIC SOURCE ACROSS 55 PUBLIC REPOSITORIES'); either restore the hero micro-line or add the omission to the STATUS.md deviation record."
+    }
+   ]
+  },
+  {
+   "dimension": "code-architecture",
+   "verdict": "FAIL",
+   "summary": "I read all binding spec documents, every module under src/, all scripts, workflows and tests, then ran the gates myself: npx tsc --noEmit is clean, all 62 vitest tests pass, `render --check` reports all 18 assets in sync, and `npm run validate` reports 0 errors over 18 assets and 132 manifest strings — the pipeline's determinism design (committed snapshot, fixed 2dp precision, no clocks or locale calls in the render path) is genuinely sound. The verdict is FAIL on one confirmed critical bug: the hero's readout stagger (.r0/.r1/.r2 animation-delay) is dead CSS because the later .ro animation shorthand resets the delay to 0s in the cascade, so the three metric readouts animate at t=0 instead of 900-1020ms, inverting the brief's §6.2 entrance order on the only animated asset — confirmed in the emitted SVG and visible in the team's own evidence screenshot hero-dark-t0_3s.png, and structurally invisible to the existing motion tests, whose regex only reads delays written inside the shorthand. Beyond that, three majors: the snapshot silently truncates at repositories(first:100) with no pageInfo guard (headline count and aggregates would diverge past 100 repos with no error), the validation gates encode ceilings materially weaker than the binding spec (160/700 KB vs the brief's 45-90/400 KB budgets; 10 of 40 build-failing lexicon terms unchecked, all undocumented), and ~290 lines across geometry.ts and motion.ts are dead code that docs/architecture.md and motion.ts's own header present as live architecture. The remaining findings are polish-grade but real: no-op rx on <path> containers (the spec'd 2u radius never renders), 'activity below' pointing the wrong way plus 'Linkedin/Github' casing in generated copy, a refresh guard that conflates crashes with no-change, doc references to three nonexistent test files, and a one-directional drift gate that cannot see orphaned committed assets. Test quality is above average for this kind of project — contrast floors, ramp direction, byte determinism and manifest honesty are real invariants — but the suite has a blind spot exactly where the one real bug lives.",
+   "confirmedMajors": [
+    {
+     "severity": "critical",
+     "title": "Hero entrance choreography is broken: the readout stagger delays are dead CSS and the numbers appear first, at t=0",
+     "location": "C:\\GitHub\\hakanduyar\\src\\hero\\hero.ts:291-292 (shipped in assets/generated/hero-dark.svg and hero-light.svg)",
+     "detail": "The rule string emits `.r0{animation-delay:900ms}.r1{animation-delay:960ms}.r2{animation-delay:1020ms}` BEFORE `.ro{opacity:0;animation:rise 240ms ... forwards}`. The `animation` shorthand resets `animation-delay` to its initial 0s, and because `.ro` has equal specificity (one class) and comes later in the stylesheet, its implicit 0s delay wins the cascade for elements carrying `class=\"ro r0\"`. Verified three ways: (1) the emitted <style> in assets/generated/hero-dark.svg preserves exactly this order after SVGO; (2) CSS Animations spec semantics — a shorthand sets omitted longhands to initial values, and later equal-specificity rules win; (3) the team's own evidence frame .ai/evidence/visual/hero-dark-t0_3s.png shows all three readouts (REPOSITORIES 55 / COMMITS 870 / TYPESCRIPT 64.2%) fully rendered at t=0.3s while the header band (320ms), wordmark wipe (480ms) and everything else are still absent — with 900ms delays working, the readouts would be at opacity 0 at t=0.3s. The binding brief (.ai/project/03-design-brief.md §6.2 row 6) places the instrument rows at 900ms with a 60ms sibling stagger, sixth of nine steps; instead they pop in first, before the frame has even finished drawing, inverting the choreography on the single animated asset the whole system exists to showcase. No documented deviation covers this (.ai/tickets/STATUS.md lists geometry re-derivation only). The test suite cannot catch it: the entrance-ceiling test in tests/scene.test.ts matches only delays written inside the `animation:` shorthand, so standalone `animation-delay` declarations — exactly the broken mechanism — are invisible to it, and no test asserts entrance ordering.",
+     "recommendation": "Move the delays into per-class shorthand rules (e.g. emit `.r0{animation:rise 240ms <ease> 900ms forwards}` per readout, or place the `.r0/.r1/.r2` animation-delay rules AFTER the `.ro` shorthand in the stylesheet). Re-render, recommit assets, and add a test that parses computed per-class effective delays (shorthand-aware) and asserts the brief's ordering: header < wordmark < sub-line < readouts < scale < index < footer.",
+     "confirmed": true,
+     "votes": []
+    },
+    {
+     "severity": "major",
+     "title": "snapshot.ts silently truncates at 100 repositories and publishes internally inconsistent numbers past that boundary",
+     "location": "C:\\GitHub\\hakanduyar\\scripts\\generate\\snapshot.ts:53 (query), 178-186 (aggregation)",
+     "detail": "The query requests `repositories(first: 100 ...)` with no `pageInfo { hasNextPage }` and no guard that `nodes.length` accounts for `totalCount`. At 101+ public non-fork repos (currently 55, historically growing ~12/year), `publicRepos` still uses `totalCount` (correct) while `totalCommits`, the language byte aggregation, `lastPush` and the featured-repo lookup all iterate only the first 100 nodes — the profile would then publish a repository count and a commit/language figure measured over different sets, with zero errors raised. This directly violates the audit's fail-loud ruling (02-audit.md R4: no silent republish of wrong numbers) and the 'no metric without a measurement' rule, because the commit total would no longer measure what its method label claims. Related robustness gaps in the same file: `languages(first: 10)` silently drops byte counts for repos with >10 languages, and `UserPayload.name` is typed `string` though the GitHub API field is nullable — a cleared display name would crash much later inside fontkit layout with an opaque TypeError instead of a clear snapshot error.",
+     "recommendation": "Request `pageInfo { hasNextPage }` and throw if `hasNextPage` is true or `nodes.length !== totalCount` after the archived filter is reconciled (or implement cursor pagination). Type `name` as `string | null` and fail with a clear message in the snapshot when it is null.",
+     "confirmed": true,
+     "votes": []
+    },
+    {
+     "severity": "major",
+     "title": "Enforcement gates are silently weaker than the binding spec: size ceilings ~2x the brief's budgets, and 10 of 40 build-failing lexicon terms unchecked",
+     "location": "C:\\GitHub\\hakanduyar\\scripts\\validate\\checks.ts:26-31 and C:\\GitHub\\hakanduyar\\scripts\\validate\\validate-all.ts:29-36",
+     "detail": "The brief's §9 budget table is binding: hero 90 KB animated / 45 KB static per theme, any section asset 45 KB, all generated assets 400 KB total. The validator enforces `perAsset: 160 KB` and `totalPayload: 700 KB` — every per-asset ceiling is 1.8-3.5x looser and the total is 1.75x looser. Current output happens to comply (largest asset 33.5 KB, total ~339 KB), so the gap is latent, but the gate as written would green-light a build that violates every budget in the spec. Similarly, brief §5.2 lists 40 banned terms as 'build-failing'; BANNED_LEXICON in validate-all.ts omits 10 of them: BOOT, ONLINE, [OK], [FAIL], PROTOCOL, TARGET, LOCKED, ENGAGE, OPERATOR, SYNCING — with no recorded rationale, while the file's comment claims the list is 'Sourced from the design brief's banned lexicon'. Neither weakening appears in STATUS.md's deviations or in docs/github-platform-constraints.md, so per the review ground rules both are undocumented deviations from a binding document. I verified the current README and all 132 manifest strings pass even the full 40-term list, so this is a gate-soundness defect, not a content defect.",
+     "recommendation": "Set SIZE_LIMITS to the brief's numbers (per-asset limits keyed by asset id: hero 90 KB, hero-static 45 KB, sections 45 KB; total 400 KB) and complete BANNED_LEXICON to the brief's 40 terms; if any term is deliberately dropped for false-positive reasons, record it in STATUS.md deviations the way the Turkish-character exclusions are recorded in checks.ts.",
+     "confirmed": true,
+     "votes": []
+    },
+    {
+     "severity": "major",
+     "title": "Two entire shared modules (~290 lines) are dead code, yet documented as load-bearing architecture, plus assorted unused exports and config",
+     "location": "C:\\GitHub\\hakanduyar\\src\\shared\\geometry.ts (all 147 lines), C:\\GitHub\\hakanduyar\\src\\shared\\motion.ts (all 144 lines)",
+     "detail": "Verified by grep over src/scripts/tests: nothing imports geometry.ts (tickRing, cornerBrackets, ruler, dotGrid, routedTrace, crosshair, polylineLength, mapRange) or motion.ts (keyframes, loopAnimation, revealStops, stagger, Stop, EASE, animationBlock, REDUCED_MOTION_IS_HANDLED_IN_THE_README). The hero writes its animation CSS by hand through Canvas.rule()/Canvas.keyframes(). Worse than mere dead weight: motion.ts's 40-line header documents a 'single master loop' timing architecture ('every animated element shares one animation-duration... expressed as percentages of that master loop') that the shipped hero does not use — it uses per-element durations and delays, the exact pattern the comment warns against — and docs/architecture.md's module table lists both files as live responsibilities ('HUD primitives', 'Keyframe helpers'). Also dead: RAW_BASE (config.ts:12, never referenced; the README uses relative paths), FeaturedRepoConfig.status (config.ts:35-37 — 'ACTIVE'/'STABLE' values are declared, populated for all four repos, documented as 'Must reflect the real state of the repository', and never rendered or validated anywhere), MIN_TYPE_SIZE (checks.ts:37), and SPACE/hairlineY/span (tokens.ts). For a solo-owner repo whose docs are the maintenance contract, ~10% of src being fictional architecture is a real maintainability cost: tsc's noUnusedLocals cannot see unused exports, so nothing stops the drift.",
+     "recommendation": "Delete geometry.ts, motion.ts, RAW_BASE, the status field, MIN_TYPE_SIZE and the unused tokens exports (or wire them in where genuinely intended); update docs/architecture.md's module table to match reality; consider knip or ts-prune in CI to keep unused exports at zero.",
+     "confirmed": true,
+     "votes": []
+    }
+   ],
+   "refutedMajors": [],
+   "unverifiedOverflow": [],
+   "minors": [
+    {
+     "severity": "minor",
+     "title": "Docs and comments cite three test files that do not exist as the build-failing enforcement mechanism",
+     "location": "C:\\GitHub\\hakanduyar\\docs\\github-platform-constraints.md:37,84; src\\shared\\motion.ts:129; src\\shared\\emit.ts:39",
+     "detail": "docs/github-platform-constraints.md states 'tests/motion.test.ts fails the build if a generated asset contains a prefers-reduced-motion media query' (line 37) and 'enforced by tests/legibility.test.ts' (line 84); emit.ts:39 says 'tests/variants.test.ts asserts that the animated and static variants keep the same element count'. None of these files exists — tests/ contains only checks, readme, scene, tokens, type. The invariants themselves ARE enforced elsewhere (scene.test.ts 'no build ever emits a prefers-reduced-motion query' and the variant-parity path count; validate-all.ts's legibility floor and checks.ts's svg-motion check), so this is documentation rot rather than a missing gate — but the platform-constraints doc is the document this review is told to treat as the authority for deviations, and it names enforcement that cannot be found, which a reviewer must then chase down file by file.",
+     "recommendation": "Point each reference at the real enforcement (tests/scene.test.ts, scripts/validate/validate-all.ts, scripts/validate/checks.ts), or split those assertions into the named files."
+    },
+    {
+     "severity": "minor",
+     "title": "rx: RADIUS is passed to <path> elements where it has no effect — the brief's 2u container radius never renders anywhere",
+     "location": "C:\\GitHub\\hakanduyar\\src\\hero\\hero.ts:94,151; src\\modules\\core-modules.ts:43; src\\systems\\system-plate.ts:50; src\\telemetry\\telemetry-panel.ts:57; src\\activity\\activity-strip.ts:55",
+     "detail": "All six container frames are drawn as chamferRect <path> elements with `rx: RADIUS` in their attribute maps. `rx` is a rect/ellipse geometry attribute; on <path> it is meaningless in every renderer, and SVGO's removeUnknownsAndDefaults strips it from the committed output entirely (verified: zero rx attributes in any emitted asset). The design brief §3.4.3 specifies 'Corner radius: 2u on containers' and §6.1 specifies the hero frame at 'radius 2' — every shipped panel actually has square corners. Visually negligible at 890px, but the code asserts an intent the output does not carry, and the RADIUS token is now a no-op across the whole system.",
+     "recommendation": "Either bake the 2u radius into the chamferRect path geometry (arc corners) and re-render, or delete the rx attributes and the RADIUS token and record square corners as a deliberate deviation."
+    },
+    {
+     "severity": "minor",
+     "title": "README copy defects produced by the generator: 'activity below' points the wrong way, and 'Linkedin'/'Github' mis-capitalize brand names",
+     "location": "C:\\GitHub\\hakanduyar\\src\\shared\\profile.ts:91 + scripts\\generate\\readme.ts:188,198 (rendered at README.md:123,135,138)",
+     "detail": "PROFILE.privateWork reads '...the public activity below understates recent output', but readme.ts appends it to the paragraph AFTER the activity image — in the shipped README.md:123 the activity strip is above the sentence, so the spatial reference is wrong. Separately, readme.ts:198 derives channel labels via charAt(0)+slice(1).toLowerCase(), turning LINKEDIN into 'Linkedin' and GITHUB into 'Github' (README.md:135,138); the correct brand spellings are LinkedIn and GitHub, on a page whose entire thesis is typographic precision. Both survive validation because no gate covers prose direction words or brand casing.",
+     "recommendation": "Change 'below' to 'above' (or move the sentence before the image), and give CHANNELS an explicit display label ('LinkedIn', 'GitHub', 'Medium', 'Email') instead of deriving casing mechanically."
+    },
+    {
+     "severity": "minor",
+     "title": "material-change.mjs conflates a crash with 'no material change', and its skip path is nearly unreachable by design",
+     "location": "C:\\GitHub\\hakanduyar\\scripts\\generate\\material-change.mjs:33,37 + .github\\workflows\\refresh-telemetry.yml (Detect material change step)",
+     "detail": "The script signals 'no material change' via exit 1, but an uncaught exception (JSON parse failure, missing file — it reads 'data/telemetry.json' relative to CWD, unlike every other script which resolves from REPO_ROOT) also exits non-zero. The workflow's `if node ...; then ... else changed=false` therefore treats any crash as 'nothing changed', reverts the snapshot, and reports the run green — a permanently failing guard would silently stop telemetry refreshes forever, exactly the maintenance-decay mode audit ruling R4 exists to prevent. Additionally, the guard's stated purpose ('a run where nothing moved but the clock produces no commit') is almost never exercised on its weekly Monday cadence: the 52-complete-week window advances every week, rotating activity.weekly and changing activity.start/end and methods.activity, so virtually every scheduled run is 'material' even with zero new contributions.",
+     "recommendation": "Distinguish outcomes explicitly (e.g. print CHANGED/UNCHANGED to stdout and always exit 0, failing the step on any exception; or use exit 0/10 with a `set -e`-safe case statement), resolve the JSON path from the script's own directory, and decide whether calendar-window rotation should count as material — if not, strip activity.start/end and normalize the weekly window before comparing."
+    },
+    {
+     "severity": "minor",
+     "title": "The drift gate is one-directional: orphaned committed assets pass every check",
+     "location": "C:\\GitHub\\hakanduyar\\scripts\\render\\render-all.ts:22-38",
+     "detail": "`render --check` iterates the 18 in-memory builds and verifies each has a matching committed file; it never verifies the inverse — that every .svg under assets/generated corresponds to a current build. If a featured key or asset name changes, the renderer writes new files, the old ones stay committed, `--check` stays green, validate-all still lints the stale files as valid standalone SVGs, and refresh-telemetry.yml's `git add assets/generated` carries them forward indefinitely. The repository would permanently ship dead image files with stale numbers in their <desc> text.",
+     "recommendation": "In --check mode, also list assets/generated/*.svg and fail on any file not present in the build set (and optionally have the render mode delete unexpected files)."
+    }
+   ]
+  },
+  {
+   "dimension": "data-honesty",
+   "verdict": "FAIL",
+   "summary": "I cross-checked every displayed figure against data/telemetry.json, dumped all 132 SVG text-manifest strings via buildAll, and verified the snapshot against live GitHub GraphQL: all numbers (55 repos, 870 commits, 64.2% TS of 3.86 MB, 135 contributions summing exactly to the 52 plotted bars, 9 active weeks, peak 46 at the highlighted index, last push 2026-08-16, hero needle at the measured 64.2% scale position) are accurate, internally consistent, and honestly labelled — the audit's older 58/962 figures reflect three repos since deleted, and the 136-vs-135 difference is the documented dropped partial week. npm test (62/62), npm run validate (0 errors), render --check (18/18 match) and tsc all pass, and no banned metric (followers, stars, streaks, invented units) appears in any rendered surface. However, prose verification against the actual repositories via gh found the lead exhibit's stack names MongoDB where the repo is unambiguously PostgreSQL (pg driver, SQL schema, 'Why PostgreSQL?' section), 'idempotency keys' claimed where only existence-check/unique-constraint idempotency exists, an unverifiable 'production storefront' claim, and an identity sentence ('my public repositories are whole applications rather than exercises') falsified by the ~30 tutorial/clone repos on the account. The audit's blocking precondition is also only half-met: descriptions are set but topics are empty on all four featured repos, and STATUS.md itself still lists T-008 IN_PROGRESS and T-012 PLANNED. The numeric telemetry pipeline earns a pass, but the factual-accuracy promise fails on the checkable prose claims.",
+   "confirmedMajors": [
+    {
+     "severity": "critical",
+     "title": "Lead exhibit's database is wrong: profile says MongoDB, dropspot-project is PostgreSQL",
+     "location": "C:\\GitHub\\hakanduyar\\src\\shared\\config.ts line 54 (stack: ['Node.js','Express','MongoDB','React']), rendered at C:\\GitHub\\hakanduyar\\README.md line 48",
+     "detail": "The dropspot-project repository states PostgreSQL everywhere: its README architecture block reads 'Node.js + Express + PostgreSQL', lists 'PostgreSQL 14+' as a prerequisite, has a 'Why PostgreSQL?' section, shows a SQL schema with SERIAL/FOR UPDATE, and its backend package.json depends on 'pg' with no mongoose/mongodb (verified via gh api repos/hakanduyar/dropspot-project/readme and .../contents/dropspot-backend/package.json). The telemetry snapshot even records 34,506 bytes of PLpgSQL. The profile's stack line 'Node.js · Express · MongoDB · React' is falsifiable in one click on the profile's own lead exhibit, on a page whose core promise (audit RULE 3 / R2) is factual precision. The dropspot signals also lean on ACID/transactional correctness, which makes naming the wrong database especially damaging.",
+     "recommendation": "Change 'MongoDB' to 'PostgreSQL' in config.ts FEATURED_REPOS[dropspot].stack, rebuild (npm run build), and re-verify the rendered README line.",
+     "confirmed": true,
+     "votes": [
+      {
+       "reasoning": "CONFIRMED by direct inspection. (1) C:\\GitHub\\hakanduyar\\src\\shared\\config.ts line 54 reads stack: ['Node.js', 'Express', 'MongoDB', 'React'] for the dropspot entry, and C:\\GitHub\\hakanduyar\\README.md line 48 renders \"Stack: Node.js · Express · MongoDB · React.\" — both read directly. (2) The live dropspot-project repository contradicts this: `gh api repos/hakanduyar/dropspot-project/readme` returns a README stating \"Node.js + Express + PostgreSQL\" (line 41), \"Database (PostgreSQL with Transactions)\" (line 48), PostgreSQL as prerequisite (lines 67, 208 \"PostgreSQL 14+\"), a \"Why PostgreSQL?\" section (line 293), and an SQL schema block (line 84); grep found zero MongoDB mentions in it. (3) `gh api repos/hakanduyar/dropspot-project/contents/dropspot-backend/package.json` shows a dependency on \"pg\": \"^8.11.3\" and no mongoose/mongodb. (4) No binding document sanctions MongoDB: the deviations list in .ai/tickets/STATUS.md (4 entries: fontkit, reduced-motion guard, hero geometry, number-floor lint) never touches the dropspot stack, and docs/github-platform-constraints.md is about rendering constraints, not repo facts. The specs' only Mongo association is playable-ecommerce, a BANNED repo (.ai/project/02-audit.md line 362), suggesting the stack line was copied from the wrong repository's story. Severity critical is warranted: this is the lead exhibit (02-audit.md line 346), the wrong claim is falsifiable in one click on the linked repo, and the profile's own signal line \"transactional claims keep concurrent buyers consistent\" (config.ts line 51) leans on exactly the PostgreSQL-transactions story the real README tells. One caveat on the claimant's supporting evidence: the 34,506 bytes of PLpgSQL in data/telemetry.json (lines 114-115) are account-wide and come from eat-fit-evolve (21,520) + kilo-takip-dusler-alemi (2,390) + planmaster-chronos-flow (10,596), not from dropspot-project, whose GitHub language breakdown is JavaScript/CSS/HTML only — that detail is misattributed, but the core defect stands on the README and package.json evidence alone.",
+       "refuted": false
+      },
+      {
+       "reasoning": "CONFIRMED by direct inspection. (1) Local claim side: C:\\GitHub\\hakanduyar\\src\\shared\\config.ts line 54 reads stack: ['Node.js', 'Express', 'MongoDB', 'React'] inside the FEATURED_REPOS entry for repo 'dropspot-project', and C:\\GitHub\\hakanduyar\\README.md line 48 renders it as \"Stack: Node.js · Express · MongoDB · React.\" on the lead exhibit. (2) Ground truth side, reproduced via read-only gh api calls: repos/hakanduyar/dropspot-project/readme decodes to a README stating \"Node.js + Express + PostgreSQL\" (line 41), \"Database (PostgreSQL with Transactions)\" (48), \"PostgreSQL\" in the tech list (67), \"PostgreSQL 14+\" as a prerequisite (208), a \"Why PostgreSQL?\" section (293), and a PostgreSQL schema figure caption (344); a grep for mongo across that README returned zero hits. repos/hakanduyar/dropspot-project/contents/dropspot-backend/package.json shows \"pg\": \"^8.11.3\" and no mongoose/mongodb dependency. (3) Not a documented deviation: .ai/tickets/STATUS.md's \"Deviations\" section lists exactly four items (fontkit vs opentype.js, reduced-motion guard placement, hero geometry, traceability number floor) — nothing about the dropspot stack — and docs/github-platform-constraints.md contains no database-related entry (grep for mongo/postgres/database returned nothing). (4) Severity framing holds: the profile's own binding docs stake it on factual precision (03-design-brief.md RULE 3, lines 29-31; 02-audit.md R2, line 148, severity critical), and the dropspot signals in config.ts lines 50-52 lean on idempotency/transactional consistency, making the wrong database name on the lead exhibit falsifiable in one click. One peripheral correction to the claimant's supporting evidence: the \"34,506 bytes of PLpgSQL\" in data/telemetry.json (lines 114-115) is account-wide telemetry aggregated from other repos (eat-fit-evolve 21,520 + planmaster-chronos-flow 10,596 + kilo-takip-dusler-alemi 2,390 per .ai/evidence/github-graphql-raw.json); dropspot-project itself reports only JavaScript/CSS/HTML to the languages API. That misattribution does not weaken the core defect, which stands on the repo's own README and package.json.",
+       "refuted": false
+      }
+     ]
+    },
+    {
+     "severity": "major",
+     "title": "'Idempotency keys' claimed twice; the repository implements idempotent operations, not key-based idempotency",
+     "location": "C:\\GitHub\\hakanduyar\\src\\shared\\config.ts line 51 and src\\shared\\profile.ts line 55, rendered at README.md lines 29 and 45",
+     "detail": "dropspot-project's README section 'Idempotency & Transaction Handling' shows the actual mechanism: pre-existence checks (if (existingEntry) return alreadyJoined), UNIQUE(user_id, drop_id) constraints and FOR UPDATE row locks. There is no Idempotency-Key header, no client-supplied key, and no key store anywhere in the backend source tree (verified via gh api tree and code search). 'Idempotency keys' is a specific, stronger mechanism than what exists. The audit and 00-context.md say 'idempotency and transaction handling' — the implementation upgraded that to a named mechanism the code does not contain. A backend engineer who clicks through and greps for the keys will not find them.",
+     "recommendation": "Reword both occurrences to match reality, e.g. 'Idempotent claim endpoints and transactional writes keep concurrent buyers consistent' (the plate line 'IDEMPOTENT CLAIM HANDLING' is already accurate — mirror that wording).",
+     "confirmed": true,
+     "votes": [
+      {
+       "reasoning": "Confirmed by direct inspection. (1) The phrase \"idempotency keys\" appears at src/shared/config.ts:51 and src/shared/profile.ts:55, rendered at README.md:29 and README.md:45. (2) The binding docs say only \"idempotency and transaction handling\" (00-context.md:39, 02-audit.md:346), and the design brief's own example sentence (03-design-brief.md:323) uses \"idempotent order handling\" — no spec document uses \"keys\"; STATUS.md's Deviations section does not cover this wording. (3) I fetched dropspot-project's full tree and grepped all 19 backend source files for Idempotency-Key/idempotencyKey/idempotency_key/x-idempotency: zero occurrences; GitHub code search for \"idempotency\" in the repo returns 0. The actual mechanism matches the claim's description exactly: Claim.js does a SELECT ... WHERE user_id AND drop_id FOR UPDATE pre-existence check returning alreadyClaimed, migrate.js declares UNIQUE(user_id, drop_id) on waitlist and claims tables, and the project README's \"Idempotency & Transaction Handling\" section documents only pre-existence checks and FOR UPDATE isolation — no client-supplied key, no key store. (4) config.ts:25's own contract requires every signal to be \"verifiable from the source\"; this one is refutable from the source. The defect is real at major severity: the profile's lead exhibit claims a specific named mechanism (client-supplied idempotency keys) that the code does not contain, and a backend engineer who greps for it will find nothing.",
+       "refuted": false
+      },
+      {
+       "reasoning": "Confirmed by direct inspection. (1) The exact phrase \"idempotency keys\" appears at src\\shared\\config.ts:51 and src\\shared\\profile.ts:55, rendered at README.md:29 and README.md:45. (2) The dropspot-project source (local clone in sync with origin/main at 943756e, 2025-11-07, matching the profile's recorded last push) contains zero matches for any idempotency-key pattern (idempotency[-_]?key, Idempotency-Key header, idempotencyKey); its actual mechanism is pre-existence checks with SELECT...FOR UPDATE inside transactions (Waitlist.js:11-15, Claim.js:11-15), UNIQUE(user_id, drop_id) constraints (migrate.js:51,63), and alreadyJoined early returns (dropController.js:119-123) — its own README calls this \"Idempotent operations\", never keys; the only unique code (claim_code) is a post-success receipt, not a dedup key. (3) The binding specs say only \"idempotency and transaction handling\" (00-context.md:39, 02-audit.md:346) — the implementation upgraded that to a specific named mechanism the code lacks. (4) STATUS.md's Deviations section does not cover this, and the wording violates the repo's own rules: config.ts:25 (\"Each must be verifiable from the source\"), config.ts:20-23 (\"never inventing capability the repository does not have\"), and 03-design-brief.md:322. A backend engineer who clicks through and greps for keys will not find them. The defect is real at the claimed severity.",
+       "refuted": false
+      }
+     ]
+    },
+    {
+     "severity": "major",
+     "title": "'A reusable motion layer for a production storefront' is unverifiable from the public record",
+     "location": "C:\\GitHub\\hakanduyar\\src\\shared\\config.ts line 61, rendered at README.md line 57; also propagated into the live GitHub description of Hunnes-Academy-motion-system (T-008)",
+     "detail": "The repository contains no evidence of a storefront or of production deployment: its README is a single title line, there is no site URL, no homepage field, and the page modules are home/education/instructor/faq/contact — an academy marketing site, not a storefront (verified via gh api git/trees and readme). config.ts's own contract says signals/headlines must be 'verifiable from the source' and must 'never invent capability the repository does not have'; both 'production' and 'storefront' are asserted on private knowledge the reader cannot check, which is exactly the evasion pattern audit R9 warns against. The claim was additionally written into the repo's live GitHub description during T-008, spreading the unverifiable assertion to the destination page.",
+     "recommendation": "Drop the deployment claim or state only what is public, e.g. 'A reusable motion layer for one site, not a pile of one-off animations', and update the GitHub description of the repo to match.",
+     "confirmed": true,
+     "votes": [
+      {
+       "reasoning": "Confirmed by direct inspection. (1) The headline exists at src/shared/config.ts:61 and README.md:57. (2) The live GitHub description of Hunnes-Academy-motion-system now reads \"Composable GSAP motion system for a production storefront...\" (verified via gh api), matching the T-008 change logged in .ai/reports/cross-repo.md:12. (3) The repo's entire public record — fetched README (one title line), metadata (homepage: null, has_pages: false), full tree and source tarball — contains no storefront, checkout, cart, price, ikas, or deployment URL; pages are home/education/instructor/faq/contact (academy site), and src/config.js ships debug:true, v0.3.0. The only commerce-adjacent token is one .hns-product-cta selector. (4) The binding spec condemns the wording: config.ts's own headline contract says \"never inventing capability the repository does not have\"; audit R9 (02-audit.md:201-206) explicitly warns that hinting at the private work (hunnes-ikas-theme, listed NOT linkable in 00-context.md:44) \"reads as evasion\"; the audit's sanctioned description of the repo (02-audit.md:349) contains no storefront/production language. (5) No documented deviation covers it: STATUS.md's Deviations list is four technical items, and docs/github-platform-constraints.md addresses rendering only. Moreover cross-repo.md's claim that \"each description restates what the repository's own README/source documents\" is demonstrably false for this row. The reviewer slightly conflates the signals clause (\"verifiable from the source\") with the headline clause, but the defect stands on the headline contract, R9, and the false T-008 justification. Severity major is appropriate: an unverifiable \"production storefront\" claim propagated to the destination page of a profile whose thesis is verifiability.",
+       "refuted": false
+      },
+      {
+       "reasoning": "Confirmed by direct inspection. The headline exists at src/shared/config.ts:61 and README.md:57, and `gh api repos/hakanduyar/Hunnes-Academy-motion-system` confirms T-008 wrote \"for a production storefront\" into the live description (homepage: null, topics: []). The public record refutes both words: the live README is a single title line (\"# Hunnes Academy Motion System\"); the full tree's page modules are home/education/instructor/faq/contact — an academy marketing site, not a storefront; a grep of the entire public tarball (20 JS files incl. the built bundle) finds zero occurrences of storefront/shop/cart/checkout/e-commerce/ikas/production/deploy or any site URL (only the CSS selector .hns-product-cta), and the public src/config.js ships debug:true at version 0.3.0 with an empty package description. The T-008 report's own justification — \"Each claim in each description restates what the repository's own README/source documents\" — is demonstrably false for this repo. \"storefront\" appears nowhere in the binding spec; 00-context.md describes the repo only as a \"GSAP modular motion system\" and marks the only plausible storefront source (private hunnes-ikas-theme) NOT linkable, so the claim rests on private knowledge — the exact evasion pattern audit R9 bans. It is not among the four documented deviations in .ai/tickets/STATUS.md and is not a measured platform constraint. Minor quibble only: the \"verifiable from the source\" clause strictly governs signals[] (which do verify), but the headline's own clause (\"never inventing capability the repository does not have\") plus the false T-008 justification uphold the defect. Severity major is appropriate: the unverifiable assertion is published on both the profile README and the destination repo's live description.",
+       "refuted": false
+      }
+     ]
+    },
+    {
+     "severity": "major",
+     "title": "'My public repositories are whole applications rather than exercises' is contradicted by the majority of the 55 public repositories",
+     "location": "C:\\GitHub\\hakanduyar\\src\\shared\\profile.ts line 36, rendered at README.md line 17",
+     "detail": "Of the 55 live public non-fork repos (verified via gh GraphQL), roughly 30 are course/tutorial/clone output that the binding audit itself classifies as such (§4.2 'BANNED as a class'): four bootstrap-* repos, Simon-Game, Drum-Kit, Dicee-Game, To-Do-List-App, Weather-App, React-Quiz-App, tic-tac-toe, random-quote-generator, login-signup, card_component, IMDB-clone, instagram-clone, youtube_clone, Frontend-Dersleri (lessons repo), patika-dev, Turkcell_React, Flutter-Tutorial, etc. The blanket claim about 'my public repositories' as a class is falsified by one click on the Repositories tab. config.ts's own comment concedes these repos 'exist in the account and are not hidden'. This is an overstatement under the audit's RULE 3 and the exact 'reader does arithmetic' trap R2 warns about.",
+     "recommendation": "Scope the claim to what is true, e.g. 'The repositories I feature here are whole applications rather than exercises — ...' or 'My recent public work is whole applications ...'.",
+     "confirmed": true,
+     "votes": [
+      {
+       "reasoning": "Confirmed by direct inspection. (1) The sentence exists verbatim: src/shared/profile.ts lines 35-38, rendered at README.md line 17, and its subject is the unqualified class \"My public repositories\" — the em-dash clause is an example list, not a restriction. (2) Live GitHub API query returns exactly 55 public non-fork repos (matches data/telemetry.json publicRepos:55, captured 2026-08-23). Of those, 21 are repos the binding audit itself brands \"Course and tutorial output ... BANNED as a class\" in 02-audit.md §4.2 (Simon-Game, Drum-Kit, Dicee-Game, To-Do-List-App, Weather-App, React-Quiz-App, baykar-quiz-app, tic-tac-toe, random-quote-generator, login-signup, card_component, patika-dev, Frontend-Dersleri, Flutter-Tutorial, 4x bootstrap-*, IMDB-clone, instagram-clone, youtube_clone), and 13 more sit in the audit's other banned rows (generator scaffolds, one-day spikes, near-duplicates) — 34 of 55 (62%), so even the \"majority\" framing holds under the audit's own rulings. (3) config.ts lines 40-42 concede these repos \"exist in the account and are not hidden\". (4) No documented deviation covers the sentence: STATUS.md Deviations lists only fontkit, reduced-motion, hero geometry, lint digit floor; the platform-constraints doc is irrelevant. (5) The audit's R2 (critical) and §6.3 explicitly treat \"an overclaim the reader can check\" as a defect, and §4.2 orders \"do not draw attention to that neighbourhood\" — the sentence invites one click of falsification. The claim's one error is citing \"the audit's RULE 3\" (RULE 3 is the design brief's no-metric-without-measurement rule and does not apply to a number-free sentence), but its substantive hooks (§4.2 classification, R2 trap, config.ts concession) all verify, so the defect stands as major.",
+       "refuted": false
+      },
+      {
+       "reasoning": "Confirmed by direct inspection. (1) The sentence \"My public repositories are whole applications rather than exercises\" exists at src/shared/profile.ts:35-38 and renders at README.md:17. (2) Live gh GraphQL (public, non-fork, OWNER) returns exactly 55 repos, matching data/telemetry.json; the list still contains all 21 repos the binding audit's own §4.2 row (02-audit.md:364) classifies as \"Course and tutorial output ... BANNED as a class\" (Simon-Game, Drum-Kit, Dicee-Game, To-Do-List-App, Weather-App, React-Quiz-App, tic-tac-toe, random-quote-generator, login-signup, card_component, Flutter-Tutorial, Frontend-Dersleri, patika-dev, baykar-quiz-app, 4x bootstrap-*, 3x *-clone/*_clone), plus ~14 more banned as scaffold spikes/near-duplicates and further obvious course output (Turkcell_React, Frontend, CardApp, Akademi-Grup-96, crm-task-1). Only 4 of 55 are audit-ruled substantive, so the class claim is falsified by one click on the Repositories tab. (3) No binding document prescribes the sentence (brief §8 only constrains the Identity section's length and banned facts), and STATUS.md's Deviations list (4 items) does not cover it, so it is an undocumented editorial overclaim. (4) The audit's own standard condemns exactly this: R2 (02-audit.md:148) treats claims the data cannot cash as critical risk, and the §6 ruling (line 499) renames sections specifically to remove \"an overclaim the reader can check\"; config.ts:40-42 concedes the tutorial repos \"exist in the account and are not hidden\". The reviewer's rule citations are sloppy — \"RULE 3\" is the design brief's metric rule (03-design-brief.md:29), not the audit's, the \"reader does arithmetic\" phrase is from audit §4.1 not R2, and \"roughly 30\" course/tutorial repos overshoots the audit's explicit ~21 — but these misattributions do not negate the defect itself, which I reproduced concretely. Severity major is consistent with the audit's own register.",
+       "refuted": false
+      }
+     ]
+    }
+   ],
+   "refutedMajors": [],
+   "unverifiedOverflow": [
+    {
+     "severity": "major",
+     "title": "Blocking publish precondition half-met: topics are empty on all four featured repositories",
+     "location": "Live GitHub state of dropspot-project, Hunnes-Academy-motion-system, stock-management-system, spark (all \"topics\": []); acknowledged in C:\\GitHub\\hakanduyar\\.ai\\reports\\cross-repo.md and C:\\GitHub\\hakanduyar\\.ai\\tickets\\STATUS.md (T-008 IN_PROGRESS)",
+     "detail": "Audit §4.2 and consolidated ruling #10 require 'English descriptions AND topics ... on all four selected repositories BEFORE the new README is published.' Verified live via gh api: English descriptions are now set on all four (good), but topics is an empty array on every one, and cross-repo.md explicitly states topics were not touched. STATUS.md honestly records T-008 as IN_PROGRESS and T-012 as PLANNED, yet the implementation team presents the system as finished. Additionally, data/telemetry.json still carries description:null for three featured repos because the snapshot predates the description updates — not displayed anywhere, but the committed snapshot no longer matches live state.",
+     "recommendation": "Set topics on all four repos (e.g. dropspot: nodejs, express, postgresql, idempotency; stock: nestjs, nextjs, prisma, rbac; motion: gsap, animation, esbuild; spark: pwa, dexie, local-first), re-run npm run data:snapshot, and only then treat the publish precondition as met."
+    }
+   ],
+   "minors": [
+    {
+     "severity": "minor",
+     "title": "'the public activity below understates recent output' points the wrong way — the activity strip is above the sentence",
+     "location": "C:\\GitHub\\hakanduyar\\src\\shared\\profile.ts line 91, rendered at README.md line 123",
+     "detail": "In the generated README the Activity <picture> block ends at line 121 and the privateWork sentence appears at line 123, after the image. 'below' refers to content that is above it. Verified by reading the assembled README ordering. A small error, but it sits in the one sentence about private work, where precision matters most.",
+     "recommendation": "Change 'below' to 'above' (or drop the word: 'so the public activity understates recent output')."
+    },
+    {
+     "severity": "minor",
+     "title": "Rejected name 'HDU // Personal Development System' survives in public package.json metadata",
+     "location": "C:\\GitHub\\hakanduyar\\package.json, \"description\" field",
+     "detail": "Audit §6.1 rejected 'PERSONAL DEVELOPMENT SYSTEM' as a decisive defect (reads as life-coaching to native English readers) and §6.2 restricts '//' to the hero wordmark. The profile repo is public, so this description is visible to anyone who opens the source the provenance line invites them to inspect. The validator does not scan package.json, so the banned construction slipped through.",
+     "recommendation": "Change the description to match the ruled name, e.g. 'HDU engineering record - the source system that generates the hakanduyar GitHub profile'."
+    },
+    {
+     "severity": "minor",
+     "title": "'Ten composable motion modules' counts a shared helper file as a module (strict count: nine)",
+     "location": "C:\\GitHub\\hakanduyar\\src\\shared\\config.ts line 63, rendered at README.md line 59",
+     "detail": "src/motions/ in Hunnes-Academy-motion-system holds exactly 10 files, but base.js exports shared helpers (getProfile, isInitialViewport, createScene) rather than a composable motion (verified via gh api contents). The binding docs (00-context.md, audit §4.1) themselves say '10 motion modules', so the implementation matches its spec, and a visitor counting files sees ten — but a visitor reading them counts nine motions plus a base. Borderline; noted because the profile's register is exact counts.",
+     "recommendation": "Either say 'Nine motion modules on a shared timeline base' or leave as-is with awareness that the count includes the base helper."
+    }
+   ]
+  },
+  {
+   "dimension": "security-hygiene",
+   "verdict": "FAIL",
+   "summary": "I inspected all 122 tracked files plus full git history of C:\\GitHub\\hakanduyar for secrets, licensing and hygiene, and ran the project's own gates (tsc --noEmit, 62/62 vitest tests, render --check drift gate, validate harness, npm audit — all green). Secrets posture is clean: no tokens, keys, private emails or local user paths anywhere in the tree or in any commit; the only email present is the sanctioned public contact. Licensing substance is verified exact — the four vendored WOFF2 files are sha256-identical to @fontsource/jetbrains-mono@5.3.0 and the OFL 1.1 text is byte-identical to that release's LICENSE — and workflows follow least privilege with no injection surfaces. However, the binding audit's explicit 'must' (validator fails the build if assets/fonts/ holds binaries without a licence file) is not implemented anywhere in the harness and is absent from the STATUS.md deviation ledger, which makes the T-004 'verification harness' claim incomplete against spec; deleting the licence file today would pass every gate. The verdict is FAIL on that single major undocumented spec violation — a roughly ten-line fix — with three minor hardening/documentation items (SHA-pinning for the write-scoped workflow, the 60-day cron auto-disable, and recording the decision to ship the candid .ai/ audit publicly) noted alongside.",
+   "confirmedMajors": [
+    {
+     "severity": "major",
+     "title": "Audit-mandated font-licence validator gate is not implemented and not recorded as a deviation",
+     "location": "C:\\GitHub\\hakanduyar\\scripts\\validate\\validate-all.ts (gate absent; ruling at C:\\GitHub\\hakanduyar\\.ai\\project\\02-audit.md lines 331-332)",
+     "detail": "02-audit.md section 3 rules: 'The validator must fail the build if assets/fonts/ contains font binaries with no licence file alongside them.' I grepped scripts/, src/ and tests/ for LICENSE/licence/PROVENANCE and font-directory scans: the harness checks font-family usage inside SVGs (scripts/validate/checks.ts:206-217) but nothing inspects assets/fonts/. Deleting LICENSE-JetBrainsMono.txt would leave npm run validate, npm test and CI fully green. The deviation ledger in .ai/tickets/STATUS.md lists four deviations; this is not one of them, so it is an undocumented departure from a binding 'must'. The substance is currently compliant (all four WOFF2 files are sha256-identical to @fontsource/jetbrains-mono@5.3.0 latin files and the OFL 1.1 text is byte-identical to that package's LICENSE), but the mandated control that keeps it compliant does not exist.",
+     "recommendation": "Add a check to scripts/validate/validate-all.ts (or checks.ts) that scans assets/fonts/ for font binaries (*.woff2/*.ttf/*.otf) and errors if no LICENSE* file sits alongside them; optionally also assert the PROVENANCE.md-listed files all exist. Alternatively, record an explicit deviation with grounds in .ai/tickets/STATUS.md — but the check is about ten lines, so implement it.",
+     "confirmed": true,
+     "votes": [
+      {
+       "reasoning": "Confirmed by direct inspection, every element of the claim holds:\n\n1. The binding ruling exists verbatim at C:\\GitHub\\hakanduyar\\.ai\\project\\02-audit.md:331-332: \"The validator must fail the build if `assets/fonts/` contains font binaries with no licence file alongside them.\" Same section (line 326) says \"Licensing is a gate, not a footnote.\" This is a binding 'must'.\n\n2. The gate is absent. I read scripts\\validate\\validate-all.ts in full (197 lines): it checks README lexicon/emoji/hosts/numbers, generated SVGs, size budgets, variant pairs, and in-memory text manifests — nothing touches assets/fonts/. scripts\\validate\\checks.ts lines 206-217 only ban font-family declarations inside SVGs, exactly as the claimant said.\n\n3. Nothing else implements it. Grep across scripts/, src/, tests/ for licence/OFL/provenance/fonts returned only: src\\shared\\type.ts:33-36 (loads the four WOFF2 binaries), a README provenance note about telemetry (unrelated), and doc/prompt files. .github\\workflows\\ (ci.yml, refresh-telemetry.yml) contain no licence or fonts check. No code path reads LICENSE-JetBrainsMono.txt, so its deletion could not fail npm run validate, npm test, or CI — the claimant's counterfactual is confirmed by code inspection without needing to modify the repo.\n\n4. Not a documented deviation. .ai\\tickets\\STATUS.md \"Deviations\" lists exactly four items (fontkit engine, reduced-motion via <picture>, hero geometry re-derivation, 2-digit number floor); none covers this gate. docs\\github-platform-constraints.md contains zero mentions of licence or fonts/ — and the missing gate is a build-tooling omission, not a platform constraint, so the only legitimate escape hatch does not apply.\n\n5. Side-claims also reproduce: sha256 of the four assets/fonts/*.woff2 files match node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-{400,500,700,800}-normal.woff2 exactly, and assets/fonts/LICENSE-JetBrainsMono.txt is byte-identical (cmp) to that package's LICENSE. So the severity calibration is right: substance is currently compliant, but the mandated control that would keep it compliant does not exist — a major, not critical, defect.\n\nThe claim is accurate in location, in its reading of the spec, and in its factual assertions about the code. Defect upheld.",
+       "refuted": false
+      },
+      {
+       "reasoning": "CONFIRMED by direct inspection. (1) The binding ruling exists exactly where claimed: C:\\GitHub\\hakanduyar\\.ai\\project\\02-audit.md line 331-332 — \"The validator must fail the build if `assets/fonts/` contains font binaries with no licence file alongside them.\" It is a \"must\" in a RULING section. (2) I read scripts/validate/validate-all.ts in full: its checks cover README lexicon/English/alt-text/emoji/third-party hosts/number traceability, generated-SVG structure and size budgets, variant pairs, and in-memory text manifests. Nothing inspects assets/fonts/. The only font-related validator logic is scripts/validate/checks.ts (~lines 206-217), which flags font-family/<text> usage inside SVGs — unrelated to licence presence, matching the claim's characterization. (3) Repo-wide grep: the only code references to assets/fonts/ are the four explicit WOFF2 paths in src/shared/type.ts:33-36 (loadFont); no build, test, or CI code references LICENSE-JetBrainsMono.txt or PROVENANCE.md (the sole hit is a review-prompt file, not part of any build path). tests/ only exercise font loading/metrics. .github/workflows/ci.yml runs typecheck, npm test, render --check, and validate — none scan assets/fonts/; no git hooks exist (no .husky, no husky/lint-staged in package.json). Therefore deleting LICENSE-JetBrainsMono.txt would indeed leave every gate green, exactly as claimed. (4) The deviation ledger (.ai/tickets/STATUS.md, \"Deviations from the backlog as specified\") lists exactly four deviations — fontkit vs opentype.js, reduced-motion guard placement, hero geometry, number-lint floor — none covering this omission; docs/github-platform-constraints.md contains no mention of licence gating (and no platform constraint could plausibly justify skipping a local filesystem check). (5) npm run validate currently exits clean (18 assets, 0 errors), confirming the harness passes today only because the licence file happens to be present, not because anything enforces it. The mandated control is absent and undocumented; the defect is real at the claimed severity.",
+       "refuted": false
+      }
+     ]
+    }
+   ],
+   "refutedMajors": [],
+   "unverifiedOverflow": [],
+   "minors": [
+    {
+     "severity": "minor",
+     "title": "Write-scoped workflow uses floating major-version action tags with persisted credentials",
+     "location": "C:\\GitHub\\hakanduyar\\.github\\workflows\\refresh-telemetry.yml lines 22-27 (actions/checkout@v4, actions/setup-node@v4)",
+     "detail": "refresh-telemetry.yml holds contents:write, persists checkout credentials (needed for its git push), and executes 187 npm packages via npm ci — while referencing actions by floating major tag rather than commit SHA. For ci.yml (contents:read) floating tags on GitHub-owned actions are defensible; for the workflow that can silently commit to the owner's profile README, SHA-pinning is the hardened norm a top-company reviewer would expect. Neither docs/maintenance.md nor docs/github-platform-constraints.md records the pinning choice. Mitigations already present: lockfile with integrity hashes, npm audit clean, GITHUB_TOKEN exposed as env only to the snapshot step.",
+     "recommendation": "Pin actions/checkout and actions/setup-node to full commit SHAs (with the tag in a comment) at least in refresh-telemetry.yml, or add one line to docs/maintenance.md stating that GitHub-owned actions at major tags is the accepted trust boundary."
+    },
+    {
+     "severity": "minor",
+     "title": "Scheduled refresh will be silently auto-disabled after 60 days of repository inactivity",
+     "location": "C:\\GitHub\\hakanduyar\\.github\\workflows\\refresh-telemetry.yml lines 10-12; C:\\GitHub\\hakanduyar\\docs\\maintenance.md ('Routine: nothing to do')",
+     "detail": "GitHub disables cron-triggered workflows in public repos after 60 days without repository activity, and the material-change guard is designed to produce long stretches with zero commits (a run that commits nothing does not count as activity). If the owner pushes nothing anywhere in this repo for two months, the Monday refresh stops silently, and the profile's core honesty claim — 'MEASURED <date>' stays current via weekly re-measurement (maintenance.md: 'Routine: nothing to do') — quietly degrades. Verified: neither maintenance.md nor github-platform-constraints.md mentions the auto-disable behaviour, so it is an undocumented platform constraint for a system whose docs otherwise document platform behaviour meticulously.",
+     "recommendation": "Document the 60-day auto-disable in docs/maintenance.md with the re-enable path (Actions tab -> enable workflow), and/or have the workflow keep itself alive (e.g. a keepalive commit or GitHub API workflow re-enable step) — several small, standard patterns exist."
+    },
+    {
+     "severity": "minor",
+     "title": "Internal audit strategy ships publicly in the profile repo — deliberate, but the residual exposure is nowhere accepted on the record",
+     "location": "C:\\GitHub\\hakanduyar\\.ai\\project\\02-audit.md (e.g. section 4 banned-repository table, lines 360-365)",
+     "detail": "The remote is github.com/hakanduyar/hakanduyar — the public profile repo the README footer links to. The committed .ai/ tree includes the audit's candid rulings about the owner's own account ('fingerprint of generator output', 'self-harm rendered in a nice font', the note not to draw attention to the typo'd medyanes repos — which the document itself then does). Committing .ai/ is deliberate and spec-sanctioned (the backlog mandates .ai/ paths), so this is not a compliance failure, and the frankness arguably reads as rigour. But any visitor one click deep can read the playbook of what the profile was engineered to conceal, and no document records that this trade-off was consciously accepted for the public repo.",
+     "recommendation": "Before T-012 publish, make an explicit recorded decision: either accept the exposure in STATUS.md/T-012 acceptance notes, or move .ai/ to a private companion repo and keep only docs/ public. Do not silently ship it as a side effect."
+    }
+   ]
+  }
+ ]
+}

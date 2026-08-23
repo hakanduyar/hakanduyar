@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "HDU // Personal Development System — the source system that generates the hakanduyar GitHub profile",
+  "description": "HDU // Engineering Record - the source system that generates the hakanduyar GitHub profile",
   "engines": {
     "node": ">=20"
   },

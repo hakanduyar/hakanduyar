@@ -7,7 +7,7 @@
  * code that is supposed to produce it.
  */
 
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { optimizeSvg, emitSvg, reportEmit, formatBytes, REPO_ROOT } from '../../src/shared/emit.js';
 import { buildAll, loadTelemetry } from '../../src/build.js';
@@ -25,6 +25,14 @@ function main(): void {
       const expected = optimizeSvg(build.asset.svg);
       const actual = existsSync(absolute) ? readFileSync(absolute, 'utf8') : null;
       if (actual !== expected) stale.push(build.path);
+    }
+    // The gate is two-directional: a committed SVG that no build produces is
+    // drift too - it would ship unreviewed and unregenerable.
+    const expectedNames = new Set(builds.map((b) => b.path.split('/').pop()));
+    for (const file of readdirSync(resolve(REPO_ROOT, 'assets/generated'))) {
+      if (file.endsWith('.svg') && !expectedNames.has(file)) {
+        stale.push(`assets/generated/${file} (orphan: no build produces this file)`);
+      }
     }
     if (stale.length) {
       console.error(

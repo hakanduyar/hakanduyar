@@ -48,8 +48,6 @@ Two properties carry the whole design:
 | `src/shared/type.ts` | Text -> vector outlines via fontkit (vendored JetBrains Mono) |
 | `src/shared/tokens.ts` | Palettes, type scale, grid, motion tokens, contrast math |
 | `src/shared/canvas.ts` | Drawing surface; records every drawn string in a manifest |
-| `src/shared/geometry.ts` | HUD primitives (tick rings, rulers, brackets, traces) |
-| `src/shared/motion.ts` | Keyframe helpers and the reduced-motion platform note |
 | `src/shared/config.ts` | Featured repositories, channels — decisions, not data |
 | `src/shared/profile.ts` | Curated English copy — decisions, not data |
 | `src/hero/` `src/modules/` `src/systems/` `src/telemetry/` `src/activity/` | One scene module per asset family |
@@ -96,7 +94,11 @@ the SVG cannot do this job (measured; see the platform doc).
 
 ## CI
 
-- `ci.yml` — every push/PR: typecheck, tests, asset drift gate, validation.
+- `ci.yml` — every push/PR: typecheck, tests, asset drift gate (both directions:
+  stale files and orphaned files), README drift gate, validation.
 - `refresh-telemetry.yml` — Mondays 06:17 UTC + manual: new snapshot, rebuild,
-  full verification, commit **only on material change** (timestamp-only runs
-  produce no commit; see `scripts/generate/material-change.mjs`).
+  full verification, commit **only when owner-driven data changed** — the
+  capture timestamp and the sliding 52-week window boundaries are excluded, so
+  a week in which nothing was pushed produces no commit
+  (`scripts/generate/material-change.mjs`; crash and no-change are distinct
+  exit codes, so a failure can never masquerade as a quiet week).

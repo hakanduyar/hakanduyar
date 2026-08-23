@@ -5,8 +5,14 @@ How to change the profile without breaking its guarantees.
 ## Routine: nothing to do
 
 `refresh-telemetry.yml` re-measures the data every Monday and commits only if
-something material changed. `ci.yml` blocks any push where the committed assets
-no longer match their source.
+something the owner did changed (a push, new commits, a new repository, a
+language shift). The capture timestamp and the sliding 52-week window do not
+count, so quiet weeks produce no commit. `ci.yml` blocks any push where the
+committed assets or README no longer match their generators.
+
+GitHub automatically disables cron-scheduled workflows after 60 days without
+repository activity. If the profile has been quiet for two months, re-enable
+the workflow from the Actions tab (one click) or push any commit.
 
 ## Changing the copy
 

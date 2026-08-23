@@ -13,12 +13,12 @@
  */
 
 import { Canvas, type RenderedAsset } from '../shared/canvas.js';
-import { el, chamferRect, linePath } from '../shared/svg.js';
-import { TYPE, GRID, STROKE, RADIUS, type Palette, type TypeStyle } from '../shared/tokens.js';
+import { el, linePath } from '../shared/svg.js';
+import { TYPE, GRID, STROKE, RADIUS, type Palette } from '../shared/tokens.js';
 import type { Telemetry } from '../shared/telemetry-types.js';
 
 const W = GRID.width;
-const H = 224;
+const H = 200;
 const L = GRID.margin;
 
 const CELL_GAP = 16;
@@ -30,11 +30,7 @@ const METHOD_BASELINE = 126;
 const BAR_TOP = 150;
 const BAR_H = 16;
 const SEGMENT_GAP = 3;
-const SEGMENT_LABEL_BASELINE = 186;
-const CAPTION_BASELINE = 210;
-
-/** Segment labels sit below the information floor and are mirrored in Markdown. */
-const SEGMENT_LABEL: TypeStyle = { size: 18, font: 'w400', tracking: 0.12, upper: true };
+const CAPTION_BASELINE = 186;
 
 export interface TelemetryPanelInput {
   telemetry: Telemetry;
@@ -49,12 +45,15 @@ export function renderTelemetryPanel(input: TelemetryPanelInput, palette: Palett
   if (!primary) throw new Error('Telemetry has no language data');
 
   canvas.add(
-    el('path', {
-      d: chamferRect(0.5, 0.5, W - 1, H - 1, 0, {}),
+    el('rect', {
+      x: 0.5,
+      y: 0.5,
+      width: W - 1,
+      height: H - 1,
+      rx: RADIUS,
       fill: 'none',
       stroke: p.rule.hairline,
       'stroke-width': STROKE.hairline,
-      rx: RADIUS,
     }),
   );
 
@@ -112,9 +111,12 @@ export function renderTelemetryPanel(input: TelemetryPanelInput, palette: Palett
   const totalGap = SEGMENT_GAP * 4;
   const usable = GRID.contentWidth - totalGap;
 
+  // The segments carry no in-image labels: at 18u they sat below every
+  // legibility floor and only some names fit their segment, so which languages
+  // got named was an accident of string width. The Markdown table directly
+  // under the image names every one of them.
   let cursor = L;
   const segments: string[] = [];
-  const labels: string[] = [];
 
   top4.forEach((language, index) => {
     const width = usable * language.share;
@@ -127,19 +129,6 @@ export function renderTelemetryPanel(input: TelemetryPanelInput, palette: Palett
         fill: p.series[index] as string,
       }),
     );
-    // Label a segment only when its own width can hold the name. Deterministic,
-    // and every language is listed in the Markdown table regardless.
-    const labelWidth = canvas.measureText(language.name, SEGMENT_LABEL);
-    if (labelWidth + 8 <= width) {
-      labels.push(
-        canvas.text(language.name, SEGMENT_LABEL, {
-          x: cursor,
-          y: SEGMENT_LABEL_BASELINE,
-          fill: p.text.tertiary,
-          decorative: true,
-        }),
-      );
-    }
     cursor += width + SEGMENT_GAP;
   });
 
@@ -166,7 +155,6 @@ export function renderTelemetryPanel(input: TelemetryPanelInput, palette: Palett
 
   canvas.add(
     ...segments,
-    ...labels,
     canvas.text(caption, TYPE.micro, { x: L, y: CAPTION_BASELINE, fill: p.text.tertiary, decorative: true }),
   );
 

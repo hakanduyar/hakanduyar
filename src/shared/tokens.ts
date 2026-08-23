@@ -126,22 +126,6 @@ export function colEnd(n: number): number {
   return col(n) + GRID.columnWidth;
 }
 
-/** Span from column `from` to column `to` inclusive. */
-export function span(from: number, to: number): { x: number; width: number } {
-  return { x: col(from), width: colEnd(to) - col(from) };
-}
-
-/** The only spacing values that exist. Anything else is a review failure. */
-export const SPACE = [4, 8, 12, 16, 24, 32, 48, 64, 96] as const;
-
-/** 8u vertical rhythm. Baselines and rules land on multiples of this. */
-export const BASELINE = 8;
-
-/** Hairlines sit on a .5 coordinate so a 1u stroke covers exactly one pixel at 1x. */
-export function hairlineY(y: number): number {
-  return Math.round(y) + 0.5;
-}
-
 export const STROKE = {
   /** Structural rules and panel edges. */
   hairline: 1,

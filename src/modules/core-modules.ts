@@ -10,7 +10,7 @@
  */
 
 import { Canvas, type RenderedAsset } from '../shared/canvas.js';
-import { el, linePath, chamferRect } from '../shared/svg.js';
+import { el, linePath } from '../shared/svg.js';
 import { TYPE, GRID, STROKE, RADIUS, type Palette } from '../shared/tokens.js';
 import type { Telemetry } from '../shared/telemetry-types.js';
 import type { CapabilityModule } from '../shared/profile.js';
@@ -35,12 +35,15 @@ export function renderCoreModules(input: CoreModulesInput, palette: Palette): Re
   const p = palette;
 
   canvas.add(
-    el('path', {
-      d: chamferRect(0.5, 0.5, W - 1, H - 1, 0, {}),
+    el('rect', {
+      x: 0.5,
+      y: 0.5,
+      width: W - 1,
+      height: H - 1,
+      rx: RADIUS,
       fill: 'none',
       stroke: p.rule.hairline,
       'stroke-width': STROKE.hairline,
-      rx: RADIUS,
     }),
   );
 
