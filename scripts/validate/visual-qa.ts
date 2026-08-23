@@ -143,7 +143,9 @@ async function captureReadmePage(browser: Browser): Promise<void> {
       writeFileSync(host, html);
       const page = await newPage(browser, { width, height: 1200, scheme: theme });
       await page.goto(pathToFileURL(host).href, { waitUntil: 'load' });
-      await new Promise((r) => setTimeout(r, 600));
+      // Let the hero's 2.4s entrance finish so the page still shows the
+      // composed state, not a frame from the middle of the wipe.
+      await new Promise((r) => setTimeout(r, 3200));
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
       );
