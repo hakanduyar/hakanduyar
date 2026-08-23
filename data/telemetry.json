@@ -1,16 +1,17 @@
 {
-  "capturedAt": "2026-08-23T17:55:00Z",
+  "capturedAt": "2026-08-23T18:25:00Z",
   "login": "hakanduyar",
   "name": "Hakan Duyar",
   "memberSince": "2021-02-20",
   "followers": 27,
   "publicRepos": 55,
+  "countedRepos": 55,
   "contributions": {
     "windowStart": "2025-08-24",
     "windowEnd": "2026-08-23",
-    "total": 136,
+    "total": 137,
     "commits": 106,
-    "pullRequests": 11,
+    "pullRequests": 12,
     "issues": 0,
     "repositoriesCreated": 6,
     "activeDays": 24,
@@ -144,21 +145,21 @@
   "totalSourceBytes": 3855605,
   "totalCommits": 870,
   "lastPush": {
-    "repo": "Hunnes-Academy-motion-system",
-    "at": "2026-08-16T14:51:10Z"
+    "repo": "hakanduyar",
+    "at": "2026-08-23T18:23:03Z"
   },
   "recentPushes": [
+    {
+      "repo": "hakanduyar",
+      "at": "2026-08-23T18:23:03Z",
+      "url": "https://github.com/hakanduyar/hakanduyar",
+      "description": null
+    },
     {
       "repo": "Hunnes-Academy-motion-system",
       "at": "2026-08-16T14:51:10Z",
       "url": "https://github.com/hakanduyar/Hunnes-Academy-motion-system",
       "description": "Composable GSAP motion system for a storefront - nine motion modules over a shared base, behind one declarative config"
-    },
-    {
-      "repo": "spark",
-      "at": "2026-07-02T13:06:47Z",
-      "url": "https://github.com/hakanduyar/spark",
-      "description": "Personal Planning, Focus, and Growth System"
     }
   ],
   "featured": [
