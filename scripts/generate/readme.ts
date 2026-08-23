@@ -195,7 +195,8 @@ function main(): void {
     const month = pushEntry.at.slice(0, 7);
     // Descriptions come from the repository settings; normalise the trailing
     // period so the sentence join reads correctly.
-    const description = pushEntry.description ? pushEntry.description.trim().replace(/.?$/, '.') : null;
+    const trimmed = pushEntry.description?.trim() ?? '';
+    const description = trimmed ? (trimmed.endsWith('.') ? trimmed : `${trimmed}.`) : null;
     const line = description
       ? `**[${pushEntry.repo}](${pushEntry.url})** — ${description} Last push ${month}.`
       : `**[${pushEntry.repo}](${pushEntry.url})** — last push ${month}.`;
