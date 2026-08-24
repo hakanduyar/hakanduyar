@@ -1,62 +1,72 @@
-<!-- GENERATED FILE - do not edit by hand.
-     Source: scripts/generate/readme.ts
-     Data:   data/telemetry.json (measured 2026-08-24)
-     Build:  npm run build -->
+# Merhaba 👋, ben Hakan Duyar
 
-<picture>
-  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/identity-static-dark.svg">
-  <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/identity-static-light.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/identity-dark.svg">
-  <img src="assets/generated/identity-light.svg" alt="Hakan Duyar, interface and systems engineer. 59 public repositories, 4237 commits on default branches, TypeScript 49.9 percent of public source." width="890">
-</picture>
+### Temiz, duyarlı ve piksel mükemmelliğinde web arayüzleri tasarlayan Ön Uç Geliştiricisiyim
 
-**Hakan Duyar — interface and systems engineer. TypeScript, React, Node.**
+React, Next.js ve TypeScript kullanarak modern, ölçeklenebilir uygulamalar geliştirmeye odaklanıyorum ve her zaman yüksek performans ve mükemmel bir kullanıcı deneyimi hedefliyorum.  
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/focus-dark.svg">
-  <img src="assets/generated/focus-light.svg" alt="Focus, four engineering domains. Interface: Component architecture in React. Systems: Transactional, idempotent services. Data: Local-first persistence and offline. Motion: Animation as a composable system." width="890">
-</picture>
+Figma tasarımlarını, ayrıntılara dikkat ederek ve bakımı kolay kod mimarisiyle **üretime hazır, erişilebilir kullanıcı arayüzlerine** dönüştürmekten keyif alıyorum.  
 
-<a href="https://github.com/hakanduyar/dropspot-project">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/system-dropspot-dark.svg">
-  <img src="assets/generated/system-dropspot-light.svg" alt="dropspot-project: Limited-stock drop platform with fair, idempotent claim distribution. Built with Node.js, Express, PostgreSQL, React. Last public push 2025-11." width="890">
-</picture>
-</a>
+Şu anda daha sağlam ve verimli uygulamalar oluşturmak için **durum yönetimi, test ve ön uç performans optimizasyonu** alanındaki bilgilerimi genişletiyorum.  
 
-<a href="https://github.com/hakanduyar/Hunnes-Academy-motion-system">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/system-motion-system-dark.svg">
-  <img src="assets/generated/system-motion-system-light.svg" alt="Hunnes-Academy-motion-system: A reusable motion layer, built as one system behind a declarative configuration. Built with JavaScript, GSAP, ES Modules. Last public push 2026-08." width="890">
-</picture>
-</a>
+---
 
-<a href="https://github.com/hakanduyar/stock-management-system">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/system-stock-dark.svg">
-  <img src="assets/generated/system-stock-light.svg" alt="stock-management-system: Role-aware inventory system covering the full stock movement lifecycle. Built with NestJS, Next.js, PostgreSQL, Prisma. Last public push 2025-11." width="890">
-</picture>
-</a>
+### 🛠️ Teknolojiler
 
-<a href="https://github.com/hakanduyar/spark">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/system-spark-dark.svg">
-  <img src="assets/generated/system-spark-light.svg" alt="spark: Local-first planning system that works with no backend and no network. Built with React, TypeScript, Vite, Dexie. Last public push 2026-07." width="890">
-</picture>
-</a>
+**Frontend:**  
+JavaScript, TypeScript, React, Next.js, Redux Toolkit, Zustand, React Router, React Hook Form, TanStack Query  
 
-<picture>
-  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/signal-static-dark.svg">
-  <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/signal-static-light.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/signal-dark.svg">
-  <img src="assets/generated/signal-light.svg" alt="Measured signal. Source distribution across 15.23 MB of public source: TypeScript 49.9 percent, Go 20.0 percent, Vue 16.5 percent, JavaScript 4.7 percent, and 8.9 percent across all other languages. 135 contributions in the 52 weeks to 2026-08-22." width="890">
-</picture>
+**Stil & UI Kitleri:**  
+Tailwind CSS, Sass/SCSS, Styled Components, Material UI, Ant Design, Chakra UI, ShadCN, Bootstrap  
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/channels-dark.svg">
-  <img src="assets/generated/channels-light.svg" alt="Channels: GitHub, @hakanduyar; LinkedIn, in/hakanduyar; Medium, @hakanduyar; Email, iamhakanduyar@gmail.com." width="890">
-</picture>
+**Backend & Veritabanı:**  
+Node.js, Express.js, Prisma, MongoDB, PostgreSQL, RESTful API, GraphQL, Firebase, Supabase, WebSocket  
 
-[GitHub](https://github.com/hakanduyar) · [LinkedIn](https://www.linkedin.com/in/hakanduyar) · [Medium](https://medium.com/@hakanduyar) · [Email](mailto:iamhakanduyar@gmail.com)
+**Araçlar & DevOps:**  
+Git, GitHub, Docker, Vercel, Netlify, JIRA  
 
-*Every image on this page is generated from source in this repository. Nothing is fetched from a third-party service. Measured 2026-08-24. Source: [hakanduyar/hakanduyar](https://github.com/hakanduyar/hakanduyar).*
+---
+
+### ⚡ Teknolojiler
+
+<p align="left">
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" alt="typescript" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="40" height="40"/>
+  <img src="https://cdn.worldvectorlogo.com/logos/nextjs-2.svg" alt="nextjs" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" alt="nodejs" width="40" height="40"/>
+  <img src="https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg" alt="tailwind" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/sass/sass-original.svg" alt="sass" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/express/express-original-wordmark.svg" alt="express" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/prisma/prisma-original.svg" alt="prisma" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mongodb/mongodb-original-wordmark.svg" alt="mongodb" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original-wordmark.svg" alt="postgresql" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/git/git-original.svg" alt="git" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/github/github-original.svg" alt="github" width="40" height="40"/>
+  <img src="https://www.vectorlogo.zone/logos/figma/figma-icon.svg" alt="figma" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/graphql/graphql-plain.svg" alt="graphql" width="40" height="40"/>
+  <img src="https://www.vectorlogo.zone/logos/firebase/firebase-icon.svg" alt="firebase" width="40" height="40"/>
+  <img src="https://www.vectorlogo.zone/logos/supabase/supabase-icon.svg" alt="supabase" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/redux/redux-original.svg" alt="redux" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/reactrouter/reactrouter-original.svg" alt="react-router" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/styledcomponents/styledcomponents-original.svg" alt="styled-components" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/materialui/materialui-original.svg" alt="material-ui" width="40" height="40"/>
+  <img src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="ant-design" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/bootstrap/bootstrap-plain-wordmark.svg" alt="bootstrap" width="40" height="40"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original.svg" alt="docker" width="40" height="40"/>
+  <img src="https://www.vectorlogo.zone/logos/vercel/vercel-icon.svg" alt="vercel" width="40" height="40"/>
+  <img src="https://www.vectorlogo.zone/logos/netlify/netlify-icon.svg" alt="netlify" width="40" height="40"/>
+  <img src="https://www.vectorlogo.zone/logos/atlassian_jira/atlassian_jira-icon.svg" alt="jira" width="40" height="40"/>
+</p>
+
+---
+
+### 📫 Bana Ulaşın
+[Email](mailto:iamhakanduyar@gmail.com) | [LinkedIn](https://linkedin.com/in/hakanduyar) | [Medium](https://medium.com/@hakanduyar)
+
+---
+
+### 📊 GitHub İstatistiklerim
+<p>
+<img align="center" src="https://github-readme-stats.vercel.app/api/top-langs?username=hakanduyar&show_icons=true&locale=tr&layout=compact" alt="hakanduyar" />
+<img align="center" src="https://github-readme-streak-stats.herokuapp.com/?user=hakanduyar&" alt="hakanduyar" />
+</p>
