@@ -20,9 +20,20 @@ document**, not as inline SVG. That single fact drives everything else.
 | CSS animation wrapped in `@media (prefers-reduced-motion: no-preference)` | **NO** | centroid pinned at `80` for every sample, in both headless and headed Chrome |
 | SMIL `<animate>` / `<animateTransform>` | **YES** | centroid moved `241 → 631 → 364` |
 
-**Ruling: use unguarded CSS keyframes.** They compose better than SMIL (one
-master timeline, shared easing, media-query-aware theming) and are the only
-technique that gives per-glyph stagger without an element explosion.
+**Historical ruling — no longer in force.** When this repository shipped an
+animated hero, the ruling was: use unguarded CSS keyframes, because they
+compose better than SMIL and are the only technique giving per-glyph stagger
+without an element explosion.
+
+**Current ruling: static SVG only.** Nothing this repository generates
+animates, and the engine cannot produce motion — `Canvas` has no animation
+register and `checkSvg` fails the build on keyframes, `animation`,
+`transition`, SMIL or a motion query. The table above is kept because it is the
+measurement, and the row that matters most is the second one: a
+`prefers-reduced-motion` guard *does not work* inside an SVG image, so any
+future animation here would have to ship a second static file and choose
+between them in the README document. That cost is a large part of why v2 does
+not animate. See [architecture.md](architecture.md#why-nothing-animates).
 
 ## 3. Media queries inside an SVG image
 

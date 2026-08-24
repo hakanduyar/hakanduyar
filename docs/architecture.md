@@ -35,7 +35,7 @@ Two properties carry the whole design:
    checkout, and every number on the profile is traceable to one file with a
    capture timestamp.
 
-2. **Determinism.** Same snapshot in, byte-identical SVG out (fixed 2-decimal
+2. **Determinism.** Same snapshot in, byte-identical SVG out (fixed 1-decimal
    precision, no clocks, no randomness). This is what lets CI run
    `npm run render -- --check` and fail if the committed assets were hand-edited
    or drifted from their source.

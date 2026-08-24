@@ -14,7 +14,7 @@ import { buildAll, loadTelemetry, expectedAssetPaths, PANEL_IDS, type AssetBuild
 import { DARK, LIGHT, TYPE } from '../src/shared/tokens.js';
 import { PROFILE } from '../src/shared/profile.js';
 import { CHANNELS, FEATURED_REPOS } from '../src/shared/config.js';
-import { remainderShare, PLOT, PLOT_BASELINE, plotStartX } from '../src/signal/signal.js';
+import { remainderShare } from '../src/signal/signal.js';
 import { SECTIONS } from '../src/shared/panel.js';
 import type { Telemetry } from '../src/shared/telemetry-types.js';
 
@@ -33,6 +33,11 @@ function panel(id: string, theme: 'dark' | 'light' = 'dark'): AssetBuild {
 }
 
 /** Every string drawn on a panel, joined — for "does the panel say X" checks. */
+/** Megabytes as the panel prints them. */
+function t18n(bytes: number): string {
+  return (bytes / 1e6).toFixed(2);
+}
+
 function manifest(id: string, theme: 'dark' | 'light' = 'dark'): string[] {
   return panel(id, theme).asset.texts.map((t) => t.value);
 }
@@ -160,6 +165,7 @@ describe('panel contents', () => {
       const texts = manifest(`system-${repo.key}`);
       // The repository name is drawn in true case, exactly as it is on GitHub.
       expect(texts).toContain(featured.name);
+      expect(texts).toContain(repo.subject);
       expect(texts).toContain(repo.plateLine);
       expect(texts).toContain(repo.stack.join(' · '));
       expect(texts).toContain(featured.pushedAt.slice(0, 7));
@@ -176,13 +182,16 @@ describe('panel contents', () => {
 
   it('signal carries the distribution and the activity, and neither identity metric', () => {
     const texts = manifest('signal');
-    expect(texts).toContain('SOURCE DISTRIBUTION');
-    expect(texts).toContain('CONTRIBUTIONS');
     for (const language of telemetry.languages.slice(0, 4)) {
       expect(texts).toContain(language.name.toUpperCase());
       expect(texts).toContain(`${(language.share * 100).toFixed(1)}%`);
     }
     expect(texts).toContain(`${(remainderShare(telemetry) * 100).toFixed(1)}%`);
+    // The figures the removed histogram used to carry, now stated.
+    expect(texts.join(' ')).toContain(`${t18n(telemetry.totalSourceBytes)} MB of public source`);
+    expect(texts.join(' ')).toContain(
+      `${telemetry.activity.total} contributions in the ${telemetry.activity.weekly.length} weeks`,
+    );
   });
 
   it('channels lists the four verified destinations and nothing else', () => {
@@ -212,7 +221,6 @@ describe('metric ownership', () => {
       { figure: String(telemetry.totalCommits), owner: 'identity' },
       { figure: telemetry.memberSince.slice(0, 4), owner: 'identity' },
       { figure: String(telemetry.activity.total), owner: 'signal' },
-      { figure: String(telemetry.activity.max), owner: 'signal' },
       { figure: `${(remainderShare(telemetry) * 100).toFixed(1)}%`, owner: 'signal' },
     ];
     for (const language of telemetry.languages.slice(0, 4)) {
@@ -274,43 +282,55 @@ describe('data honesty', () => {
   });
 
 
-  it('every weekly bar stands at the position and height its count implies', () => {
+  it('every distribution bar is exactly as long as its measured share', () => {
+    // Geometry is restated here rather than imported from the renderer. Round-2
+    // review made the point on the version of this test that imported the
+    // constants: renderer and test sharing one source can agree on a wrong
+    // number and both pass. These are the design contract — a renderer that
+    // moves the track has to come here and say so.
+    const TRACK_X = 280;
+    const TRACK_W = 440;
+    const TRACK_H = 8;
+    const FIRST_ROW = 108;
+    const ROW_PITCH = 36;
+
     const svg = panel('signal').asset.svg;
-    const weekly = telemetry.activity.weekly;
-    const startX = plotStartX(weekly.length);
+    const named = telemetry.languages.slice(0, 4);
+    const shares = [...named.map((l) => l.share), remainderShare(telemetry)];
     const round = (value: number): string => {
       const fixed = value.toFixed(2);
       return fixed.includes('.') ? fixed.replace(/\.?0+$/, '') : fixed;
     };
 
-    let drawn = 0;
-    weekly.forEach((count, index) => {
-      const x = startX + index * (PLOT.barWidth + PLOT.barGap);
-      if (count === 0) {
-        // Zero weeks draw a stub on the baseline, never a bar.
-        const stubY = round(PLOT_BASELINE - PLOT.zeroStub / 2);
-        expect(svg, `week ${index} is zero and should draw a stub at x=${round(x)}`).toContain(
-          `M${round(x)} ${stubY}L${round(x + PLOT.barWidth)} ${stubY}`,
+    shares.forEach((share, index) => {
+      const trackY = FIRST_ROW + index * ROW_PITCH - 9;
+      // The full-length track every row is read against.
+      expect(svg, `row ${index} track`).toContain(
+        `<rect x="${TRACK_X}" y="${round(trackY)}" width="${TRACK_W}" height="${TRACK_H}"`,
+      );
+      if (index < named.length) {
+        expect(svg, `row ${index} fill at share ${share}`).toContain(
+          `<rect x="${TRACK_X}" y="${round(trackY)}" width="${round(TRACK_W * share)}" height="${TRACK_H}"`,
         );
-        return;
+      } else {
+        // The remainder is outlined, inset by half a hairline.
+        expect(svg, 'remainder is outlined, not filled').toContain(
+          `<rect x="${round(TRACK_X + 0.5)}" y="${round(trackY + 0.5)}" ` +
+            `width="${round(TRACK_W * share - 1)}" height="${TRACK_H - 1}" fill="none"`,
+        );
       }
-      drawn++;
-      const height = (count / telemetry.activity.max) * PLOT.maxBarHeight;
-      const rect =
-        `<rect x="${round(x)}" y="${round(PLOT_BASELINE - height)}" ` +
-        `width="${round(PLOT.barWidth)}" height="${round(height)}"`;
-      expect(svg, `week ${index} (count ${count}) should draw ${rect}`).toContain(rect);
     });
 
-    expect(drawn).toBe(weekly.filter((w) => w > 0).length);
-    // The tallest week is the page's single chromatic mark.
-    const peak = telemetry.activity.maxIndex;
-    const peakX = round(startX + peak * (PLOT.barWidth + PLOT.barGap));
-    const peakHeight = round(PLOT.maxBarHeight);
-    expect(svg).toContain(
-      `<rect x="${peakX}" y="${round(PLOT_BASELINE - PLOT.maxBarHeight)}" ` +
-        `width="${round(PLOT.barWidth)}" height="${peakHeight}" fill="${DARK.signal}"`,
+    // The largest share is the page's single chromatic mark.
+    expect(countInsensitive(svg, DARK.signal)).toBe(1);
+    expect(svg).toContain(`width="${round(TRACK_W * shares[0]!)}" height="${TRACK_H}" fill="${DARK.signal}"`);
+  });
+
+  it('the page spends its one chromatic mark exactly once, on one panel', () => {
+    const coloured = PANEL_IDS.filter(
+      (id) => countInsensitive(panel(id).asset.svg, DARK.signal) > 0,
     );
+    expect(coloured).toEqual(['signal']);
   });
 });
 

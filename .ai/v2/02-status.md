@@ -74,3 +74,34 @@ The fourth plate line pushed the generated payload to 412 KB, over the 400 KB
 budget. Rather than raise the budget, path precision dropped from two decimals
 to one — 0.1 user units, which is 0.1 CSS px in the profile column and 0.04 px
 on a phone. Verified against captures at both widths. The set is now 296 KB.
+
+
+## Round-2 review outcome
+
+Codex returned **FAIL** again on `2f64dd4`. Full text:
+[04-review-2.md](04-review-2.md). The CRITICAL and three of five MAJORs were
+confirmed resolved; gate H flipped to PASS. What remained:
+
+| Finding | Resolution |
+|---|---|
+| MAJOR — the activity test imported the renderer's own constants, so both could agree on a wrong number | Dissolved by the gate-E fix below: the histogram is gone. The distribution test that replaced it restates the track geometry locally, so a renderer that moves the track has to come to the test and say so. |
+| MAJOR — `github-platform-constraints.md` still carried the ruling "use unguarded CSS keyframes" | The animation ruling is now explicitly marked historical, with the current ruling — static SVG only — stated beneath it. The measurement table stays: the row showing that a reduced-motion guard does not work inside an SVG image is a large part of *why* v2 does not animate. |
+| MINOR — the `412 KB → 296 KB` figure in `emit.ts` was not reproducible from history | It was measured against an uncommitted intermediate. The comment now states a check anyone can run: set the precision back to 2, re-render, and the same content measures 412 KB against 295 KB at one decimal. Both figures verified. |
+| MINOR — `subject` was not regression-tested | Asserted in the system-plate manifest test. |
+| MINOR — stale precision, animation and token documentation | `emit.ts` header, `architecture.md`, `visual-system.md` and the generated `tokens.md` corrected. |
+| **GATE E — still FAIL**: numbered rails, five tracks, MAX metadata and a 52-week histogram still read as a dashboard | The 52-week histogram is removed and its figures survive as two sentence-case lines. The panel is now one composition — five lengths against one common track — closing in the voice of the page rather than of an instrument. |
+
+### On the ordinals, which round 2 also asked to reduce
+
+Kept. `01`–`04` over a shared rail is the device that makes five separately
+rendered images read as one system; it is what allows the README to carry no
+headings at all. Removing it would trade the cohesion the redesign is built on
+for a small reduction in register. The dashboard feel came from two stacked
+charts, and that is what was removed instead.
+
+### The accent moved
+
+With the histogram gone, the peak-week mark went with it, so the page's single
+chromatic element is now the largest share in the distribution. It is still
+load-bearing — it moves when the measurement moves — and a test asserts that
+`signal` is the only chromatic panel on the page.

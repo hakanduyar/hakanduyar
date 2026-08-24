@@ -30,10 +30,12 @@ The series ramps therefore run in opposite directions, and
 
 Exactly one chromatic hue exists: instrument amber (`#FF9E2C` dark /
 `#9C520F` light). **At most one signal-coloured element per asset**, marking
-that asset's single most important value — the identity plate's primary-language
-share, the signal panel's peak contribution week. No green anywhere: a green dot implies a running service,
-and nothing here is a running service. No language brand colours: the language
-bar uses the neutral ramp, which is what keeps it from looking like a stat-card
+that asset's single most important value. In practice the whole page now spends
+it exactly once, on the largest share in the signal panel's distribution —
+`tests/scene.test.ts` asserts that no other panel is chromatic at all. No green
+anywhere: a green dot implies a running service, and nothing here is a running
+service. No language brand colours: the distribution
+uses the neutral ramp, which is what keeps it from looking like a stat-card
 widget.
 
 All token values and their measured contrast ratios live in

@@ -1,12 +1,12 @@
 /**
  * Asset emission: optimise, write, and report.
  *
- * SVGO is configured conservatively. The default preset happily rewrites ids,
- * inlines <style> blocks into presentation attributes and drops "unknown"
- * attributes — every one of which silently kills a CSS keyframe animation or
- * an aria wiring. The plugins disabled below were each disabled in response to
- * a specific breakage, so do not re-enable them without re-running
- * `npm run validate`.
+ * SVGO is configured conservatively. Most of the overrides this file once
+ * carried existed to protect animation; v2 ships none, and they were removed.
+ * What remains is one override protecting the aria wiring and one precision
+ * setting, each documented at its line. Do not add more without re-running
+ * `npm run validate` — the earlier set was accumulated one breakage at a
+ * time.
  */
 
 import { optimize, type Config } from 'svgo';
@@ -33,10 +33,12 @@ const SVGO_CONFIG: Config = {
           removeUnknownsAndDefaults: { keepRoleAttr: true },
           // 1 decimal place: 0.1 user units, which is 0.1 CSS px in the 890px
           // profile column and 0.04 px on a 360px phone — below the rendering
-          // resolution either way, and verified against captures. Every panel
-          // is outlined text, so path data is essentially the whole payload:
-          // dropping the second decimal took the generated set from 412 KB to
-          // 296 KB, which is what let panel 02 afford a fourth line.
+          // resolution either way, and verified against captures at both
+          // widths. Every panel is outlined text, so path data is essentially
+          // the whole payload. Set this back to 2 and re-run `npm run render`
+          // to see it: the same content measures 412 KB at two decimals and
+          // 295 KB at one. That saving is what let panel 02 afford a fourth
+          // line without breaching the 400 KB payload budget.
           convertPathData: { floatPrecision: 1, transformPrecision: 1 },
           // <title>/<desc> are the accessibility contract for these assets, and
           // the viewBox is what lets GitHub scale them: SVGO 4 keeps all three
