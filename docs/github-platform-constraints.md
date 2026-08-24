@@ -52,10 +52,16 @@ compound queries. Verified against `POST /markdown`:
 ```
 
 survives verbatim. First matching `<source>` wins, so the reduced-motion pair
-must be declared before the theme pair. Every animated asset in this repository
-therefore ships **four** files: animated dark, animated light, static dark,
-static light — where the static variant is the composed final frame of the
-animation, not a blank placeholder.
+must be declared before the theme pair.
+
+**This repository no longer uses that ladder.** It is recorded here because the
+measurement is the reason it was ever needed: a `prefers-reduced-motion` guard
+placed *inside* an SVG image does not report the viewer's real setting (§3), so
+honouring the preference meant shipping a second file and choosing between them
+in the README document. v2 ships nothing that moves, so every asset is a plain
+dark/light pair and each `<picture>` declares exactly one `<source>`. Anyone
+reintroducing motion here needs this section again — and needs to ship four
+files per animated asset, not two.
 
 ## 5. What GitHub's sanitizer keeps and drops
 

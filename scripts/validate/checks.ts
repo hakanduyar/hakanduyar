@@ -17,11 +17,6 @@ export interface Finding {
   message: string;
 }
 
-export interface CheckContext {
-  readme: string;
-  assetPaths: string[];
-}
-
 /**
  * Size budgets, in bytes — the design brief's figures (section 9), not
  * comfortable multiples of them. The whole payload is meant to cost roughly
