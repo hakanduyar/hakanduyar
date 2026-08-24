@@ -68,6 +68,8 @@ by inverting the dark one fails `tests/tokens.test.ts`.
 | metric | 40 | 500 | 0em | as written |
 | heading | 32 | 700 | 0.2em | UPPER |
 | label | 26 | 500 | 0.18em | UPPER |
+| body | 26 | 400 | 0.02em | as written |
+| strong | 28 | 700 | 0.02em | as written |
 | micro | 22 | 400 | 0.14em | UPPER |
 
 The 26u `label` size is the floor for information-carrying text

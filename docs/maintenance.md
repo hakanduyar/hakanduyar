@@ -59,20 +59,27 @@ the section is depth, not recency.
 
 ## Changing the design
 
-Tokens (colour, type scale, grid, motion) live in `src/shared/tokens.ts`.
+Tokens (colour, type scale, grid) live in `src/shared/tokens.ts`.
 `tests/tokens.test.ts` asserts the contrast floors and the opposite-direction
 series ramps, so a palette edit that breaks accessibility or theme logic fails
-`npm test`. Scene geometry lives in the five modules under `src/`; each module
-asserts its own layout fits before it will emit.
+`npm test`. Panel chrome — frame, section head, fit guards — lives in
+`src/shared/panel.ts`; scene geometry lives in the five panel modules under
+`src/`, and each asserts its own layout fits before it will emit.
 
 ## Adding an asset
 
-1. Write a scene module returning `RenderedAsset` via `Canvas`.
-2. Register it in `src/build.ts` (both themes; animated only if it is the hero
-   — the one-animated-asset rule is deliberate).
+1. Write a scene module returning `RenderedAsset` via `Canvas`, opening with
+   `frame()` and `head()` from `src/shared/panel.ts` so it joins the system
+   rather than sitting next to it.
+2. Add its id to `PANEL_IDS` and build it in `src/build.ts` (both themes).
+   `expectedAssetPaths()` derives from that list, so the validators pick up the
+   new panel automatically.
 3. Reference it from `scripts/generate/readme.ts` with a `<picture>` block and
-   a real-text mirror of anything it displays.
+   alt text that can stand in for the panel when the image does not load.
 4. `npm run build` and let the harness complain until it stops.
+
+Note the prose budget: the README allows three lines of text outside the
+panels. Anything the new panel needs to say, it says by drawing it.
 
 ## Regenerating everything from scratch
 
@@ -81,7 +88,7 @@ npm ci
 npm run build        # snapshot -> render -> readme -> validate
 npm test
 npm run qa:github    # GitHub's own renderer must preserve every construct
-npm run qa:visual    # screenshots + <img> animation liveness (needs Chrome)
+npm run qa:visual    # screenshots at 890px/360px + stillness proof (needs Chrome)
 ```
 
 `qa:visual` writes evidence under `.ai/evidence/visual/` (git-ignored except
@@ -91,11 +98,14 @@ when intentionally committed for review).
 
 - **Adding a webfont or `<text>` to an SVG** — cannot load / shifts per-OS.
   The build rejects both.
-- **Wrapping animations in `prefers-reduced-motion`** — misfires inside
-  SVG-as-image (always-true/never-true; measured). Reduced motion is handled
-  by the `<picture>` static sources. The validator rejects the query in assets.
-- **Re-enabling SVGO's `removeHiddenElems`** — deletes every element whose
-  entrance starts at `opacity:0` (it once stripped 19 of the hero's 25 paths).
+- **Adding "just a subtle" animation** — v2 is static by construction, and the
+  validator rejects keyframes, `animation`, `transition`, SMIL and motion
+  queries in any asset. The reasoning is in
+  [architecture.md](architecture.md#why-nothing-animates); the platform
+  measurement behind it is in
+  [github-platform-constraints.md](github-platform-constraints.md).
+- **Adding one line of explanation under a panel** — this is how v1 became a
+  report. `validate-all.ts` caps prose outside the panels at three lines.
 - **Showing follower/star counts or a daily contribution grid** — ruled out on
   content grounds in `.ai/project/02-audit.md` §5; the numbers at this scale
   read against the owner.

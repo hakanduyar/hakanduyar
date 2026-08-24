@@ -1,19 +1,18 @@
 /**
  * The drawing surface every asset is built on.
  *
- * Two responsibilities beyond emitting markup:
+ * One responsibility beyond emitting markup: **the text manifest.** All copy is
+ * converted to vector outlines, which makes it invisible to grep — exactly
+ * where the content lint (banned lexicon, Turkish characters, unmeasured
+ * numbers) matters most. `Canvas` solves that by recording every string as a
+ * side effect of drawing it, so the manifest cannot drift from what is actually
+ * on the canvas. There is no way to draw text without registering it.
  *
- * 1. **The text manifest.** All copy is converted to vector outlines, which
- *    makes it invisible to grep — exactly where the content lint (banned
- *    lexicon, Turkish characters, unmeasured numbers) matters most. `Canvas`
- *    solves that by recording every string as a side effect of drawing it, so
- *    the manifest cannot drift from what is actually on the canvas. There is no
- *    way to draw text without registering it.
- *
- * 2. **The animation register.** An asset declares animations against a named
- *    class; `Canvas` collects the keyframes and emits one `<style>` block. The
- *    same scene can then be built twice — once animated, once at rest — from a
- *    single definition, which is what keeps the static variant honest.
+ * v2 removed a second responsibility: the animation register. `Canvas` used to
+ * collect keyframes so a scene could be built twice, animated and at rest.
+ * Nothing on the page moves any more, so the register, the `animated` flag and
+ * the variant pairing that depended on it are gone — a static-only engine
+ * cannot emit motion by accident.
  */
 
 import { el, g, esc, svgDocument, n, type Attrs } from './svg.js';
@@ -26,8 +25,6 @@ export interface TextPlacement {
   y: number;
   anchor?: Anchor;
   fill: string;
-  /** CSS class for animation targeting. */
-  cls?: string;
   /**
    * Set when the string is decorative or duplicated verbatim in the README,
    * so the legibility check can allow it below the information-carrying floor.
@@ -44,7 +41,6 @@ export interface RegisteredText {
 export interface RenderedAsset {
   id: string;
   theme: string;
-  animated: boolean;
   svg: string;
   /** Every string drawn on the canvas, for the content lint. */
   texts: RegisteredText[];
@@ -54,8 +50,6 @@ export interface RenderedAsset {
 
 export class Canvas {
   private readonly body: string[] = [];
-  private readonly css: string[] = [];
-  private readonly keyframeNames = new Set<string>();
   readonly texts: RegisteredText[] = [];
 
   constructor(
@@ -63,8 +57,6 @@ export class Canvas {
     readonly height: number,
     readonly palette: Palette,
     readonly idPrefix: string,
-    /** When false, no animation CSS is emitted and the scene renders at rest. */
-    readonly animated: boolean,
   ) {}
 
   /** Append raw markup. */
@@ -101,7 +93,6 @@ export class Canvas {
       d: run.d,
       fill: place.fill,
       transform: `translate(${n(place.x + dx)} ${n(place.y)})`,
-      class: place.cls,
     });
   }
 
@@ -115,22 +106,6 @@ export class Canvas {
     }).width;
   }
 
-  /** Append a CSS rule. Ignored entirely when building the static variant. */
-  rule(css: string): void {
-    if (this.animated) this.css.push(css);
-  }
-
-  /**
-   * Register a `@keyframes` block once, by name. Repeated registration of the
-   * same name is a no-op, so a shared reveal can be requested per element
-   * without duplicating the rule.
-   */
-  keyframes(name: string, block: string): void {
-    if (!this.animated || this.keyframeNames.has(name)) return;
-    this.keyframeNames.add(name);
-    this.css.push(block);
-  }
-
   /** Namespaced id, so two assets on the same page cannot collide. */
   id(local: string): string {
     return `${this.idPrefix}-${local}`;
@@ -141,7 +116,6 @@ export class Canvas {
     // canvases and <picture> only distinguishes light from dark, so a
     // transparent asset would sit on an unpredictable colour.
     const ground = el('rect', { width: this.width, height: this.height, fill: this.palette.surface.base });
-    const style = this.css.length ? `<style>${this.css.join('')}</style>` : '';
 
     const svg = svgDocument(
       {
@@ -151,13 +125,12 @@ export class Canvas {
         desc: opts.desc,
         idPrefix: this.idPrefix,
       },
-      style + ground + this.body.join(''),
+      ground + this.body.join(''),
     );
 
     return {
       id: opts.id,
       theme: this.palette.name,
-      animated: this.animated,
       svg,
       texts: this.texts,
       title: opts.title,

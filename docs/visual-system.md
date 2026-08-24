@@ -30,8 +30,8 @@ The series ramps therefore run in opposite directions, and
 
 Exactly one chromatic hue exists: instrument amber (`#FF9E2C` dark /
 `#9C520F` light). **At most one signal-coloured element per asset**, marking
-that asset's single most important value — the hero's index line, the activity
-strip's peak week. No green anywhere: a green dot implies a running service,
+that asset's single most important value — the identity plate's primary-language
+share, the signal panel's peak contribution week. No green anywhere: a green dot implies a running service,
 and nothing here is a running service. No language brand colours: the language
 bar uses the neutral ramp, which is what keeps it from looking like a stat-card
 widget.
@@ -71,25 +71,28 @@ Every asset paints its own opaque ground and draws its own hairline border:
 GitHub ships several dark canvases and `<picture>` only distinguishes light
 from dark, so transparency would sit on an unpredictable colour.
 
+
 ## Motion
 
-One entrance (≤2400ms), then hold. Element order: frame draw-on → column
-ruling → header → wordmark wipe → discipline line → readouts (staggered 60ms)
-→ scale → index travel → footer. Easings: `cubic-bezier(0.16,1,0.3,1)` for
-reveals, `cubic-bezier(0.33,0,0.15,1)` for the needle. The single loop — index
-drift, ±6u, 9s, linear — starts only after the entrance ends.
+There is none. Every asset is static, and the engine cannot produce anything
+else: `Canvas` has no animation register, and `scripts/validate/checks.ts`
+fails the build on CSS keyframes, an `animation` or `transition` property, a
+SMIL element, or a `prefers-reduced-motion` query in any generated file.
 
-Banned: typewriter text, glitch, scanlines, radar sweeps, flicker, pulsing
-glow, rotation, particles, boot logs, count-up counters, loops under 6s,
-animated filters, animated stroke-width.
-
-The static variants are built from the same scene modules with animation
-disabled, so the resting composition can never drift from the animated one.
+v1 animated the identity plate — a 2.4s entrance and one 9s index drift — and
+paired it with a static variant selected by a reduced-motion `<source>`. The
+reasoning behind that pairing is still sound and still documented in
+[github-platform-constraints.md](github-platform-constraints.md); what changed
+is the judgement that the entrance was worth its cost. It played once, above
+the fold, and resolved to the composition that actually carries the page.
+Shipping that resting state directly is what v2 does.
 
 ## Vocabulary
 
-Section labels: IDENTITY, CORE MODULES, SELECTED SYSTEMS, TELEMETRY, ACTIVITY,
-OPERATING PRINCIPLES, CHANNELS. The banned lexicon (MISSION CONTROL, SYSTEM
+Section labels: FOCUS, SELECTED SYSTEMS, SIGNAL, CHANNELS — drawn inside the
+panels as a zero-padded ordinal and a name over a hairline rail, never as
+Markdown headings. The identity plate carries no label at all; the name is the
+label. The banned lexicon (MISSION CONTROL, SYSTEM
 ONLINE, INITIALIZING, END TRANSMISSION, NEURAL, 10X, PASSIONATE, ...) is
 enforced by `scripts/validate/validate-all.ts` against both the README and
 every string drawn inside every asset — outlining text does not exempt it,

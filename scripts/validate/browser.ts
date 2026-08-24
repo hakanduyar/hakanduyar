@@ -50,35 +50,10 @@ export type ColorScheme = 'dark' | 'light';
 
 export async function newPage(
   browser: Browser,
-  opts: { width: number; height: number; scheme: ColorScheme; reducedMotion?: boolean },
+  opts: { width: number; height: number; scheme: ColorScheme },
 ): Promise<Page> {
   const page = await browser.newPage();
   await page.setViewport({ width: opts.width, height: opts.height, deviceScaleFactor: 2 });
-  await page.emulateMediaFeatures([
-    { name: 'prefers-color-scheme', value: opts.scheme },
-    { name: 'prefers-reduced-motion', value: opts.reducedMotion ? 'reduce' : 'no-preference' },
-  ]);
+  await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: opts.scheme }]);
   return page;
-}
-
-/**
- * Freeze every CSS animation in the current document and seek it to `seconds`.
- *
- * This is what makes animation QA deterministic: instead of screenshotting
- * "roughly two seconds in" and hoping, the timeline is placed at an exact
- * offset, so the same command always produces the same pixels.
- *
- * Only works when the SVG is loaded as the top-level document — animations
- * inside an <img> live in a document the automation cannot reach, which is
- * precisely why `img-animation` is verified separately by difference instead.
- */
-export async function seekAnimations(page: Page, seconds: number): Promise<number> {
-  return page.evaluate((t: number) => {
-    const animations = document.getAnimations();
-    for (const animation of animations) {
-      animation.pause();
-      animation.currentTime = t * 1000;
-    }
-    return animations.length;
-  }, seconds);
 }

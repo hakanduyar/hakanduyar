@@ -28,18 +28,21 @@ export interface CheckContext {
  * one medium photograph.
  */
 export const SIZE_LIMITS = {
-  /** The animated hero, per theme. */
-  heroAnimated: 90 * 1024,
-  /** Any static asset, hero included. */
+  /** Any generated asset. v2 is static throughout, so there is one budget. */
   staticAsset: 45 * 1024,
   /** Everything the README pulls in, combined. */
   totalPayload: 400 * 1024,
 };
 
-/** Budget that applies to a generated file, by name. */
-export function sizeBudgetFor(fileName: string): number {
-  const isAnimatedHero = /^hero-(dark|light).svg$/.test(fileName);
-  return isAnimatedHero ? SIZE_LIMITS.heroAnimated : SIZE_LIMITS.staticAsset;
+/**
+ * Budget that applies to a generated file.
+ *
+ * v1 carried a second, far larger budget for the animated hero. There is no
+ * animated anything now, so a per-name exemption is exactly the kind of dead
+ * branch that lets an oversized asset through unnoticed.
+ */
+export function sizeBudgetFor(_fileName: string): number {
+  return SIZE_LIMITS.staticAsset;
 }
 
 // ---------------------------------------------------------------------------
@@ -109,37 +112,41 @@ export function checkAltText(readme: string): Finding[] {
   return findings;
 }
 
-/** Every animated asset must have a reduced-motion static counterpart. */
-export function checkReducedMotionSources(readme: string): Finding[] {
+/**
+ * Every `<picture>` must be a plain dark/light pair.
+ *
+ * v1 checked the ordering of `prefers-reduced-motion` sources, because the
+ * hero shipped animated and static variants and the first matching `<source>`
+ * wins. v2 has no variants, so the check inverts: a motion query or a
+ * `-static-` asset appearing here means a v1 construct survived the rewrite.
+ */
+export function checkPictureSources(readme: string): Finding[] {
   const findings: Finding[] = [];
   const pictures = readme.match(/<picture>[\s\S]*?<\/picture>/g) ?? [];
   for (const block of pictures) {
-    const hasReduce = /prefers-reduced-motion:\s*reduce/.test(block);
-    const referencesStatic = /-static-/.test(block);
-    if (referencesStatic && !hasReduce) {
+    if (/prefers-reduced-motion/.test(block)) {
       findings.push({
         level: 'error',
-        check: 'a11y',
-        message: '<picture> references a static asset but declares no prefers-reduced-motion source',
+        check: 'picture',
+        message: 'a <picture> declares a prefers-reduced-motion source, but v2 ships no animated variants',
       });
     }
-    if (hasReduce && !referencesStatic) {
+    if (/-static-/.test(block)) {
       findings.push({
         level: 'error',
-        check: 'a11y',
-        message: '<picture> declares a reduced-motion source that is not a -static- asset',
+        check: 'picture',
+        message: 'a <picture> references a -static- asset, which no longer exists in v2',
       });
     }
-    if (hasReduce) {
-      // First matching <source> wins, so reduced motion must be declared first.
-      const firstSource = /<source\b[^>]*>/.exec(block)?.[0] ?? '';
-      if (!/prefers-reduced-motion/.test(firstSource)) {
-        findings.push({
-          level: 'error',
-          check: 'a11y',
-          message: 'reduced-motion <source> must be declared before the colour-scheme sources',
-        });
-      }
+    const sources = [...block.matchAll(/<source\b[^>]*media="([^"]+)"/g)].map((m) => m[1] as string);
+    if (sources.length !== 1 || sources[0] !== '(prefers-color-scheme: dark)') {
+      findings.push({
+        level: 'error',
+        check: 'picture',
+        message:
+          'every <picture> must declare exactly one source, "(prefers-color-scheme: dark)", with the light ' +
+          `asset as the <img> fallback; found [${sources.join(', ')}]`,
+      });
     }
   }
   return findings;
@@ -189,14 +196,24 @@ export function checkSvg(relPath: string): Finding[] {
     });
   }
 
-  // A reduced-motion query inside an SVG image is always-true / never-true in
-  // Chromium. See docs/github-platform-constraints.md.
-  if (/prefers-reduced-motion/.test(svg)) {
-    findings.push({
-      level: 'error',
-      check: 'svg-motion',
-      message: `${relPath} contains a prefers-reduced-motion query, which misfires inside an SVG image`,
-    });
+  // v2 is static by construction. This is the backstop for that claim: it
+  // fails on CSS keyframes, CSS animation/transition shorthands, SMIL, and the
+  // reduced-motion query v1 needed — any of which means motion got back in.
+  const motion: [RegExp, string][] = [
+    [/@keyframes/, 'CSS @keyframes'],
+    [/animation\s*:/, 'a CSS animation property'],
+    [/transition\s*:/, 'a CSS transition property'],
+    [/<animate|<animateTransform|<animateMotion|<set[\s>]/, 'a SMIL animation element'],
+    [/prefers-reduced-motion/, 'a prefers-reduced-motion query'],
+  ];
+  for (const [pattern, label] of motion) {
+    if (pattern.test(svg)) {
+      findings.push({
+        level: 'error',
+        check: 'svg-motion',
+        message: `${relPath} contains ${label}; v2 assets are static`,
+      });
+    }
   }
 
   // Nothing may reach the network: SVG images cannot load external resources.
@@ -258,27 +275,5 @@ export function checkSvg(relPath: string): Finding[] {
   }
 
   findings.push(...checkEnglishOnly(svg, relPath));
-  return findings;
-}
-
-/** Static variants must not animate; animated variants must. */
-export function checkVariantPair(animatedPath: string, staticPath: string): Finding[] {
-  const findings: Finding[] = [];
-  const animated = readFileSync(resolve(REPO_ROOT, animatedPath), 'utf8');
-  const still = readFileSync(resolve(REPO_ROOT, staticPath), 'utf8');
-  if (!/@keyframes/.test(animated)) {
-    findings.push({
-      level: 'error',
-      check: 'variant',
-      message: `${animatedPath} is the animated variant but declares no @keyframes`,
-    });
-  }
-  if (/@keyframes/.test(still) || /animation\s*:/.test(still)) {
-    findings.push({
-      level: 'error',
-      check: 'variant',
-      message: `${staticPath} is the reduced-motion variant but still contains animation`,
-    });
-  }
   return findings;
 }

@@ -4,6 +4,12 @@
  * Kept separate from the CLI so tests and validators can inspect the built
  * assets — including each asset's declared text manifest — without writing
  * files or shelling out.
+ *
+ * v2 is static throughout. There is no animated/static split, so the build set
+ * is simply every panel in every theme: eight logical panels, two themes,
+ * sixteen files. `PANEL_IDS` is the contract the validators and the README
+ * assembler both check themselves against, so an asset can never be added to
+ * the page without also being added here.
  */
 
 import { readFileSync } from 'node:fs';
@@ -13,24 +19,43 @@ import { PALETTES, THEMES, type ThemeName } from './shared/tokens.js';
 import type { Telemetry } from './shared/telemetry-types.js';
 import type { RenderedAsset } from './shared/canvas.js';
 import { PROFILE } from './shared/profile.js';
-import { renderHero } from './hero/hero.js';
-import { renderCoreModules } from './modules/core-modules.js';
+import { CHANNELS, FEATURED_REPOS } from './shared/config.js';
+import { renderIdentity } from './identity/identity.js';
+import { renderFocus } from './focus/focus.js';
 import { renderSystemPlate } from './systems/system-plate.js';
-import { renderTelemetryPanel } from './telemetry/telemetry-panel.js';
-import { renderActivityStrip } from './activity/activity-strip.js';
+import { renderSignal } from './signal/signal.js';
+import { renderChannels } from './channels/channels.js';
 
 export interface AssetBuild {
-  /** Logical asset name, shared across themes and variants. */
+  /** Logical asset name, shared across themes. */
   id: string;
   theme: ThemeName;
-  animated: boolean;
   /** Repo-relative output path. */
   path: string;
   asset: RenderedAsset;
 }
 
+/**
+ * The eight logical panels, in the order the README stacks them.
+ *
+ * Derived from `FEATURED_REPOS` rather than written out, so promoting a
+ * different repository cannot leave the contract and the build disagreeing.
+ */
+export const PANEL_IDS: readonly string[] = [
+  'identity',
+  'focus',
+  ...FEATURED_REPOS.map((repo) => `system-${repo.key}`),
+  'signal',
+  'channels',
+];
+
 export function loadTelemetry(): Telemetry {
   return JSON.parse(readFileSync(resolve(REPO_ROOT, 'data/telemetry.json'), 'utf8')) as Telemetry;
+}
+
+/** Every file the build produces, as repo-relative paths. */
+export function expectedAssetPaths(): string[] {
+  return THEMES.flatMap((theme) => PANEL_IDS.map((id) => `assets/generated/${id}-${theme}.svg`));
 }
 
 export function buildAll(telemetry: Telemetry): AssetBuild[] {
@@ -39,54 +64,28 @@ export function buildAll(telemetry: Telemetry): AssetBuild[] {
 
   for (const theme of THEMES) {
     const palette = PALETTES[theme];
+    const push = (id: string, asset: RenderedAsset): void => {
+      builds.push({ id, theme, path: out(`${id}-${theme}`), asset });
+    };
 
-    // The hero is the only animated asset, so it is the only one built twice.
-    // Both variants come from one module, which is what stops the resting
-    // composition from drifting away from the animated one.
-    for (const animated of [true, false]) {
-      const name = animated ? `hero-${theme}` : `hero-static-${theme}`;
-      builds.push({
-        id: 'hero',
-        theme,
-        animated,
-        path: out(name),
-        asset: renderHero({ telemetry, discipline: PROFILE.discipline }, palette, animated),
-      });
-    }
+    push('identity', renderIdentity({ telemetry, discipline: PROFILE.discipline }, palette));
+    push('focus', renderFocus({ modules: PROFILE.modules }, palette));
 
-    builds.push({
-      id: 'core-modules',
-      theme,
-      animated: false,
-      path: out(`core-modules-${theme}`),
-      asset: renderCoreModules({ telemetry, modules: PROFILE.modules }, palette),
+    // Iterated in configured order, not snapshot order, so the build set and
+    // PANEL_IDS are derived from the same list and cannot disagree.
+    // Only the first plate opens the section, so the four read as one rack.
+    FEATURED_REPOS.forEach((repo, index) => {
+      push(
+        `system-${repo.key}`,
+        renderSystemPlate({ telemetry, key: repo.key, sectionHead: index === 0 }, palette),
+      );
     });
 
-    for (const featured of telemetry.featured) {
-      builds.push({
-        id: `system-${featured.key}`,
-        theme,
-        animated: false,
-        path: out(`system-${featured.key}-${theme}`),
-        asset: renderSystemPlate({ telemetry, key: featured.key }, palette),
-      });
-    }
-
-    builds.push({
-      id: 'telemetry',
-      theme,
-      animated: false,
-      path: out(`telemetry-${theme}`),
-      asset: renderTelemetryPanel({ telemetry }, palette),
-    });
-
-    builds.push({
-      id: 'activity',
-      theme,
-      animated: false,
-      path: out(`activity-${theme}`),
-      asset: renderActivityStrip({ telemetry }, palette),
-    });
+    push('signal', renderSignal({ telemetry }, palette));
+    push(
+      'channels',
+      renderChannels({ channels: CHANNELS.map((c) => ({ label: c.label, detail: c.detail })) }, palette),
+    );
   }
 
   return builds;
