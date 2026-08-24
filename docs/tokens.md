@@ -64,12 +64,12 @@ by inverting the dark one fails `tests/tokens.test.ts`.
 | Role | Size (u) | Weight | Tracking | Case |
 |---|---:|---:|---:|---|
 | display | 72 | 800 | 0.16em | UPPER |
+| metricXl | 60 | 500 | 0em | as written |
 | metric | 40 | 500 | 0em | as written |
+| heading | 32 | 700 | 0.2em | UPPER |
 | label | 26 | 500 | 0.18em | UPPER |
-| body | 26 | 400 | 0.02em | as written |
-| strong | 28 | 700 | 0.02em | as written |
+| micro | 22 | 400 | 0.14em | UPPER |
 
-The 26u `label` size is the floor for every string drawn on a panel
-(~10.5 CSS px at a 360px viewport). There is no tier below it: v1 had one
-for annotation the README repeated in Markdown, and v2 has no Markdown
-beneath the panels. Enforced by `scripts/validate/validate-all.ts`.
+The 26u `label` size is the floor for information-carrying text
+(~10.5 CSS px at a 360px viewport); `micro` is annotation only and must be
+duplicated in Markdown. Enforced by `scripts/validate/validate-all.ts`.

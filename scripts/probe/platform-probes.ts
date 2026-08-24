@@ -6,12 +6,6 @@
  * changes its sanitiser or Chromium changes SVG-as-image behaviour, and update
  * the doc from the output — never the other way round.
  *
- * These probes are diagnostics, not part of the build. They are what the v2
- * static-first decision rests on: probes 1-3 are the measurement showing that a
- * `prefers-reduced-motion` guard inside an SVG image does not report the
- * viewer's real setting, which is why shipping motion here was never safely
- * accessible. Keep them runnable so the reasoning stays checkable.
- *
  * Probes:
  *   1. Does CSS keyframe animation run inside an SVG referenced via <img>?
  *   2. Does SMIL run there?
@@ -91,15 +85,7 @@ async function main(): Promise<void> {
         ['light', false],
         ['dark', true],
       ] as const) {
-        const page = await newPage(browser, { width: 460, height: 700, scheme });
-        // Emulated here rather than in `newPage`: the shipped assets contain no
-        // motion, so the shared harness has no reason to carry a motion knob.
-        // This probe is the one place the preference still matters — it is what
-        // measures the misfire that docs/github-platform-constraints.md records.
-        await page.emulateMediaFeatures([
-          { name: 'prefers-color-scheme', value: scheme },
-          { name: 'prefers-reduced-motion', value: reduced ? 'reduce' : 'no-preference' },
-        ]);
+        const page = await newPage(browser, { width: 460, height: 700, scheme, reducedMotion: reduced });
         await page.goto(pathToFileURL(join(dir, 'host.html')).href, { waitUntil: 'load' });
         const samples: Record<string, number[]> = Object.fromEntries(ids.map((id) => [id, []]));
         for (let i = 0; i < 3; i++) {

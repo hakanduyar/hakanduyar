@@ -16,27 +16,11 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { REPO_ROOT } from '../../src/shared/emit.js';
 import { LOGIN } from '../../src/shared/config.js';
-import { PANEL_IDS } from '../../src/build.js';
-
-/**
- * Thrown when no usable credential exists — distinct from a renderer assertion
- * failing, so a caller (or a reviewer reading the exit output) cannot mistake
- * "nothing to check with" for "checked, and it's broken".
- */
-class NoCredentialError extends Error {}
 
 function token(): string {
   const fromEnv = process.env['GITHUB_TOKEN'] ?? process.env['GH_TOKEN'];
   if (fromEnv) return fromEnv;
-  try {
-    // No shell: a literal argv, not a string a shell would need to parse.
-    return execFileSync('gh', ['auth', 'token'], { encoding: 'utf8' }).trim();
-  } catch (error) {
-    throw new NoCredentialError(
-      'No GitHub token available: GITHUB_TOKEN/GH_TOKEN are unset and `gh auth token` failed ' +
-        `(${error instanceof Error ? error.message : error}). Set a token or run \`gh auth login\`.`,
-    );
-  }
+  return execFileSync('gh', ['auth', 'token'], { encoding: 'utf8', shell: true }).trim();
 }
 
 async function main(): Promise<void> {
@@ -59,18 +43,13 @@ async function main(): Promise<void> {
     if (!condition) failures.push(message);
   };
 
-  // The <picture> mechanism is the entire theming strategy.
+  // The <picture> mechanism is the entire theming and reduced-motion strategy.
   const pictureCount = (html.match(/<picture>/g) ?? []).length;
   const sourceCount = (readme.match(/<source /g) ?? []).length;
   expect(pictureCount === (readme.match(/<picture>/g) ?? []).length, 'a <picture> block was sanitised away');
   expect((html.match(/<source /g) ?? []).length === sourceCount, 'a <source> element was dropped');
-  expect(pictureCount === PANEL_IDS.length, `expected ${PANEL_IDS.length} panels, rendered ${pictureCount}`);
+  expect(html.includes('media="(prefers-reduced-motion: reduce)'), 'the reduced-motion media attribute was stripped');
   expect(html.includes('media="(prefers-color-scheme: dark)"'), 'the colour-scheme media attribute was stripped');
-  expect(html.includes('media="(prefers-reduced-motion: reduce)"'), 'the reduced-motion source attribute was stripped');
-  expect(
-    html.includes('media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)"'),
-    'the compound reduced-motion dark source attribute was stripped',
-  );
 
   // Every generated asset referenced must survive as an <img> src or srcset.
   for (const asset of readme.match(/assets\/generated\/[\w-]+\.svg/g) ?? []) {
@@ -82,17 +61,9 @@ async function main(): Promise<void> {
     expect(html.includes(`alt="${alt}`), `alt text truncated or dropped: "${alt!.slice(0, 40)}..."`);
   }
 
-  // v2 carries no headings at all — each panel draws its own section mark. A
-  // heading appearing here means Markdown prose crept back onto the page.
-  expect(!/<h[1-6][^>]*>/.test(html), 'the rendered page contains a heading; v2 sections live inside the panels');
-
-  // The system plates are the navigation: each must survive as a real anchor
-  // wrapping its own image, or four repositories become unreachable.
-  for (const id of PANEL_IDS.filter((panel) => panel.startsWith('system-'))) {
-    expect(
-      new RegExp(`<a[^>]+href="[^"]*"[^>]*>[\\s\\S]{0,400}?${id}-light\\.svg`).test(html),
-      `${id} plate did not survive as a linked image`,
-    );
+  // Section structure must survive as headings.
+  for (const heading of ['Identity', 'Core modules', 'Selected systems', 'Telemetry', 'Activity']) {
+    expect(new RegExp(`<h2[^>]*>${heading}</h2>`).test(html), `heading "${heading}" not rendered as <h2>`);
   }
 
   // External links: every URL on the page must answer. medium.com blocks
@@ -129,16 +100,11 @@ async function main(): Promise<void> {
   }
   console.log(
     `[qa:github] renderer preserved all ${pictureCount} <picture> blocks, ${sourceCount} sources, ` +
-      `every asset reference and alt text, with no headings; ${urls.length} external links answered`,
+      `every asset reference, alt text and heading; ${urls.length} external links answered`,
   );
 }
 
 main().catch((error: unknown) => {
-  if (error instanceof NoCredentialError) {
-    console.error('[qa:github] SKIPPED (no credentials):', error.message);
-    process.exitCode = 1;
-    return;
-  }
   console.error('[qa:github] FAILED:', error instanceof Error ? error.message : error);
   process.exitCode = 1;
 });

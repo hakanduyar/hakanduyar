@@ -1,66 +1,49 @@
 /**
  * README assembler.
  *
- * The README is generated, not hand-edited: every image reference matches what
- * the renderer emits, and every number on the page lives inside a panel that
- * was drawn from the telemetry snapshot.
+ * The README is generated, not hand-edited: every number in it comes from the
+ * telemetry snapshot, and every image reference matches what the renderer
+ * emits. Markdown carries the content; the images are the frame. If every
+ * image on the page failed to load, the page would still do its whole job.
  *
- * v2 changed what this file is for. v1 assembled a document — eight `##`
- * headings, four identity paragraphs, a nine-row metrics table, twelve bullets
- * and five principles — and hung images off it. The prose was the page and the
- * graphics illustrated it, which is exactly why the result read as a report.
- *
- * Here the panels are the page. This assembler emits almost nothing of its own:
- * a stack of `<picture>` blocks, one strapline, one channels link line, one
- * provenance line. No headings at all — each panel draws its own section mark,
- * so a Markdown heading above it would say the same thing twice in two
- * typefaces.
- *
- * The accessible reading of the page therefore rests on `alt` text rather than
- * on body copy, and each `alt` is written to stand alone: read in order with no
- * images loaded, they still say who this is, what he works on, what he built
- * and how to reach him.
- *
- * That is why alt text is the one place the page repeats a figure. The
- * no-duplicate-metrics rule exists so a sighted reader is not told the same
- * number twice in two registers; alt text is not a second telling, it is the
- * same telling for a reader who cannot see the panel. Stripping the numbers out
- * of it to satisfy the rule would leave that reader with strictly less than
- * everyone else. `tests/readme.test.ts` states this exemption explicitly and
- * asserts the panels themselves still obey the rule.
+ * Reduced motion: a `prefers-reduced-motion` query inside the SVGs themselves
+ * misfires (see docs/github-platform-constraints.md), so the hero's <picture>
+ * declares static sources first — the README document evaluates those media
+ * attributes correctly.
  */
 
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { REPO_ROOT } from '../../src/shared/emit.js';
 import { PROFILE } from '../../src/shared/profile.js';
 import { CHANNELS, FEATURED_REPOS, LOGIN } from '../../src/shared/config.js';
-import { loadTelemetry, PANEL_IDS } from '../../src/build.js';
-import { remainderShare } from '../../src/signal/signal.js';
+import type { Telemetry } from '../../src/shared/telemetry-types.js';
 
 const OUT = resolve(REPO_ROOT, 'README.md');
 
-/**
- * A themed `<picture>`. Animated panels put the reduced-motion pair first,
- * because the README document evaluates that preference correctly even though
- * an SVG image document does not.
- */
-function picture(opts: { base: string; alt: string; animated?: boolean; link?: string }): string {
-  const asset = (name: string): string => `assets/generated/${name}.svg`;
+function loadTelemetry(): Telemetry {
+  return JSON.parse(readFileSync(resolve(REPO_ROOT, 'data/telemetry.json'), 'utf8')) as Telemetry;
+}
+
+/** A themed <picture> block. Reduced-motion sources must come first: the first matching <source> wins. */
+function picture(opts: {
+  base: string;
+  alt: string;
+  animated: boolean;
+  width?: number;
+  link?: string;
+}): string {
+  const a = (name: string): string => `assets/generated/${name}.svg`;
   const sources: string[] = [];
   if (opts.animated) {
     sources.push(
-      `  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="${asset(`${opts.base}-static-dark`)}">`,
-      `  <source media="(prefers-reduced-motion: reduce)" srcset="${asset(`${opts.base}-static-light`)}">`,
+      `  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="${a(`${opts.base}-static-dark`)}">`,
+      `  <source media="(prefers-reduced-motion: reduce)" srcset="${a(`${opts.base}-static-light`)}">`,
     );
   }
-  sources.push(`  <source media="(prefers-color-scheme: dark)" srcset="${asset(`${opts.base}-dark`)}">`);
-  const inner =
-    '<picture>\n' +
-    sources.join('\n') +
-    '\n' +
-    `  <img src="${asset(`${opts.base}-light`)}" alt="${opts.alt}" width="890">\n` +
-    '</picture>';
+  sources.push(`  <source media="(prefers-color-scheme: dark)" srcset="${a(`${opts.base}-dark`)}">`);
+  const img = `  <img src="${a(`${opts.base}-light`)}" alt="${opts.alt}" width="${opts.width ?? 890}">`;
+  const inner = `<picture>\n${sources.join('\n')}\n${img}\n</picture>`;
   return opts.link ? `<a href="${opts.link}">\n${inner}\n</a>` : inner;
 }
 
@@ -70,8 +53,13 @@ function main(): void {
   if (!primary) throw new Error('No language data in telemetry');
 
   const capturedDate = t.capturedAt.slice(0, 10);
-  const share = (value: number): string => `${(value * 100).toFixed(1)} percent`;
+  const megabytes = (t.totalSourceBytes / 1e6).toFixed(2);
   const byKey = new Map(t.featured.map((f) => [f.key, f]));
+  const featured = (key: string) => {
+    const entry = byKey.get(key);
+    if (!entry) throw new Error(`Featured key "${key}" missing from telemetry`);
+    return entry;
+  };
 
   const lines: string[] = [];
   const push = (...items: string[]): void => {
@@ -86,109 +74,164 @@ function main(): void {
     '',
   );
 
-  // -- 00 identity -----------------------------------------------------------
+  // -- hero -------------------------------------------------------------------
 
   push(
     picture({
-      base: 'identity',
+      base: 'hero',
       animated: true,
       alt:
-        `${t.name}, interface and systems engineer. ` +
+        `HDU engineering record. ${t.name}, interface and systems engineering. ` +
         `${t.publicRepos} public repositories, ${t.totalCommits} commits on default branches, ` +
-        `${primary.name} ${share(primary.share)} of public source.`,
+        `${primary.name} ${(primary.share * 100).toFixed(1)} percent of public source. ` +
+        `Active since ${t.memberSince.slice(0, 4)}, last public push ${t.lastPush.at.slice(0, 10)}.`,
     }),
     '',
-    // The one line of real text on the page: what search, screen readers and a
-    // failed image load all fall back to.
     `**${PROFILE.strapline}**`,
     '',
   );
 
-  // -- 01 focus --------------------------------------------------------------
+  // -- identity -----------------------------------------------------------------
+
+  push('## Identity', '');
+  for (const paragraph of PROFILE.identity) push(paragraph, '');
+
+  // -- core modules ---------------------------------------------------------------
 
   push(
+    '## Core modules',
+    '',
     picture({
-      base: 'focus',
+      base: 'core-modules',
+      animated: false,
       alt:
-        'Focus, four engineering domains. ' +
-        PROFILE.modules
-          .map((m) => `${m.name.charAt(0)}${m.name.slice(1).toLowerCase()}: ${m.capability}`)
-          .join('. ') +
+        'Four capability domains, each with its evidence repository: ' +
+        PROFILE.modules.map((m) => `${m.name.toLowerCase()} (${featured(m.evidence).name})`).join(', ') +
         '.',
     }),
     '',
   );
+  for (const module of PROFILE.modules) {
+    const repo = featured(module.evidence);
+    push(`- **${module.name.charAt(0) + module.name.slice(1).toLowerCase()}** — ${module.summary} Evidence: [${repo.name}](${repo.url}).`);
+  }
+  push('');
 
-  // -- 02 selected systems ---------------------------------------------------
-  //
-  // Each plate is its own link. One image, one repository, one anchor — so the
-  // section needs no list of links underneath it.
+  // -- selected systems ------------------------------------------------------------
 
-  for (const repo of FEATURED_REPOS) {
-    const featured = byKey.get(repo.key);
-    if (!featured) throw new Error(`Featured key "${repo.key}" missing from telemetry`);
+  push('## Selected systems', '');
+  for (const config of FEATURED_REPOS) {
+    const repo = featured(config.key);
     push(
       picture({
-        base: `system-${repo.key}`,
-        link: featured.url,
-        alt:
-          `${featured.name}: ${repo.headline} ` +
-          `Built with ${repo.stack.join(', ')}. Last public push ${featured.pushedAt.slice(0, 7)}.`,
+        base: `system-${config.key}`,
+        animated: false,
+        alt: `${repo.name}: ${config.plateLine}. ${repo.language ?? ''}, last push ${repo.pushedAt.slice(0, 7)}.`,
+        link: repo.url,
       }),
       '',
+      `**[${repo.name}](${repo.url})** — ${config.headline}`,
+      '',
+    );
+    for (const signal of config.signals) push(`- ${signal}`);
+    push('', `Stack: ${config.stack.join(' · ')}. Last public push: ${repo.pushedAt.slice(0, 7)}.`, '');
+  }
+
+  // -- telemetry -------------------------------------------------------------------
+
+  push(
+    '## Telemetry',
+    '',
+    picture({
+      base: 'telemetry',
+      animated: false,
+      alt:
+        `Measured telemetry: ${t.publicRepos} public repositories, ${t.totalCommits} commits on default branches, ` +
+        `${primary.name} ${(primary.share * 100).toFixed(1)} percent of ${megabytes} MB of public source.`,
+    }),
+    '',
+    '| Measure | Value | Method |',
+    '|---|---:|---|',
+    `| Public repositories | ${t.publicRepos} | public, non-fork, owned by @${t.login} |`,
+    `| Commits | ${t.totalCommits} | default branches, ${t.countedRepos} public repositories |`,
+  );
+  for (const language of t.languages.slice(0, 4)) {
+    push(
+      `| ${language.name} | ${(language.share * 100).toFixed(1)}% | share of ${megabytes} MB public source |`,
     );
   }
-
-  // -- 03 signal -------------------------------------------------------------
-
-  const named = t.languages.slice(0, 4);
+  const remainder = 1 - t.languages.slice(0, 4).reduce((sum, l) => sum + l.share, 0);
   push(
+    `| All other languages | ${(remainder * 100).toFixed(1)}% | ${t.languages.length - 4} languages |`,
+    `| Active since | ${t.memberSince.slice(0, 4)} | GitHub account created ${t.memberSince} |`,
+    `| Last public push | ${t.lastPush.at.slice(0, 10)} | most recent push to a public repository |`,
+    '',
+    `Measured ${capturedDate} from the GitHub API. No estimated or third-party figures.`,
+    '',
+  );
+
+  // -- activity --------------------------------------------------------------------
+
+  push(
+    '## Activity',
+    '',
     picture({
-      base: 'signal',
-      animated: true,
-      // Describes what the panel draws, and no more: the active-week count and
-      // the peak week left the page with the histogram.
+      base: 'activity',
+      animated: false,
       alt:
-        `Measured signal. Source distribution across ${(t.totalSourceBytes / 1e6).toFixed(2)} MB of public source: ` +
-        named.map((l) => `${l.name} ${share(l.share)}`).join(', ') +
-        `, and ${share(remainderShare(t))} across all other languages. ` +
-        `${t.activity.total} contributions in the ${t.activity.weekly.length} weeks to ${t.activity.end}.`,
+        `Weekly public contributions for the 52 weeks to ${t.activity.end}: ${t.activity.total} total across ` +
+        `${t.activity.activeWeeks} active weeks, at most ${t.activity.max} in one week.`,
     }),
+    '',
+    `${t.activity.total} public contributions in the 52 weeks to ${t.activity.end}, concentrated in ` +
+      `${t.activity.activeWeeks} active weeks with a peak of ${t.activity.max} in one week.`,
     '',
   );
 
-  // -- 04 channels -----------------------------------------------------------
-  //
-  // The one place a link line is unavoidable: four destinations cannot live in
-  // one anchor. It carries the link words only — the handles are drawn in the
-  // panel and are not repeated here.
+  // -- active work -----------------------------------------------------------------
+
+  push('## Active work', '');
+  const featuredByName = new Map(FEATURED_REPOS.map((f) => [f.repo, f]));
+  for (const pushEntry of t.recentPushes) {
+    const month = pushEntry.at.slice(0, 7);
+    // Prefer the curated headline when the repository is featured: it is
+    // sentence-cased and register-consistent, where raw GitHub descriptions
+    // import Title Case and their own dash conventions.
+    const curated = featuredByName.get(pushEntry.repo)?.headline;
+    const trimmed = pushEntry.description?.trim() ?? '';
+    const fallback = trimmed ? (trimmed.endsWith('.') ? trimmed : `${trimmed}.`) : null;
+    const summary = curated ?? fallback;
+    const line = summary
+      ? `**[${pushEntry.repo}](${pushEntry.url})** — ${summary} Last push ${month}.`
+      : `**[${pushEntry.repo}](${pushEntry.url})** — Last push ${month}.`;
+    push(`- ${line}`);
+  }
+  push('', PROFILE.privateWork, '');
+
+  // -- operating principles ----------------------------------------------------------
+
+  push('## Operating principles', '');
+  for (const principle of PROFILE.principles) push(`- ${principle}`);
+  push('');
+
+  // -- channels ------------------------------------------------------------------------
+
+  push('## Channels', '');
+  for (const channel of CHANNELS) {
+    push(`- ${channel.display}: [${channel.detail}](${channel.href})`);
+  }
+  push('');
+
+  // -- provenance ------------------------------------------------------------------------
 
   push(
-    picture({
-      base: 'channels',
-      alt: 'Channels: ' + CHANNELS.map((c) => `${c.display}, ${c.detail}`).join('; ') + '.',
-    }),
-    '',
-    CHANNELS.map((c) => `[${c.display}](${c.href})`).join(' · '),
-    '',
-    `*${PROFILE.provenanceNote} Measured ${capturedDate}. ` +
-      `Source: [${LOGIN}/${LOGIN}](https://github.com/${LOGIN}/${LOGIN}).*`,
+    `*${PROFILE.provenanceNote} Data measured ${capturedDate}. ` +
+      `Source: [${LOGIN}/${LOGIN}](https://github.com/${LOGIN}/${LOGIN}). Build: \`npm run build\`.*`,
     '',
   );
 
-  const readme = lines.join('\n');
-
-  // The assembler and the build set must reference the same panels. This is the
-  // cheap half of that guarantee; validate-all checks the emitted files too.
-  for (const id of PANEL_IDS) {
-    if (!readme.includes(`assets/generated/${id}-dark.svg`)) {
-      throw new Error(`README does not reference panel "${id}", which buildAll() produces`);
-    }
-  }
-
-  writeFileSync(OUT, readme, 'utf8');
-  const words = readme.replace(/<[^>]*>/g, ' ').split(/\s+/).filter(Boolean).length;
-  console.log(`[readme] ${lines.length} lines, ${PANEL_IDS.length} panels, ~${words} words of markup and copy`);
+  writeFileSync(OUT, lines.join('\n'), 'utf8');
+  console.log(`[readme] wrote ${OUT} (${lines.length} lines)`);
 }
 
 main();

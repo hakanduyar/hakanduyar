@@ -28,14 +28,7 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 
-/**
- * The owner-driven fields. Everything else is derived from them or the clock.
- *
- * `recentPushes` was in this view while v1 rendered an "Active work" section
- * from it. v2 draws no such section, so a change there moves nothing a reader
- * can see and must not by itself justify a telemetry commit. A push still
- * registers here through `lastPush`.
- */
+/** The owner-driven fields. Everything else is derived from them or the clock. */
 function materialView(snapshot) {
   return {
     login: snapshot.login,
@@ -46,6 +39,7 @@ function materialView(snapshot) {
     totalSourceBytes: snapshot.totalSourceBytes,
     languages: snapshot.languages,
     lastPush: snapshot.lastPush,
+    recentPushes: snapshot.recentPushes,
     featured: snapshot.featured,
   };
 }

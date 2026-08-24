@@ -17,29 +17,16 @@ export interface FeaturedRepoConfig {
    * One-line English positioning statement. The GitHub description is often
    * empty or non-English, so the profile states what the system *is* in its
    * own words — never inventing capability the repository does not have.
-   *
-   * Too long for the plate at the 26u floor; it is the asset's `<desc>` and the
-   * README's alt text, which is where a reader who cannot see the plate gets it.
    */
   headline: string;
-  /**
-   * The plate's first content line: what the system *is*, as a noun phrase.
-   * Max 30 characters. Without it the plate led with an implementation detail
-   * and never said what the repository was — the reader learned that
-   * dropspot-project does idempotent claim handling without learning it is a
-   * drop platform.
-   */
-  subject: string;
+  /** 2-4 concrete engineering facts. Each must be verifiable from the source. */
+  signals: string[];
   /** Stack labels, curated — not every dependency in the lockfile. */
   stack: string[];
   /**
-   * The plate's second content line: the one engineering fact that
-   * distinguishes this system. Max 25 characters — the renderer throws beyond
-   * that. States what is implemented, never how good it is.
-   *
-   * It must add to `subject` rather than reword it. "Local-first planning
-   * system" over "Local-first, no backend" spent two of the plate's four lines
-   * saying one thing.
+   * The one line printed on the system plate. Max 27 characters: beyond that
+   * it collides with the right-aligned meta column, and the renderer throws.
+   * States what is implemented, never how good it is.
    */
   plateLine: string;
 }
@@ -54,7 +41,11 @@ export const FEATURED_REPOS: FeaturedRepoConfig[] = [
     key: 'dropspot',
     repo: 'dropspot-project',
     headline: 'Limited-stock drop platform with fair, idempotent claim distribution.',
-    subject: 'Limited-stock drop platform',
+    signals: [
+      'Priority-scored waitlist decides who converts when stock is scarce',
+      'Idempotent claim operations and ACID transactions keep concurrent buyers consistent',
+      'Documented data model, API surface and seed generation',
+    ],
     stack: ['Node.js', 'Express', 'PostgreSQL', 'React'],
     plateLine: 'Idempotent claim handling',
   },
@@ -62,25 +53,37 @@ export const FEATURED_REPOS: FeaturedRepoConfig[] = [
     key: 'motion-system',
     repo: 'Hunnes-Academy-motion-system',
     headline: 'A reusable motion layer, built as one system behind a declarative configuration.',
-    subject: 'Reusable motion layer',
+    signals: [
+      'Nine motion modules over a shared base, behind one declarative config',
+      'Page-scoped router activates only the motions a route needs',
+      'Ships as a single built bundle for drop-in use',
+    ],
     stack: ['JavaScript', 'GSAP', 'ES Modules'],
-    plateLine: 'Nine modules, one config',
+    plateLine: 'Composable motion modules',
   },
   {
     key: 'stock',
     repo: 'stock-management-system',
     headline: 'Role-aware inventory system covering the full stock movement lifecycle.',
-    subject: 'Role-aware inventory system',
+    signals: [
+      'Three-role access model: admin, storekeeper, employee',
+      'JWT authentication over a Prisma/PostgreSQL schema',
+      'Stock-in / stock-out movements tracked as first-class records',
+    ],
     stack: ['NestJS', 'Next.js', 'PostgreSQL', 'Prisma'],
-    plateLine: 'JWT over a Prisma schema',
+    plateLine: 'Role-based access control',
   },
   {
     key: 'spark',
     repo: 'spark',
     headline: 'Local-first planning system that works with no backend and no network.',
-    subject: 'Local-first planning system',
+    signals: [
+      'All state lives in IndexedDB via Dexie — no server, no account',
+      'Installable offline PWA built mobile-first',
+      'Optional AI layer is additive, never required to use the app',
+    ],
     stack: ['React', 'TypeScript', 'Vite', 'Dexie'],
-    plateLine: 'IndexedDB via Dexie',
+    plateLine: 'Local-first, no backend',
   },
 ];
 

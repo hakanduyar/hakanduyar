@@ -7,13 +7,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import {
-  checkEnglishOnly,
-  checkAltText,
-  checkPictureSources,
-  sizeBudgetFor,
-  SIZE_LIMITS,
-} from '../scripts/validate/checks.js';
+import { checkEnglishOnly, checkAltText, checkReducedMotionSources } from '../scripts/validate/checks.js';
 
 describe('checkEnglishOnly', () => {
   it('flags Turkish-specific characters', () => {
@@ -50,50 +44,32 @@ describe('checkAltText', () => {
   });
 });
 
-describe('checkPictureSources', () => {
-  const staticPicture = `<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="a-dark.svg">
-  <img src="a-light.svg" alt="a sufficiently descriptive alternative text">
-</picture>`;
-
-  const animatedPicture = `<picture>
-  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="identity-static-dark.svg">
-  <source media="(prefers-reduced-motion: reduce)" srcset="identity-static-light.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="identity-dark.svg">
-  <img src="identity-light.svg" alt="a sufficiently descriptive alternative text">
-</picture>`;
-
-  it('accepts a plain dark source with a light fallback for static panels', () => {
-    expect(checkPictureSources(staticPicture)).toHaveLength(0);
-  });
-
-  it('accepts the four-source reduced-motion ladder for animated panels', () => {
-    expect(checkPictureSources(animatedPicture)).toHaveLength(0);
-  });
-
-  it('rejects a reduced-motion ladder with the wrong order or filenames', () => {
-    const v1 = `<picture>
+describe('checkReducedMotionSources', () => {
+  const staticFirst = `<picture>
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="a-static-dark.svg">
   <source media="(prefers-reduced-motion: reduce)" srcset="a-static-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="a-dark.svg">
   <img src="a-light.svg" alt="a sufficiently descriptive alternative text">
 </picture>`;
-    const findings = checkPictureSources(v1);
-    expect(findings.length).toBeGreaterThan(0);
-    expect(findings.some((f) => /source ladder/.test(f.message))).toBe(true);
+
+  it('accepts reduced-motion sources declared first', () => {
+    expect(checkReducedMotionSources(staticFirst)).toHaveLength(0);
   });
 
-  it('rejects a picture with no dark source at all', () => {
-    const noDark = `<picture>
+  it('rejects a picture whose reduced-motion source is not first (first match wins)', () => {
+    const wrongOrder = `<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="a-dark.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="a-static-light.svg">
   <img src="a-light.svg" alt="a sufficiently descriptive alternative text">
 </picture>`;
-    expect(checkPictureSources(noDark).length).toBeGreaterThan(0);
+    expect(checkReducedMotionSources(wrongOrder).length).toBeGreaterThan(0);
   });
-});
 
-describe('sizeBudgetFor', () => {
-  it('applies one static budget to every asset, with no per-name exemption', () => {
-    for (const name of ['identity-dark.svg', 'signal-light.svg', 'hero-dark.svg']) {
-      expect(sizeBudgetFor(name)).toBe(SIZE_LIMITS.staticAsset);
-    }
+  it('rejects a static asset reference with no reduced-motion source at all', () => {
+    const missing = `<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="a-static-dark.svg">
+  <img src="a-light.svg" alt="a sufficiently descriptive alternative text">
+</picture>`;
+    expect(checkReducedMotionSources(missing).length).toBeGreaterThan(0);
   });
 });

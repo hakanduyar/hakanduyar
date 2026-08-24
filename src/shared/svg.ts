@@ -70,8 +70,6 @@ export interface SvgDocOptions {
   title: string;
   desc?: string;
   idPrefix: string;
-  /** Deterministic CSS emitted before the scene body, when the scene moves. */
-  style?: string;
 }
 
 export function svgDocument(opts: SvgDocOptions, body: string): string {
@@ -81,7 +79,6 @@ export function svgDocument(opts: SvgDocOptions, body: string): string {
   const head =
     `<title id="${titleId}">${esc(opts.title)}</title>` +
     (opts.desc ? `<desc id="${descId}">${esc(opts.desc)}</desc>` : '');
-  const style = opts.style ? `<style>${opts.style}</style>` : '';
 
   return (
     `<svg xmlns="http://www.w3.org/2000/svg" ` +
@@ -90,7 +87,6 @@ export function svgDocument(opts: SvgDocOptions, body: string): string {
     `role="img" aria-labelledby="${labelledBy}" ` +
     `font-kerning="none">` +
     head +
-    style +
     body +
     `</svg>`
   );

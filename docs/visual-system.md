@@ -30,12 +30,10 @@ The series ramps therefore run in opposite directions, and
 
 Exactly one chromatic hue exists: instrument amber (`#FF9E2C` dark /
 `#9C520F` light). **At most one signal-coloured element per asset**, marking
-that asset's single most important value. In practice the whole page now spends
-it exactly once, on the largest share in the signal panel's distribution —
-`tests/scene.test.ts` asserts that no other panel is chromatic at all. No green
-anywhere: a green dot implies a running service, and nothing here is a running
-service. No language brand colours: the distribution
-uses the neutral ramp, which is what keeps it from looking like a stat-card
+that asset's single most important value — the hero's index line, the activity
+strip's peak week. No green anywhere: a green dot implies a running service,
+and nothing here is a running service. No language brand colours: the language
+bar uses the neutral ramp, which is what keeps it from looking like a stat-card
 widget.
 
 All token values and their measured contrast ratios live in
@@ -52,25 +50,14 @@ at build time; prose lives in Markdown and renders in the reader's own font.
 | Role | Size (u) | Weight | Use |
 |---|---|---|---|
 | display | 72 | 800 | The wordmark. Once per document. |
-| metric | 40 | 500 | The identity plate's three readouts |
-| strong | 28 | 700 | The one item a panel leads with — currently a repository name |
-| label | 26 | 500 | Uppercase register: section marks, row keys, values |
-| body | 26 | 400 | Mixed-case running text inside a panel |
+| metricXl | 60 | 500 | Headline telemetry values |
+| metric | 40 | 500 | Secondary values |
+| heading | 32 | 700 | In-asset headings |
+| label | 26 | 500 | **The floor for information-carrying text.** ~10.5 CSS px at a 360px viewport. |
+| micro | 22 | 400 | Annotation only, and only when duplicated verbatim in Markdown. Absolute floor 16u. |
 
-Five roles, and every one of them is drawn — `tests/tokens.test.ts` asserts
-that, because an unused step is an invitation to reach for the wrong size. v1
-also had `metricXl`, `heading` and `micro`; the first two went unused and
-`micro` (22u) sat below the floor, which only worked while the README repeated
-those strings in Markdown.
-
-**26u is the floor for every string on a panel**, roughly 10.5 CSS px at a
-360px viewport. There is no tier beneath it.
-
-Two registers, deliberately: uppercase with tracking for anything that labels
-or measures, mixed case for anything the page says in its own voice — the
-capability lines, the plate subjects, the signal panel's closing facts. The
-mixed-case register is what stops a page of measurements reading as an
-instrument panel. No italics, no glow, no text stroke.
+Uppercase with tracking for labels; sentence case never appears inside an
+asset. No italics, no glow, no text stroke.
 
 ## Grid
 
@@ -84,37 +71,25 @@ Every asset paints its own opaque ground and draws its own hairline border:
 GitHub ships several dark canvases and `<picture>` only distinguishes light
 from dark, so transparency would sit on an unpredictable colour.
 
-
 ## Motion
 
-Two panels animate: identity and signal. Their animated variants use
-unguarded CSS keyframes for the constrained acquisition, pulse and scan
-effects; the identity text and information-bearing composition remain still.
-Each also has a static light/dark variant selected by the reduced-motion
-`<source>` entries in the README `<picture>` ladder. The other six panels
-remain static and ship only the two-source dark/light pair.
+One entrance (≤2400ms), then hold. Element order: frame draw-on → column
+ruling → header → wordmark wipe → discipline line → readouts (staggered 60ms)
+→ scale → index travel → footer. Easings: `cubic-bezier(0.16,1,0.3,1)` for
+reveals, `cubic-bezier(0.33,0,0.15,1)` for the needle. The single loop — index
+drift, ±6u, 9s, linear — starts only after the entrance ends.
 
-The eight logical panels therefore produce 20 files: identity and signal have
-animated and static variants for each theme, while the remaining six have two
-theme files each. `Canvas` has a constrained animation register rather than a
-general motion system, and the validators allow only the named effects on
-their owning panels. Static variants emit no motion CSS; transitions, SMIL and
-`prefers-reduced-motion` queries remain forbidden in generated SVGs.
+Banned: typewriter text, glitch, scanlines, radar sweeps, flicker, pulsing
+glow, rotation, particles, boot logs, count-up counters, loops under 6s,
+animated filters, animated stroke-width.
 
-v1 animated the identity plate — a 2.4s entrance and one 9s index drift — and
-paired it with a static variant selected by a reduced-motion `<source>`. The
-reasoning behind that pairing is still sound and still documented in
-[github-platform-constraints.md](github-platform-constraints.md); what changed
-is the judgement that the entrance was worth its cost. It played once, above
-the fold, and resolved to the composition that actually carries the page.
-Shipping that resting state directly is what v2 did.
+The static variants are built from the same scene modules with animation
+disabled, so the resting composition can never drift from the animated one.
 
 ## Vocabulary
 
-Section labels: FOCUS, SELECTED SYSTEMS, SIGNAL, CHANNELS — drawn inside the
-panels as a zero-padded ordinal and a name over a hairline rail, never as
-Markdown headings. The identity plate carries no label at all; the name is the
-label. The banned lexicon (MISSION CONTROL, SYSTEM
+Section labels: IDENTITY, CORE MODULES, SELECTED SYSTEMS, TELEMETRY, ACTIVITY,
+OPERATING PRINCIPLES, CHANNELS. The banned lexicon (MISSION CONTROL, SYSTEM
 ONLINE, INITIALIZING, END TRANSMISSION, NEURAL, 10X, PASSIONATE, ...) is
 enforced by `scripts/validate/validate-all.ts` against both the README and
 every string drawn inside every asset — outlining text does not exempt it,

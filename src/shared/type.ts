@@ -71,7 +71,7 @@ export interface GlyphOutline {
 }
 
 export interface LaidOutText {
-  /** Every glyph as its own path, so a caller can measure or place one at a time. */
+  /** Every glyph as its own path — enables per-character stagger animation. */
   glyphs: GlyphOutline[];
   /** All glyph outlines concatenated into a single `d`. */
   d: string;

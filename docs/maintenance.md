@@ -13,9 +13,9 @@ committed assets or README no longer match their generators.
 Known refresh exception: contributions that touch no owned public default
 branch (issues or PRs on other accounts' repositories, work on non-default
 branches) change only the sliding activity fields, which are deliberately
-excluded from the material-change view. The signal panel's activity summary
-then refreshes with the next owned public push rather than immediately.
-Accepted trade-off; the alternative is a weekly metronome commit.
+excluded from the material-change view. The activity strip then refreshes with
+the next owned public push rather than immediately. Accepted trade-off; the
+alternative is a weekly metronome commit.
 
 Collapse guard: the refresh refuses to commit (and fails loudly) if any
 headline gauge (repositories, commits, source bytes, trailing-year
@@ -38,11 +38,10 @@ the workflow from the Actions tab (one click) or push any commit.
 
 Curated text lives in exactly two files:
 
-- `src/shared/profile.ts` — the discipline line, the strapline, the four
-  capability modules, and the provenance note.
-- `src/shared/config.ts` — featured repositories: the subject line (max 30
-  characters), the plate line (max 25), the stack, the headline that becomes
-  alt text and `<desc>`, and the verified contact channels.
+- `src/shared/profile.ts` — identity paragraphs, strapline, capability
+  modules, operating principles, private-work sentence, provenance note.
+- `src/shared/config.ts` — featured repositories: headline, signals, stack,
+  the 27-character plate line, and the verified contact channels.
 
 After editing: `npm run build`. The renderers re-measure every string; if a new
 string overflows its box the build fails with the arithmetic in the error
@@ -60,30 +59,20 @@ the section is depth, not recency.
 
 ## Changing the design
 
-Tokens (colour, type scale, grid) live in `src/shared/tokens.ts`.
+Tokens (colour, type scale, grid, motion) live in `src/shared/tokens.ts`.
 `tests/tokens.test.ts` asserts the contrast floors and the opposite-direction
 series ramps, so a palette edit that breaks accessibility or theme logic fails
-`npm test`. Panel chrome — frame, section head, fit guards — lives in
-`src/shared/panel.ts`; scene geometry lives in the five panel modules under
-`src/`, and each asserts its own layout fits before it will emit.
+`npm test`. Scene geometry lives in the five modules under `src/`; each module
+asserts its own layout fits before it will emit.
 
 ## Adding an asset
 
-1. Write a scene module returning `RenderedAsset` via `Canvas`, opening with
-   `frame()` and `head()` from `src/shared/panel.ts` so it joins the system
-   rather than sitting next to it.
-2. Add its id to `PANEL_IDS` and build it in `src/build.ts` for both themes.
-   Static panels contribute a two-source dark/light pair; an intentionally
-   animated panel must use the constrained motion modes and contribute four
-   animated/static theme variants. `expectedAssetPaths()` derives from that
-   list, so the validators pick up the new panel automatically.
-3. Reference it from `scripts/generate/readme.ts` with a `<picture>` block —
-   using the four-entry reduced-motion ladder for an animated panel — and alt
-   text that can stand in for the panel when the image does not load.
+1. Write a scene module returning `RenderedAsset` via `Canvas`.
+2. Register it in `src/build.ts` (both themes; animated only if it is the hero
+   — the one-animated-asset rule is deliberate).
+3. Reference it from `scripts/generate/readme.ts` with a `<picture>` block and
+   a real-text mirror of anything it displays.
 4. `npm run build` and let the harness complain until it stops.
-
-Note the prose budget: the README allows three lines of text outside the
-panels. Anything the new panel needs to say, it says by drawing it.
 
 ## Regenerating everything from scratch
 
@@ -92,7 +81,7 @@ npm ci
 npm run build        # snapshot -> render -> readme -> validate
 npm test
 npm run qa:github    # GitHub's own renderer must preserve every construct
-npm run qa:visual    # screenshots at 890px/360px + static/motion proof (needs Chrome)
+npm run qa:visual    # screenshots + <img> animation liveness (needs Chrome)
 ```
 
 `qa:visual` writes evidence under `.ai/evidence/visual/` (git-ignored except
@@ -102,15 +91,11 @@ when intentionally committed for review).
 
 - **Adding a webfont or `<text>` to an SVG** — cannot load / shifts per-OS.
   The build rejects both.
-- **Adding an unregistered animation** — V3 permits motion only through the
-  named identity and signal effects, with static `<picture>` fallbacks. The
-  validator rejects transitions, SMIL, reduced-motion queries and effects
-  outside the owning panel's allowlist. The reasoning is in
-  [architecture.md](architecture.md#why-most-things-dont-animate); the platform
-  measurement behind it is in
-  [github-platform-constraints.md](github-platform-constraints.md).
-- **Adding one line of explanation under a panel** — this is how v1 became a
-  report. `validate-all.ts` caps prose outside the panels at three lines.
+- **Wrapping animations in `prefers-reduced-motion`** — misfires inside
+  SVG-as-image (always-true/never-true; measured). Reduced motion is handled
+  by the `<picture>` static sources. The validator rejects the query in assets.
+- **Re-enabling SVGO's `removeHiddenElems`** — deletes every element whose
+  entrance starts at `opacity:0` (it once stripped 19 of the hero's 25 paths).
 - **Showing follower/star counts or a daily contribution grid** — ruled out on
   content grounds in `.ai/project/02-audit.md` §5; the numbers at this scale
   read against the owner.
