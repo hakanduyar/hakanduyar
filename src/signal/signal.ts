@@ -24,7 +24,7 @@
  * identity plate, and repeating them is what the Markdown table was doing.
  */
 
-import { Canvas, type RenderedAsset } from '../shared/canvas.js';
+import { Canvas, type MotionMode, type RenderedAsset } from '../shared/canvas.js';
 import { el } from '../shared/svg.js';
 import { TYPE, GRID, STROKE, type Palette } from '../shared/tokens.js';
 import { frame, head, rail, fitted, SECTIONS } from '../shared/panel.js';
@@ -67,9 +67,9 @@ export function remainderShare(telemetry: Telemetry): number {
   return 1 - named.reduce((sum, language) => sum + language.share, 0);
 }
 
-export function renderSignal(input: SignalInput, palette: Palette): RenderedAsset {
+export function renderSignal(input: SignalInput, palette: Palette, mode: MotionMode = 'static'): RenderedAsset {
   const t = input.telemetry;
-  const canvas = new Canvas(W, H, palette, `hdu-signal-${palette.name}`);
+  const canvas = new Canvas(W, H, palette, `hdu-signal-${palette.name}`, mode);
   const p = palette;
 
   if (t.languages.length <= NAMED_LANGUAGES) {
@@ -133,6 +133,23 @@ export function renderSignal(input: SignalInput, palette: Palette): RenderedAsse
     );
   });
 
+  // A neutral observation cursor crosses the measured tracks. The bars and
+  // percentages remain the complete data story in every frame; this is only
+  // a timed diagnostic pass over the existing signal.
+  if (mode === 'animated') {
+    canvas.add(
+      el('rect', {
+        x: TRACK_X,
+        y: Y.firstRow - 18,
+        width: 1.5,
+        height: 161,
+        fill: p.rule.tick,
+        class: 'signal-scan',
+      }),
+    );
+    canvas.registerMotion('signal-scan', '.signal-scan');
+  }
+
   canvas.add(rail(p, Y.volume - 32));
 
   // The two facts the removed histogram used to carry, stated rather than
@@ -164,5 +181,6 @@ export function renderSignal(input: SignalInput, palette: Palette): RenderedAsse
     id: 'signal',
     title: 'Measured signal - source distribution and contribution volume',
     desc,
+    mode,
   });
 }

@@ -36,32 +36,49 @@ describe('the panel stack', () => {
   });
 
   it('references every panel exactly once, in build order', () => {
-    const referenced = [...readme.matchAll(/assets\/generated\/([a-z-]+)-light\.svg/g)].map((m) => m[1]!);
+    const referenced = (readme.match(/<picture>[\s\S]*?<\/picture>/g) ?? []).map(
+      (block) => /<img[^>]*src="assets\/generated\/([^\"]+)-light\.svg"/.exec(block)?.[1] ?? '',
+    );
     expect(referenced).toEqual([...PANEL_IDS]);
   });
 
-  it('pairs every panel with its dark variant and nothing else', () => {
+  it('references the exact static/animated asset set and nothing else', () => {
     const all = [...readme.matchAll(/assets\/generated\/([a-z-]+)\.svg/g)].map((m) => m[1]!);
-    expect(all).toHaveLength(PANEL_IDS.length * 2);
+    expect(all).toHaveLength(20);
     for (const id of PANEL_IDS) {
       expect(all.filter((name) => name === `${id}-dark`)).toHaveLength(1);
       expect(all.filter((name) => name === `${id}-light`)).toHaveLength(1);
+      if (id === 'identity' || id === 'signal') {
+        expect(all.filter((name) => name === `${id}-static-dark`)).toHaveLength(1);
+        expect(all.filter((name) => name === `${id}-static-light`)).toHaveLength(1);
+      }
     }
   });
 
   it('references no v1 asset', () => {
-    expect(readme).not.toMatch(/hero-|core-modules-|telemetry-|activity-|-static-/);
+    expect(readme).not.toMatch(/hero-|core-modules-|telemetry-|activity-/);
   });
 
-  it('every <picture> is a plain dark source with a light fallback', () => {
+  it('animated pictures use the reduced-motion ladder and static pictures stay two-source', () => {
     const pictures = readme.match(/<picture>[\s\S]*?<\/picture>/g) ?? [];
     expect(pictures).toHaveLength(PANEL_IDS.length);
-    for (const block of pictures) {
-      const sources = [...block.matchAll(/<source[^>]*media="([^"]+)"/g)].map((m) => m[1]!);
-      expect(sources).toEqual(['(prefers-color-scheme: dark)']);
+    pictures.forEach((block, index) => {
+      const sources = [...block.matchAll(/<source[^>]*media="([^"]+)"[^>]*srcset="([^"]+)"/g)].map((m) => [
+        m[1]!,
+        m[2]!,
+      ]);
+      const id = PANEL_IDS[index]!;
+      const expected = id === 'identity' || id === 'signal'
+        ? [
+            ['(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)', `assets/generated/${id}-static-dark.svg`],
+            ['(prefers-reduced-motion: reduce)', `assets/generated/${id}-static-light.svg`],
+            ['(prefers-color-scheme: dark)', `assets/generated/${id}-dark.svg`],
+          ]
+        : [['(prefers-color-scheme: dark)', `assets/generated/${id}-dark.svg`]];
+      expect(sources).toEqual(expected);
       expect(block).toContain('-light.svg" alt="');
-      expect(block).not.toMatch(/prefers-reduced-motion/);
-    }
+      expect(block).not.toContain('-static-light.svg" alt="');
+    });
   });
 });
 

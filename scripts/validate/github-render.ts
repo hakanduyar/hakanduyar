@@ -51,7 +51,11 @@ async function main(): Promise<void> {
   expect((html.match(/<source /g) ?? []).length === sourceCount, 'a <source> element was dropped');
   expect(pictureCount === PANEL_IDS.length, `expected ${PANEL_IDS.length} panels, rendered ${pictureCount}`);
   expect(html.includes('media="(prefers-color-scheme: dark)"'), 'the colour-scheme media attribute was stripped');
-  expect(!html.includes('prefers-reduced-motion'), 'a v1 reduced-motion source survived into the rendered page');
+  expect(html.includes('media="(prefers-reduced-motion: reduce)"'), 'the reduced-motion source attribute was stripped');
+  expect(
+    html.includes('media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)"'),
+    'the compound reduced-motion dark source attribute was stripped',
+  );
 
   // Every generated asset referenced must survive as an <img> src or srcset.
   for (const asset of readme.match(/assets\/generated\/[\w-]+\.svg/g) ?? []) {

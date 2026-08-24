@@ -32,6 +32,12 @@ function panel(id: string, theme: 'dark' | 'light' = 'dark'): AssetBuild {
   return found;
 }
 
+function variant(id: string, mode: 'animated' | 'static', theme: 'dark' | 'light' = 'dark'): AssetBuild {
+  const found = builds.find((b) => b.id === id && b.theme === theme && b.mode === mode);
+  if (!found) throw new Error(`No ${mode} build for panel "${id}" (${theme})`);
+  return found;
+}
+
 /** Every string drawn on a panel, joined — for "does the panel say X" checks. */
 /** Megabytes as the panel prints them. */
 function t18n(bytes: number): string {
@@ -48,7 +54,7 @@ beforeAll(() => {
 });
 
 describe('the build set', () => {
-  it('emits exactly the eight v2 panels in two themes, by name', () => {
+  it('emits the eight panels with only identity and signal doubled for motion fallbacks', () => {
     expect(PANEL_IDS).toEqual([
       'identity',
       'focus',
@@ -59,17 +65,28 @@ describe('the build set', () => {
       'signal',
       'channels',
     ]);
-    expect(builds).toHaveLength(16);
+    expect(builds).toHaveLength(20);
     expect(builds.map((b) => b.path).sort()).toEqual(expectedAssetPaths().sort());
     for (const theme of ['dark', 'light'] as const) {
-      expect(builds.filter((b) => b.theme === theme).map((b) => b.id)).toEqual([...PANEL_IDS]);
+      const themed = builds.filter((b) => b.theme === theme);
+      expect(themed.filter((b) => b.mode === 'animated').map((b) => b.id)).toEqual(['identity', 'signal']);
+      expect(themed.filter((b) => b.mode === 'static').map((b) => b.id)).toEqual([
+        'identity',
+        'focus',
+        'system-dropspot',
+        'system-motion-system',
+        'system-stock',
+        'system-spark',
+        'signal',
+        'channels',
+      ]);
     }
   });
 
   it('builds no v1 panel: no hero, core-modules, telemetry or activity asset', () => {
     for (const build of builds) {
       expect(build.id).not.toMatch(/^(hero|core-modules|telemetry|activity)/);
-      expect(build.path).not.toMatch(/-static-/);
+      if (build.path.includes('-static-')) expect(['identity', 'signal']).toContain(build.id);
     }
   });
 
@@ -100,9 +117,9 @@ describe('the build set', () => {
   });
 });
 
-describe('static by construction', () => {
-  it('no build emits animation of any kind', () => {
-    for (const build of builds) {
+describe('controlled motion by construction', () => {
+  it('static builds emit no animation of any kind', () => {
+    for (const build of builds.filter((candidate) => candidate.mode === 'static')) {
       for (const pattern of [
         /@keyframes/,
         /animation\s*:/,
@@ -116,9 +133,19 @@ describe('static by construction', () => {
     }
   });
 
-  it('the RenderedAsset contract carries no animation flag', () => {
-    expect(Object.keys(panel('identity').asset)).not.toContain('animated');
-    expect(Object.keys(panel('identity'))).not.toContain('animated');
+  it('animated panels emit only their named controlled effects', () => {
+    expect(variant('identity', 'animated').asset.svg).toMatch(/@keyframes identity-acquire/);
+    expect(variant('identity', 'animated').asset.svg).toMatch(/@keyframes identity-pulse/);
+    expect(variant('identity', 'animated').asset.svg).not.toMatch(/@keyframes signal-scan/);
+    expect(variant('signal', 'animated').asset.svg).toMatch(/@keyframes signal-scan/);
+    expect(variant('signal', 'animated').asset.svg).not.toMatch(/@keyframes identity-/);
+  });
+
+  it('the mode is carried on both the build and rendered asset contracts', () => {
+    expect(panel('identity').mode).toBe('animated');
+    expect(panel('identity').asset.mode).toBe('animated');
+    expect(variant('identity', 'static').mode).toBe('static');
+    expect(variant('identity', 'static').asset.mode).toBe('static');
   });
 });
 

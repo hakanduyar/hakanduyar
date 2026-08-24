@@ -51,16 +51,27 @@ describe('checkAltText', () => {
 });
 
 describe('checkPictureSources', () => {
-  const v2 = `<picture>
+  const staticPicture = `<picture>
   <source media="(prefers-color-scheme: dark)" srcset="a-dark.svg">
   <img src="a-light.svg" alt="a sufficiently descriptive alternative text">
 </picture>`;
 
-  it('accepts a plain dark source with a light fallback', () => {
-    expect(checkPictureSources(v2)).toHaveLength(0);
+  const animatedPicture = `<picture>
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="identity-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="identity-static-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="identity-dark.svg">
+  <img src="identity-light.svg" alt="a sufficiently descriptive alternative text">
+</picture>`;
+
+  it('accepts a plain dark source with a light fallback for static panels', () => {
+    expect(checkPictureSources(staticPicture)).toHaveLength(0);
   });
 
-  it('rejects a surviving v1 reduced-motion ladder', () => {
+  it('accepts the four-source reduced-motion ladder for animated panels', () => {
+    expect(checkPictureSources(animatedPicture)).toHaveLength(0);
+  });
+
+  it('rejects a reduced-motion ladder with the wrong order or filenames', () => {
     const v1 = `<picture>
   <source media="(prefers-reduced-motion: reduce)" srcset="a-static-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="a-dark.svg">
@@ -68,7 +79,7 @@ describe('checkPictureSources', () => {
 </picture>`;
     const findings = checkPictureSources(v1);
     expect(findings.length).toBeGreaterThan(0);
-    expect(findings.some((f) => /reduced-motion/.test(f.message))).toBe(true);
+    expect(findings.some((f) => /source ladder/.test(f.message))).toBe(true);
   });
 
   it('rejects a picture with no dark source at all', () => {

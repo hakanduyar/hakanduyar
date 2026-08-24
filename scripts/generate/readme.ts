@@ -41,14 +41,24 @@ import { remainderShare } from '../../src/signal/signal.js';
 const OUT = resolve(REPO_ROOT, 'README.md');
 
 /**
- * A themed `<picture>`. Dark source, light fallback, nothing else — v2 ships no
- * animated variants, so the reduced-motion source ladder v1 needed is gone.
+ * A themed `<picture>`. Animated panels put the reduced-motion pair first,
+ * because the README document evaluates that preference correctly even though
+ * an SVG image document does not.
  */
-function picture(opts: { base: string; alt: string; link?: string }): string {
+function picture(opts: { base: string; alt: string; animated?: boolean; link?: string }): string {
   const asset = (name: string): string => `assets/generated/${name}.svg`;
+  const sources: string[] = [];
+  if (opts.animated) {
+    sources.push(
+      `  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="${asset(`${opts.base}-static-dark`)}">`,
+      `  <source media="(prefers-reduced-motion: reduce)" srcset="${asset(`${opts.base}-static-light`)}">`,
+    );
+  }
+  sources.push(`  <source media="(prefers-color-scheme: dark)" srcset="${asset(`${opts.base}-dark`)}">`);
   const inner =
     '<picture>\n' +
-    `  <source media="(prefers-color-scheme: dark)" srcset="${asset(`${opts.base}-dark`)}">\n` +
+    sources.join('\n') +
+    '\n' +
     `  <img src="${asset(`${opts.base}-light`)}" alt="${opts.alt}" width="890">\n` +
     '</picture>';
   return opts.link ? `<a href="${opts.link}">\n${inner}\n</a>` : inner;
@@ -81,6 +91,7 @@ function main(): void {
   push(
     picture({
       base: 'identity',
+      animated: true,
       alt:
         `${t.name}, interface and systems engineer. ` +
         `${t.publicRepos} public repositories, ${t.totalCommits} commits on default branches, ` +
@@ -134,6 +145,7 @@ function main(): void {
   push(
     picture({
       base: 'signal',
+      animated: true,
       // Describes what the panel draws, and no more: the active-week count and
       // the peak week left the page with the histogram.
       alt:

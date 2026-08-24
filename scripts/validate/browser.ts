@@ -50,10 +50,25 @@ export type ColorScheme = 'dark' | 'light';
 
 export async function newPage(
   browser: Browser,
-  opts: { width: number; height: number; scheme: ColorScheme },
+  opts: { width: number; height: number; scheme: ColorScheme; reducedMotion?: boolean },
 ): Promise<Page> {
   const page = await browser.newPage();
   await page.setViewport({ width: opts.width, height: opts.height, deviceScaleFactor: 2 });
-  await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: opts.scheme }]);
+  await page.emulateMediaFeatures([
+    { name: 'prefers-color-scheme', value: opts.scheme },
+    { name: 'prefers-reduced-motion', value: opts.reducedMotion ? 'reduce' : 'no-preference' },
+  ]);
   return page;
+}
+
+/** Freeze and seek top-level SVG CSS animations to a deterministic offset. */
+export async function seekAnimations(page: Page, seconds: number): Promise<number> {
+  return page.evaluate((time: number) => {
+    const animations = document.getAnimations();
+    for (const animation of animations) {
+      animation.pause();
+      animation.currentTime = time * 1000;
+    }
+    return animations.length;
+  }, seconds);
 }

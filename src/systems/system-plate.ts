@@ -37,6 +37,10 @@ const TEXT_X = 64;
 /** Baselines within the plate body, relative to its top. */
 const ROW = { name: 42, subject: 78, line: 110, stack: 142 } as const;
 
+/** Static observation rail: one trunk, four relationship branches, four nodes. */
+const OBSERVE_X = 56;
+const OBSERVE_ROWS = [ROW.name, ROW.subject, ROW.line, ROW.stack] as const;
+
 /** Longest implementation line that clears the right-aligned push month. */
 const MAX_IMPLEMENTATION_CHARS = 25;
 /** Longest subject line the plate holds beside the index rule. */
@@ -81,8 +85,9 @@ export function renderSystemPlate(input: SystemPlateInput, palette: Palette): Re
     );
   }
 
-  // The index rule: the plate's left edge, spanning every text row. Same mark
-  // on all four, which is most of what makes them read as a set.
+  // The index rule and observation rail: the plate's left edge spans every
+  // text row, then branches to four tracked entities. It stays static so the
+  // relationship geometry remains legible when motion is unavailable.
   canvas.add(
     el('path', {
       d: linePath(L + 0.75, top + 20, L + 0.75, top + ROW.stack),
@@ -90,6 +95,20 @@ export function renderSystemPlate(input: SystemPlateInput, palette: Palette): Re
       'stroke-width': STROKE.strong,
       fill: 'none',
     }),
+    el('path', {
+      d: OBSERVE_ROWS.map((row) => linePath(L + 0.75, top + row, OBSERVE_X, top + row)).join(''),
+      stroke: p.rule.tick,
+      'stroke-width': STROKE.hairline,
+      fill: 'none',
+    }),
+    ...OBSERVE_ROWS.map((row) =>
+      el('circle', {
+        cx: OBSERVE_X,
+        cy: top + row,
+        r: 2,
+        fill: p.rule.tick,
+      }),
+    ),
   );
 
   const pushMonth = featured.pushedAt.slice(0, 7);

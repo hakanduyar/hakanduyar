@@ -4,6 +4,8 @@
      Build:  npm run build -->
 
 <picture>
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/identity-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/identity-static-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/generated/identity-dark.svg">
   <img src="assets/generated/identity-light.svg" alt="Hakan Duyar, interface and systems engineer. 59 public repositories, 4194 commits on default branches, TypeScript 49.1 percent of public source." width="890">
 </picture>
@@ -44,6 +46,8 @@
 </a>
 
 <picture>
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/signal-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/signal-static-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/generated/signal-dark.svg">
   <img src="assets/generated/signal-light.svg" alt="Measured signal. Source distribution across 14.89 MB of public source: TypeScript 49.1 percent, Go 20.4 percent, Vue 16.9 percent, JavaScript 4.5 percent, and 9.1 percent across all other languages. 135 contributions in the 52 weeks to 2026-08-22." width="890">
 </picture>

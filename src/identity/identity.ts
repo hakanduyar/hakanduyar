@@ -12,17 +12,14 @@
  * counts appeared on the hero, again on the telemetry panel, and a third time in
  * a Markdown table.
  *
- * No motion. v1 built this plate twice — animated and at rest — and shipped a
- * reduced-motion `<picture>` ladder to choose between them. The entrance was
- * the most expensive thing on the page and the least load-bearing: it played
- * once, before most readers had scrolled to it, and the composition it
- * resolved to was the composition that mattered. v2 ships that resting state
- * directly, which is also what removes the whole variant-pairing apparatus
- * from the build.
+ * V3 keeps the resting composition intact and adds only a measured acquisition
+ * bracket and tracking pulse to the animated variant. The static variant is
+ * built by the same function, with the motion register and motion marks absent.
  */
 
-import { Canvas, type RenderedAsset } from '../shared/canvas.js';
-import { TYPE, GRID, type Palette } from '../shared/tokens.js';
+import { Canvas, type MotionMode, type RenderedAsset } from '../shared/canvas.js';
+import { el, linePath } from '../shared/svg.js';
+import { TYPE, GRID, STROKE, type Palette } from '../shared/tokens.js';
 import { frame, rail, fitted } from '../shared/panel.js';
 import type { Telemetry } from '../shared/telemetry-types.js';
 
@@ -49,9 +46,9 @@ export interface IdentityInput {
   discipline: string;
 }
 
-export function renderIdentity(input: IdentityInput, palette: Palette): RenderedAsset {
+export function renderIdentity(input: IdentityInput, palette: Palette, mode: MotionMode = 'static'): RenderedAsset {
   const t = input.telemetry;
-  const canvas = new Canvas(W, H, palette, `hdu-identity-${palette.name}`);
+  const canvas = new Canvas(W, H, palette, `hdu-identity-${palette.name}`, mode);
   const p = palette;
 
   canvas.add(frame(canvas, p));
@@ -66,6 +63,51 @@ export function renderIdentity(input: IdentityInput, palette: Palette): Rendered
     canvas.text(input.discipline, TYPE.label, { x: L, y: Y.disciplineBaseline, fill: p.text.secondary }),
     rail(p, Y.rail),
   );
+
+  // -- motion marks ---------------------------------------------------------
+  // The wordmark remains fully present in frame one. The marks are neutral
+  // observation geometry: they add acquisition character without making any
+  // information depend on an animated reveal.
+  if (mode === 'animated') {
+    const nameWidth = canvas.measureText(t.name, TYPE.display);
+    const bracketLeft = L - 12;
+    const bracketRight = L + nameWidth + 12;
+    const bracketTop = 36;
+    const bracketBottom = 108;
+
+    canvas.add(
+      el('path', {
+        d:
+          `M${bracketLeft} ${bracketTop + 12}V${bracketTop}H${bracketLeft + 10}` +
+          `M${bracketRight - 10} ${bracketTop}H${bracketRight}V${bracketTop + 12}` +
+          `M${bracketLeft} ${bracketBottom - 12}V${bracketBottom}H${bracketLeft + 10}` +
+          `M${bracketRight - 10} ${bracketBottom}H${bracketRight}V${bracketBottom - 12}`,
+        stroke: p.rule.tick,
+        'stroke-width': STROKE.hairline,
+        'stroke-dasharray': 1000,
+        fill: 'none',
+        class: 'identity-acquire',
+      }),
+      el('path', {
+        d: linePath(bracketLeft, 105, bracketRight, 105),
+        stroke: p.rule.tick,
+        'stroke-width': STROKE.hairline,
+        'stroke-dasharray': '1.5 1000',
+        fill: 'none',
+        class: 'identity-acquire',
+      }),
+      el('rect', {
+        x: bracketRight - 12,
+        y: 111,
+        width: 12,
+        height: 1.5,
+        fill: p.rule.tick,
+        class: 'identity-pulse',
+      }),
+    );
+    canvas.registerMotion('identity-acquire', '.identity-acquire');
+    canvas.registerMotion('identity-pulse', '.identity-pulse');
+  }
 
   // -- readouts -------------------------------------------------------------
   //
@@ -110,5 +152,6 @@ export function renderIdentity(input: IdentityInput, palette: Palette): Rendered
     id: 'identity',
     title: `${t.name} - ${disciplineSentence}`,
     desc,
+    mode,
   });
 }

@@ -23,7 +23,7 @@ export interface Finding {
  * one medium photograph.
  */
 export const SIZE_LIMITS = {
-  /** Any generated asset. v2 is static throughout, so there is one budget. */
+  /** Any generated asset, including the two animated panels and their fallbacks. */
   staticAsset: 45 * 1024,
   /** Everything the README pulls in, combined. */
   totalPayload: 400 * 1024,
@@ -32,12 +32,16 @@ export const SIZE_LIMITS = {
 /**
  * Budget that applies to a generated file.
  *
- * v1 carried a second, far larger budget for the animated hero. There is no
- * animated anything now, so a per-name exemption is exactly the kind of dead
- * branch that lets an oversized asset through unnoticed.
+ * Motion does not get a per-name exemption: the four generated variants of
+ * identity and signal must fit the same per-file ceiling as every static plate.
  */
 export function sizeBudgetFor(_fileName: string): number {
   return SIZE_LIMITS.staticAsset;
+}
+
+/** Animated output is limited to the two panels with explicit motion design. */
+export function isAnimatedAssetPath(relPath: string): boolean {
+  return /(?:^|\/)\b(?:identity|signal)-(?:dark|light)\.svg$/.test(relPath);
 }
 
 // ---------------------------------------------------------------------------
@@ -108,39 +112,45 @@ export function checkAltText(readme: string): Finding[] {
 }
 
 /**
- * Every `<picture>` must be a plain dark/light pair.
- *
- * v1 checked the ordering of `prefers-reduced-motion` sources, because the
- * hero shipped animated and static variants and the first matching `<source>`
- * wins. v2 has no variants, so the check inverts: a motion query or a
- * `-static-` asset appearing here means a v1 construct survived the rewrite.
+ * Animated panels use the four-source reduced-motion/theme ladder. Static
+ * panels retain the two-source dark/light pair. The exact source order is
+ * checked because the first matching `<source>` wins.
  */
 export function checkPictureSources(readme: string): Finding[] {
   const findings: Finding[] = [];
   const pictures = readme.match(/<picture>[\s\S]*?<\/picture>/g) ?? [];
   for (const block of pictures) {
-    if (/prefers-reduced-motion/.test(block)) {
-      findings.push({
-        level: 'error',
-        check: 'picture',
-        message: 'a <picture> declares a prefers-reduced-motion source, but v2 ships no animated variants',
-      });
-    }
-    if (/-static-/.test(block)) {
-      findings.push({
-        level: 'error',
-        check: 'picture',
-        message: 'a <picture> references a -static- asset, which no longer exists in v2',
-      });
-    }
-    const sources = [...block.matchAll(/<source\b[^>]*media="([^"]+)"/g)].map((m) => m[1] as string);
-    if (sources.length !== 1 || sources[0] !== '(prefers-color-scheme: dark)') {
+    const firstAsset = /(?:srcset|src)="([^"\s]+)\.svg"/.exec(block)?.[1];
+    const basePath = firstAsset?.replace(/-static-(?:dark|light)$|-(?:dark|light)$/, '');
+    const slash = basePath?.lastIndexOf('/') ?? -1;
+    const prefix = slash >= 0 ? basePath!.slice(0, slash + 1) : '';
+    const base = slash >= 0 ? basePath!.slice(slash + 1) : basePath;
+    const animated = base === 'identity' || base === 'signal';
+    const sourcePairs = [...block.matchAll(/<source\b[^>]*media="([^"]+)"[^>]*srcset="([^"]+)"/g)].map((m) => [
+      m[1] as string,
+      m[2] as string,
+    ] as const);
+    const img = /<img\b[^>]*src="([^"]+)"/.exec(block)?.[1];
+    const asset = (name: string): string => `${prefix}${name}.svg`;
+    const expectedSources = animated
+      ? [
+          ['(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)', asset(`${base}-static-dark`)],
+          ['(prefers-reduced-motion: reduce)', asset(`${base}-static-light`)],
+          ['(prefers-color-scheme: dark)', asset(`${base}-dark`)],
+        ]
+      : [['(prefers-color-scheme: dark)', asset(`${base}-dark`)]];
+    const sameSources =
+      sourcePairs.length === expectedSources.length &&
+      sourcePairs.every(
+        ([media, srcset], index) => media === expectedSources[index]![0] && srcset === expectedSources[index]![1],
+      );
+    if (!sameSources || img !== asset(`${base}-light`)) {
       findings.push({
         level: 'error',
         check: 'picture',
         message:
-          'every <picture> must declare exactly one source, "(prefers-color-scheme: dark)", with the light ' +
-          `asset as the <img> fallback; found [${sources.join(', ')}]`,
+          `${animated ? 'animated' : 'static'} panel picture has the wrong source ladder: ` +
+          `${JSON.stringify({ sources: sourcePairs, img })}`,
       });
     }
   }
@@ -191,12 +201,16 @@ export function checkSvg(relPath: string): Finding[] {
     });
   }
 
-  // v2 is static by construction. This is the backstop for that claim: it
-  // fails on CSS keyframes, CSS animation/transition shorthands, SMIL, and the
-  // reduced-motion query v1 needed — any of which means motion got back in.
+  const animated = isAnimatedAssetPath(relPath);
+  const panel = /(?:^|\/)(identity|signal)-(?:dark|light)\.svg$/.exec(relPath)?.[1];
+  const allowedEffects = panel === 'identity' ? ['identity-acquire', 'identity-pulse'] : ['signal-scan'];
+  const keyframes = [...svg.matchAll(/@keyframes\s+([\w-]+)/g)].map((match) => match[1] as string);
+  const animations = [...svg.matchAll(/animation\s*:\s*([\w-]+)/g)].map((match) => match[1] as string);
+
+  // Static assets reject every motion primitive. Animated assets may contain
+  // only the named effect set for their own panel; transitions, SMIL and
+  // reduced-motion queries remain forbidden everywhere.
   const motion: [RegExp, string][] = [
-    [/@keyframes/, 'CSS @keyframes'],
-    [/animation\s*:/, 'a CSS animation property'],
     [/transition\s*:/, 'a CSS transition property'],
     [/<animate|<animateTransform|<animateMotion|<set[\s>]/, 'a SMIL animation element'],
     [/prefers-reduced-motion/, 'a prefers-reduced-motion query'],
@@ -206,8 +220,39 @@ export function checkSvg(relPath: string): Finding[] {
       findings.push({
         level: 'error',
         check: 'svg-motion',
-        message: `${relPath} contains ${label}; v2 assets are static`,
+        message: `${relPath} contains ${label}; this SVG motion is not permitted`,
       });
+    }
+  }
+
+  if (!animated) {
+    if (keyframes.length || animations.length) {
+      findings.push({
+        level: 'error',
+        check: 'svg-motion',
+        message: `${relPath} contains CSS motion; static assets must contain no keyframes or animation declarations`,
+      });
+    }
+  } else {
+    const unknownKeyframes = keyframes.filter((name) => !allowedEffects.includes(name));
+    const unknownAnimations = animations.filter((name) => !allowedEffects.includes(name));
+    if (unknownKeyframes.length || unknownAnimations.length) {
+      findings.push({
+        level: 'error',
+        check: 'svg-motion',
+        message:
+          `${relPath} contains uncontrolled motion names: ` +
+          [...new Set([...unknownKeyframes, ...unknownAnimations])].join(', '),
+      });
+    }
+    for (const effect of allowedEffects) {
+      if (!keyframes.includes(effect) || !animations.includes(effect)) {
+        findings.push({
+          level: 'error',
+          check: 'svg-motion',
+          message: `${relPath} is animated but does not declare the controlled ${effect} effect`,
+        });
+      }
     }
   }
 

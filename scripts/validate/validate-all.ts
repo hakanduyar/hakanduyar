@@ -8,7 +8,7 @@
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { REPO_ROOT } from '../../src/shared/emit.js';
-import { buildAll, loadTelemetry, expectedAssetPaths, PANEL_IDS } from '../../src/build.js';
+import { buildAll, loadTelemetry, expectedAssetPaths } from '../../src/build.js';
 import {
   checkSvg,
   checkEnglishOnly,
@@ -223,11 +223,11 @@ function main(): void {
       });
     }
   }
-  if (expected.size !== PANEL_IDS.length * 2) {
+  if (expected.size !== expectedAssetPaths().length) {
     findings.push({
       level: 'error',
       check: 'assets',
-      message: `the build set declares ${expected.size} files for ${PANEL_IDS.length} panels across two themes`,
+      message: `the build set declares ${expected.size} files, expected ${expectedAssetPaths().length} for the panel/mode contract`,
     });
   }
 
@@ -248,11 +248,18 @@ function main(): void {
         });
       }
     }
-    if (/@keyframes|animation\s*:/.test(build.asset.svg)) {
+    if (build.mode === 'static' && /@keyframes|animation\s*:/.test(build.asset.svg)) {
       findings.push({
         level: 'error',
         check: 'motion',
-        message: `${build.path} contains animation; the v2 engine is static by construction`,
+        message: `${build.path} is static but contains animation`,
+      });
+    }
+    if (build.mode === 'animated' && !/@keyframes/.test(build.asset.svg)) {
+      findings.push({
+        level: 'error',
+        check: 'motion',
+        message: `${build.path} is animated but contains no controlled keyframes`,
       });
     }
   }
