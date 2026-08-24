@@ -78,14 +78,32 @@ export interface TypeStyle {
  */
 export const TYPE = {
   display: { size: 72, font: 'w800', tracking: 0.16, upper: true },
-  metricXl: { size: 60, font: 'w500', tracking: 0, upper: false },
   metric: { size: 40, font: 'w500', tracking: 0, upper: false },
-  heading: { size: 32, font: 'w700', tracking: 0.2, upper: true },
   label: { size: 26, font: 'w500', tracking: 0.18, upper: true },
-  micro: { size: 22, font: 'w400', tracking: 0.14, upper: true },
+  /**
+   * Mixed-case running text inside a panel. Same 26u body as `label` so it
+   * clears the information floor, but with tracking dialled back to near zero:
+   * `label`'s 0.18em is an uppercase-only setting, and at that width a
+   * sentence-length string costs ~20u per character and stops fitting the
+   * 810u content column. At 0.02em the same column holds ~50 characters.
+   */
+  body: { size: 26, font: 'w400', tracking: 0.02, upper: false },
+  /**
+   * The one piece of content in a panel that has to win over its neighbours —
+   * currently a repository name. Set in true case on purpose: a repository name
+   * is a string someone may retype, and `label`'s uppercase would misreport it.
+   */
+  strong: { size: 28, font: 'w700', tracking: 0.02, upper: false },
 } as const satisfies Record<string, TypeStyle>;
 
-/** Smallest size permitted for text that carries information. */
+/**
+ * Smallest size permitted for any text at all.
+ *
+ * v1 had a second, lower tier — `micro`, 22u — for annotation the README
+ * repeated verbatim in Markdown. v2 has no Markdown beneath the panels, so a
+ * string below this floor would simply be unreadable on a phone. The tier is
+ * gone rather than merely unused, so it cannot be reached for.
+ */
 export const MIN_INFO_TYPE_SIZE = TYPE.label.size;
 
 // ---------------------------------------------------------------------------
@@ -139,32 +157,6 @@ export const STROKE = {
 
 /** Containers are instrument panels, not app cards. Radii above 4 are banned. */
 export const RADIUS = 2;
-
-// ---------------------------------------------------------------------------
-// Motion tokens
-// ---------------------------------------------------------------------------
-
-export const DUR = {
-  micro: 120,
-  short: 240,
-  medium: 420,
-  long: 720,
-  /** Hard ceiling for the entire entrance sequence. */
-  sequenceMax: 2400,
-  /** Between staggered siblings; at most 8 items. */
-  stagger: 60,
-} as const;
-
-export const EASE = {
-  /** Reveals, wipes, rises. The default. */
-  entrance: 'cubic-bezier(0.16,1,0.3,1)',
-  /** Anything that both starts and stops in view. */
-  standard: 'cubic-bezier(0.4,0,0.2,1)',
-  /** A needle finding a reading: decisive start, long settle. */
-  instrument: 'cubic-bezier(0.33,0,0.15,1)',
-  /** Permitted only for the single continuous loop. */
-  linear: 'linear',
-} as const;
 
 // ---------------------------------------------------------------------------
 // Contrast (WCAG 2.x relative luminance)

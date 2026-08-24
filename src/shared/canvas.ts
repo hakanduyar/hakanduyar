@@ -1,22 +1,23 @@
 /**
  * The drawing surface every asset is built on.
  *
- * Two responsibilities beyond emitting markup:
+ * One responsibility beyond emitting markup: **the text manifest.** All copy is
+ * converted to vector outlines, which makes it invisible to grep — exactly
+ * where the content lint (banned lexicon, Turkish characters, unmeasured
+ * numbers) matters most. `Canvas` solves that by recording every string as a
+ * side effect of drawing it, so the manifest cannot drift from what is actually
+ * on the canvas. There is no way to draw text without registering it.
  *
- * 1. **The text manifest.** All copy is converted to vector outlines, which
- *    makes it invisible to grep — exactly where the content lint (banned
- *    lexicon, Turkish characters, unmeasured numbers) matters most. `Canvas`
- *    solves that by recording every string as a side effect of drawing it, so
- *    the manifest cannot drift from what is actually on the canvas. There is no
- *    way to draw text without registering it.
+ * V3 restores a constrained animation register. Scenes can opt into one of
+ * three named effects, while a static build still has no path to CSS output.
  *
- * 2. **The animation register.** An asset declares animations against a named
- *    class; `Canvas` collects the keyframes and emits one `<style>` block. The
- *    same scene can then be built twice — once animated, once at rest — from a
- *    single definition, which is what keeps the static variant honest.
+ * The `decorative` flag went with it. It existed so a string could be drawn
+ * below the information floor when the README repeated it verbatim in Markdown;
+ * v2 has no Markdown to fall back on, so every string on a panel has to carry
+ * itself and there is nothing left to exempt.
  */
 
-import { el, g, esc, svgDocument, n, type Attrs } from './svg.js';
+import { el, svgDocument, n } from './svg.js';
 import { layout, anchorOffset, type Anchor, type TextOptions } from './type.js';
 import type { Palette, TypeStyle } from './tokens.js';
 
@@ -26,25 +27,45 @@ export interface TextPlacement {
   y: number;
   anchor?: Anchor;
   fill: string;
-  /** CSS class for animation targeting. */
-  cls?: string;
-  /**
-   * Set when the string is decorative or duplicated verbatim in the README,
-   * so the legibility check can allow it below the information-carrying floor.
-   */
-  decorative?: boolean;
 }
 
 export interface RegisteredText {
   value: string;
   size: number;
-  decorative: boolean;
 }
+
+export type MotionMode = 'animated' | 'static';
+
+/** The only motion primitives this renderer is permitted to emit. */
+export type MotionEffect = 'identity-acquire' | 'identity-pulse' | 'signal-scan';
+
+export interface MotionRegistration {
+  effect: MotionEffect;
+  /** A class selector owned by the scene that registered the effect. */
+  selector: string;
+}
+
+const MOTION_EFFECTS: readonly MotionEffect[] = ['identity-acquire', 'identity-pulse', 'signal-scan'];
+
+const MOTION_ANIMATIONS: Record<MotionEffect, string> = {
+  'identity-acquire': 'identity-acquire 2.4s linear both',
+  'identity-pulse': 'identity-pulse 9s linear infinite',
+  'signal-scan': 'signal-scan 7s linear infinite',
+};
+
+const MOTION_KEYFRAMES: Record<MotionEffect, string> = {
+  'identity-acquire':
+    '@keyframes identity-acquire{0%{stroke-dashoffset:1000;opacity:0}12%{opacity:1}100%{stroke-dashoffset:0;opacity:.55}}',
+  'identity-pulse':
+    '@keyframes identity-pulse{0%,100%{opacity:.18;transform:translateX(0)}50%{opacity:.55;transform:translateX(12px)}}',
+  'signal-scan':
+    '@keyframes signal-scan{0%{opacity:.18;transform:translateX(0)}10%{opacity:.75}90%{opacity:.75}100%{opacity:.18;transform:translateX(440px)}}',
+};
 
 export interface RenderedAsset {
   id: string;
   theme: string;
-  animated: boolean;
+  mode: MotionMode;
   svg: string;
   /** Every string drawn on the canvas, for the content lint. */
   texts: RegisteredText[];
@@ -54,8 +75,7 @@ export interface RenderedAsset {
 
 export class Canvas {
   private readonly body: string[] = [];
-  private readonly css: string[] = [];
-  private readonly keyframeNames = new Set<string>();
+  private readonly motions: MotionRegistration[] = [];
   readonly texts: RegisteredText[] = [];
 
   constructor(
@@ -63,18 +83,12 @@ export class Canvas {
     readonly height: number,
     readonly palette: Palette,
     readonly idPrefix: string,
-    /** When false, no animation CSS is emitted and the scene renders at rest. */
-    readonly animated: boolean,
+    readonly mode: MotionMode = 'static',
   ) {}
 
   /** Append raw markup. */
   add(...markup: (string | null | undefined | false)[]): void {
     for (const item of markup) if (item) this.body.push(item);
-  }
-
-  /** Append a `<g>` wrapper around markup. */
-  addGroup(attrs: Attrs, ...children: (string | null | undefined | false)[]): void {
-    this.body.push(g(attrs, ...children));
   }
 
   /**
@@ -92,16 +106,11 @@ export class Canvas {
     };
     const run = layout(value, options);
     const dx = anchorOffset(run.width, place.anchor ?? 'start');
-    this.texts.push({
-      value: style.upper ? value.toUpperCase() : value,
-      size: style.size,
-      decorative: place.decorative ?? false,
-    });
+    this.texts.push({ value: style.upper ? value.toUpperCase() : value, size: style.size });
     return el('path', {
       d: run.d,
       fill: place.fill,
       transform: `translate(${n(place.x + dx)} ${n(place.y)})`,
-      class: place.cls,
     });
   }
 
@@ -115,33 +124,43 @@ export class Canvas {
     }).width;
   }
 
-  /** Append a CSS rule. Ignored entirely when building the static variant. */
-  rule(css: string): void {
-    if (this.animated) this.css.push(css);
-  }
-
   /**
-   * Register a `@keyframes` block once, by name. Repeated registration of the
-   * same name is a no-op, so a shared reveal can be requested per element
-   * without duplicating the rule.
+   * Register one of the renderer's fixed motion effects against a scene class.
+   * The registration is retained for both modes; `build()` decides whether
+   * the CSS is emitted, so the static variant remains a faithful no-CSS build.
    */
-  keyframes(name: string, block: string): void {
-    if (!this.animated || this.keyframeNames.has(name)) return;
-    this.keyframeNames.add(name);
-    this.css.push(block);
+  registerMotion(effect: MotionEffect, selector: string): void;
+  registerMotion(motion: MotionRegistration): void;
+  registerMotion(effectOrMotion: MotionEffect | MotionRegistration, selector?: string): void {
+    const motion: MotionRegistration =
+      typeof effectOrMotion === 'string'
+        ? { effect: effectOrMotion, selector: selector ?? '' }
+        : effectOrMotion;
+    if (!motion.selector) throw new Error(`Motion effect "${motion.effect}" needs a selector`);
+    if (!this.motions.some((registered) => registered.effect === motion.effect && registered.selector === motion.selector)) {
+      this.motions.push(motion);
+    }
   }
 
-  /** Namespaced id, so two assets on the same page cannot collide. */
-  id(local: string): string {
-    return `${this.idPrefix}-${local}`;
+  private motionStyle(mode: MotionMode): string | undefined {
+    if (mode !== 'animated' || this.motions.length === 0) return undefined;
+
+    const registrations = this.motions
+      .map(({ effect, selector }) => `${selector}{animation:${MOTION_ANIMATIONS[effect]}}`)
+      .join('');
+    const effects = MOTION_EFFECTS
+      .filter((effect) => this.motions.some((motion) => motion.effect === effect))
+      .map((effect) => MOTION_KEYFRAMES[effect])
+      .join('');
+    return registrations + effects;
   }
 
-  build(opts: { id: string; title: string; desc: string }): RenderedAsset {
+  build(opts: { id: string; title: string; desc: string; mode?: MotionMode }): RenderedAsset {
+    const mode = opts.mode ?? this.mode;
     // Every asset paints its own opaque ground: GitHub ships several dark
     // canvases and <picture> only distinguishes light from dark, so a
     // transparent asset would sit on an unpredictable colour.
     const ground = el('rect', { width: this.width, height: this.height, fill: this.palette.surface.base });
-    const style = this.css.length ? `<style>${this.css.join('')}</style>` : '';
 
     const svg = svgDocument(
       {
@@ -150,14 +169,15 @@ export class Canvas {
         title: opts.title,
         desc: opts.desc,
         idPrefix: this.idPrefix,
+        style: this.motionStyle(mode),
       },
-      style + ground + this.body.join(''),
+      ground + this.body.join(''),
     );
 
     return {
       id: opts.id,
       theme: this.palette.name,
-      animated: this.animated,
+      mode,
       svg,
       texts: this.texts,
       title: opts.title,
@@ -165,6 +185,3 @@ export class Canvas {
     };
   }
 }
-
-/** Escape helper re-exported so scene modules need only one import. */
-export { esc };

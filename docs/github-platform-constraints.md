@@ -20,9 +20,23 @@ document**, not as inline SVG. That single fact drives everything else.
 | CSS animation wrapped in `@media (prefers-reduced-motion: no-preference)` | **NO** | centroid pinned at `80` for every sample, in both headless and headed Chrome |
 | SMIL `<animate>` / `<animateTransform>` | **YES** | centroid moved `241 → 631 → 364` |
 
-**Ruling: use unguarded CSS keyframes.** They compose better than SMIL (one
-master timeline, shared easing, media-query-aware theming) and are the only
-technique that gives per-glyph stagger without an element explosion.
+**Historical ruling — no longer in force.** When this repository shipped an
+animated hero, the ruling was: use unguarded CSS keyframes, because they
+compose better than SMIL and are the only technique giving per-glyph stagger
+without an element explosion.
+
+**Current ruling: constrained motion on two panels.** Identity and signal use
+unguarded CSS keyframes for their named effects, and each ships a static
+variant selected by a reduced-motion `<picture>` fallback. The other six
+panels remain static and use the same two-source dark/light pair established
+by V2. `Canvas` exposes only the constrained motion register; validation still
+rejects transitions, SMIL, reduced-motion queries and effects outside the
+owning panel's allowlist. The table above is kept because it is the
+measurement, and the row that matters most is the second one: a
+`prefers-reduced-motion` guard *does not work* inside an SVG image. That is why
+the reduced-motion strategy is a static fallback `<picture>` ladder rather
+than an in-SVG guard. See
+[architecture.md](architecture.md#why-most-things-dont-animate).
 
 ## 3. Media queries inside an SVG image
 
@@ -52,10 +66,15 @@ compound queries. Verified against `POST /markdown`:
 ```
 
 survives verbatim. First matching `<source>` wins, so the reduced-motion pair
-must be declared before the theme pair. Every animated asset in this repository
-therefore ships **four** files: animated dark, animated light, static dark,
-static light — where the static variant is the composed final frame of the
-animation, not a blank placeholder.
+must be declared before the theme pair.
+
+This repository uses that ladder for identity and signal only. Each animated
+panel ships animated and static light/dark variants, and its README
+`<picture>` has four entries: the two reduced-motion static choices first,
+then the dark animated `<source>` and light `<img>` fallback. Every other
+panel remains static, ships only its dark/light pair, and its `<picture>` uses
+the two-source ladder. First matching `<source>` still wins, so the reduced-
+motion pair must remain before the theme pair.
 
 ## 5. What GitHub's sanitizer keeps and drops
 

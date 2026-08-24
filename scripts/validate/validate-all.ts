@@ -8,18 +8,19 @@
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { REPO_ROOT } from '../../src/shared/emit.js';
-import { buildAll, loadTelemetry } from '../../src/build.js';
+import { buildAll, loadTelemetry, expectedAssetPaths } from '../../src/build.js';
 import {
   checkSvg,
   checkEnglishOnly,
   checkAltText,
   checkAssetsResolve,
-  checkReducedMotionSources,
-  checkVariantPair,
+  checkPictureSources,
   SIZE_LIMITS,
   type Finding,
 } from './checks.js';
 import { MIN_INFO_TYPE_SIZE } from '../../src/shared/tokens.js';
+import { remainderShare } from '../../src/signal/signal.js';
+import { SECTIONS } from '../../src/shared/panel.js';
 
 /**
  * Words that would put the profile straight back into the genre it is built to
@@ -61,10 +62,47 @@ function main(): void {
   findings.push(...checkLexicon(readme, 'README.md'));
   findings.push(...checkAltText(readme));
   findings.push(...checkAssetsResolve(readme));
-  findings.push(...checkReducedMotionSources(readme));
+  findings.push(...checkPictureSources(readme));
 
   if (!/GENERATED FILE/.test(readme)) {
     findings.push({ level: 'error', check: 'readme', message: 'README.md is missing its generated-file header' });
+  }
+
+  // -- v2 composition: the panels are the page ---------------------------------
+  //
+  // These are the checks that keep the redesign from decaying back into v1. The
+  // failure mode is not dramatic — it is someone adding "just one line" of
+  // explanation under a panel, four times, until the page is a document again.
+  const body = readme.replace(/<!--[\s\S]*?-->/g, '');
+  const structural: [RegExp, string][] = [
+    [/^#{1,6}\s/m, 'a Markdown heading (each panel draws its own section mark)'],
+    [/^\s*[-*+]\s/m, 'a Markdown bullet list'],
+    [/^\s*\|/m, 'a Markdown table'],
+    [/hero-(static-)?(dark|light)\.svg/, 'a v1 hero asset'],
+    [/(core-modules|telemetry|activity)-(dark|light)\.svg/, 'a v1 asset that v2 replaced'],
+    [/ENGINEERING RECORD/i, 'the v1 "engineering record" framing'],
+  ];
+  for (const [pattern, description] of structural) {
+    if (pattern.test(body)) {
+      findings.push({ level: 'error', check: 'composition', message: `README.md contains ${description}` });
+    }
+  }
+
+  // Prose budget. Outside the panels the page may carry the strapline, the
+  // channels link line and the provenance line - and nothing else.
+  const proseLines = body
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .filter((line) => !/^<\/?(picture|source|img|a)\b/.test(line));
+  if (proseLines.length > 3) {
+    findings.push({
+      level: 'error',
+      check: 'composition',
+      message:
+        `README.md carries ${proseLines.length} lines of prose outside the panels; the budget is 3 ` +
+        `(strapline, channels links, provenance). Offending lines: ${proseLines.slice(3).join(' | ').slice(0, 160)}`,
+    });
   }
   // Emoji ban: the profile communicates through composition, not decoration.
   const emoji = readme.match(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu) ?? [];
@@ -108,10 +146,13 @@ function main(): void {
     }
   };
   collect(telemetry);
-  // Display convention: the language table shows the top four plus an
-  // "all other languages" row, whose count is the only derived integer on
-  // the page (languages.length - 4).
-  known.add(String(Math.max(0, telemetry.languages.length - 4)));
+  // The one derived figure the page is allowed to state: the share of source
+  // not covered by the four named languages. It is computed from measured
+  // shares by the same function the panel draws with, so the number permitted
+  // here and the number rendered cannot drift apart.
+  known.add((remainderShare(telemetry) * 100).toFixed(1));
+  // Section ordinals (01-04) are page structure, not measurements.
+  for (const ordinal of Object.values(SECTIONS)) known.add(ordinal);
   const prose = readme
     .replace(/<!--[\s\S]*?-->/g, '')
     .replace(/\((?:https?:|mailto:)[^)]*\)/g, '')
@@ -165,10 +206,29 @@ function main(): void {
     });
   }
 
-  for (const theme of ['dark', 'light'] as const) {
-    findings.push(
-      ...checkVariantPair(`assets/generated/hero-${theme}.svg`, `assets/generated/hero-static-${theme}.svg`),
-    );
+  // The generated directory must be exactly the build set: no missing panel,
+  // and no orphan left behind by a rename.
+  const expected = new Set(expectedAssetPaths().map((p) => p.split('/').pop() as string));
+  for (const file of expected) {
+    if (!svgFiles.includes(file)) {
+      findings.push({ level: 'error', check: 'assets', message: `assets/generated is missing ${file}` });
+    }
+  }
+  for (const file of svgFiles) {
+    if (!expected.has(file)) {
+      findings.push({
+        level: 'error',
+        check: 'assets',
+        message: `assets/generated/${file} is an orphan: no panel in the build set produces it`,
+      });
+    }
+  }
+  if (expected.size !== expectedAssetPaths().length) {
+    findings.push({
+      level: 'error',
+      check: 'assets',
+      message: `the build set declares ${expected.size} files, expected ${expectedAssetPaths().length} for the panel/mode contract`,
+    });
   }
 
   // -- in-memory scene checks -------------------------------------------------------
@@ -178,7 +238,7 @@ function main(): void {
     for (const text of build.asset.texts) {
       findings.push(...checkEnglishOnly(text.value, `${build.path} [text "${text.value}"]`));
       findings.push(...checkLexicon(text.value, `${build.path} [text "${text.value}"]`));
-      if (!text.decorative && text.size < MIN_INFO_TYPE_SIZE) {
+      if (text.size < MIN_INFO_TYPE_SIZE) {
         findings.push({
           level: 'error',
           check: 'legibility',
@@ -187,22 +247,20 @@ function main(): void {
             'for information-carrying text (unreadable at mobile scale)',
         });
       }
-      // Even annotation that is duplicated in Markdown has an absolute floor:
-      // below 16u the string is pure texture, and texture violates RULE 1.
-      if (text.decorative && text.size < 16) {
-        findings.push({
-          level: 'error',
-          check: 'legibility',
-          message: `${build.path} draws decorative text "${text.value}" at ${text.size}u, below the 16u absolute floor`,
-        });
-      }
     }
-    const hasAnimation = /@keyframes/.test(build.asset.svg);
-    if (build.animated && !hasAnimation) {
-      findings.push({ level: 'error', check: 'variant', message: `${build.path} should animate but has no @keyframes` });
+    if (build.mode === 'static' && /@keyframes|animation\s*:/.test(build.asset.svg)) {
+      findings.push({
+        level: 'error',
+        check: 'motion',
+        message: `${build.path} is static but contains animation`,
+      });
     }
-    if (!build.animated && hasAnimation) {
-      findings.push({ level: 'error', check: 'variant', message: `${build.path} is a static build but contains @keyframes` });
+    if (build.mode === 'animated' && !/@keyframes/.test(build.asset.svg)) {
+      findings.push({
+        level: 'error',
+        check: 'motion',
+        message: `${build.path} is animated but contains no controlled keyframes`,
+      });
     }
   }
 

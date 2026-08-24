@@ -43,7 +43,7 @@ describe('layout', () => {
   });
 
   it('measure() agrees with layout().width', () => {
-    for (const text of ['REPOSITORIES', 'LAST PUSH 2026-08-16', 'a b c']) {
+    for (const text of ['REPOSITORIES', 'SOURCE DISTRIBUTION', 'a b c']) {
       expect(measure(text, TYPE.label)).toBeCloseTo(layout(text, TYPE.label).width, 6);
     }
   });

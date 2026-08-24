@@ -61,23 +61,13 @@ export async function newPage(
   return page;
 }
 
-/**
- * Freeze every CSS animation in the current document and seek it to `seconds`.
- *
- * This is what makes animation QA deterministic: instead of screenshotting
- * "roughly two seconds in" and hoping, the timeline is placed at an exact
- * offset, so the same command always produces the same pixels.
- *
- * Only works when the SVG is loaded as the top-level document — animations
- * inside an <img> live in a document the automation cannot reach, which is
- * precisely why `img-animation` is verified separately by difference instead.
- */
+/** Freeze and seek top-level SVG CSS animations to a deterministic offset. */
 export async function seekAnimations(page: Page, seconds: number): Promise<number> {
-  return page.evaluate((t: number) => {
+  return page.evaluate((time: number) => {
     const animations = document.getAnimations();
     for (const animation of animations) {
       animation.pause();
-      animation.currentTime = t * 1000;
+      animation.currentTime = time * 1000;
     }
     return animations.length;
   }, seconds);

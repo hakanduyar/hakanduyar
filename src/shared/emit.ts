@@ -1,12 +1,13 @@
 /**
  * Asset emission: optimise, write, and report.
  *
- * SVGO is configured conservatively. The default preset happily rewrites ids,
- * inlines <style> blocks into presentation attributes and drops "unknown"
- * attributes — every one of which silently kills a CSS keyframe animation or
- * an aria wiring. The plugins disabled below were each disabled in response to
- * a specific breakage, so do not re-enable them without re-running
- * `npm run validate`.
+ * SVGO is configured conservatively. v2 accumulated a set of overrides that
+ * protected animation, then removed them when it went static; v3 restored a
+ * small, constrained motion register for two panels only, so those overrides
+ * are back — see the precision comment below and canvas.ts for the animation
+ * register itself. Do not add more overrides without re-running
+ * `npm run validate` — the earlier set was accumulated one breakage at a
+ * time.
  */
 
 import { optimize, type Config } from 'svgo';
@@ -24,26 +25,23 @@ const SVGO_CONFIG: Config = {
       name: 'preset-default',
       params: {
         overrides: {
-          // Ids are animation and aria targets, not decoration.
+          // The <title>/<desc> ids are the targets of aria-labelledby. SVGO
+          // does not track that reference, so cleaning ids would silently
+          // break the accessibility contract on every asset.
           cleanupIds: false,
-          // Would hoist <style> rules onto elements and destroy keyframes.
-          inlineStyles: false,
-          // Collapsing groups moves transforms that animations depend on.
-          collapseGroups: false,
-          // Merging paths across animated groups changes what animates.
-          mergePaths: false,
-          // Critical. SVGO computes the stylesheet and deletes anything it
-          // resolves to opacity:0 or display:none. Every element in an entrance
-          // sequence starts at opacity:0, so leaving this on silently strips
-          // most of the animated hero - it shrank from 25 paths to 6 before
-          // this was turned off. tests/scene.test.ts asserts that the
-          // animated and static variants keep the same element count.
-          removeHiddenElems: false,
           // role="img" is the accessibility contract; SVGO treats it as an
           // unknown attribute and strips it without this flag.
           removeUnknownsAndDefaults: { keepRoleAttr: true },
-          // 2dp is already applied at generation time; re-rounding shifts glyphs.
-          convertPathData: { floatPrecision: 2, transformPrecision: 2 },
+          // 1 decimal place: 0.1 user units, which is 0.1 CSS px in the 890px
+          // profile column and 0.04 px on a 360px phone — below the rendering
+          // resolution either way, and verified against captures at both
+          // widths. Every panel is outlined text, so path data is essentially
+          // the whole payload; at two decimals the current 20-asset v3 set
+          // (identity + signal now shipping animated and static variants)
+          // measures well over the 400 KB budget. Set this back to 2 and
+          // re-run `npm run render` to see the actual difference for
+          // yourself rather than trusting a stale figure here.
+          convertPathData: { floatPrecision: 1, transformPrecision: 1 },
           // <title>/<desc> are the accessibility contract for these assets, and
           // the viewBox is what lets GitHub scale them: SVGO 4 keeps all three
           // by default, so they need no override, only this note.

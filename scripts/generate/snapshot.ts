@@ -181,10 +181,10 @@ async function main(): Promise<void> {
   const completeWeeks = cal.weeks.filter((w) => w.contributionDays.length === 7);
   const recentWeeks = completeWeeks.slice(-52);
   const weekly = recentWeeks.map((w) => w.contributionDays.reduce((sum, d) => sum + d.contributionCount, 0));
-  // The plotted total is the sum of the 52 complete weeks, which is slightly
-  // below GitHub's trailing-365-day figure because the partial current week is
-  // excluded. The caption quotes the plotted number, not the larger one — the
-  // axis must describe the bars that are actually drawn.
+  // The sum of the 52 complete weeks, slightly below GitHub's trailing-365-day
+  // figure because the partial current week is excluded. The signal panel
+  // states this number alongside the window it covers, so the two always agree;
+  // quoting the larger figure against a 52-week window would not.
   const weeklyTotal = weekly.reduce((a, b) => a + b, 0);
   const activityMax = weekly.reduce((a, b) => Math.max(a, b), 0);
   const activityMaxIndex = weekly.indexOf(activityMax);
@@ -268,13 +268,6 @@ async function main(): Promise<void> {
     totalSourceBytes: totalBytes,
     totalCommits,
     lastPush: { repo: mostRecent.name, at: mostRecent.pushedAt },
-    // The profile repository is the page itself; listing it under Active
-    // work would be self-reference, not information.
-    recentPushes: [...repos]
-      .filter((r) => r.name !== LOGIN)
-      .sort((a, b) => (a.pushedAt < b.pushedAt ? 1 : -1))
-      .slice(0, 2)
-      .map((r) => ({ repo: r.name, at: r.pushedAt, url: r.url, description: r.description })),
     featured,
     methods: {
       publicRepos: `PUBLIC, NON-FORK, OWNED BY @${user.login}`,
