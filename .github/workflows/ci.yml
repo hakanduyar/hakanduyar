@@ -1,0 +1,58 @@
+# Verifies every push and pull request:
+#   - the TypeScript compiles
+#   - the unit tests pass
+#   - the committed generated assets exactly match their source (drift gate)
+#   - the committed README exactly matches its generator (drift gate)
+#   - the README and assets pass the validation harness
+#
+# Actions are pinned to commit SHAs: both workflows run third-party code, and
+# the refresh workflow holds a write token, so a hijacked floating tag must
+# not be able to reach either.
+name: ci
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Generated assets match their source
+        run: npm run render -- --check
+
+      - name: README matches its generator
+        run: |
+          npm run readme
+          git diff --exit-code README.md
+
+      - name: Token table matches its generator
+        run: |
+          npm run docs:tokens
+          git diff --exit-code docs/tokens.md
+
+      - name: Validation harness
+        run: npm run validate

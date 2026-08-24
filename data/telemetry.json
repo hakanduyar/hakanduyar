@@ -1,0 +1,254 @@
+{
+  "capturedAt": "2026-08-23T22:36:00Z",
+  "login": "hakanduyar",
+  "name": "Hakan Duyar",
+  "memberSince": "2021-02-20",
+  "followers": 27,
+  "publicRepos": 59,
+  "countedRepos": 59,
+  "contributions": {
+    "windowStart": "2025-08-24",
+    "windowEnd": "2026-08-24",
+    "total": 137,
+    "commits": 114,
+    "pullRequests": 12,
+    "issues": 0,
+    "repositoriesCreated": 10,
+    "activeDays": 24,
+    "longestActiveRun": 6,
+    "peakDay": 37
+  },
+  "activity": {
+    "weekly": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      3,
+      46,
+      12,
+      0,
+      10,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      40,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      19
+    ],
+    "total": 135,
+    "start": "2025-08-24",
+    "end": "2026-08-22",
+    "max": 46,
+    "maxIndex": 10,
+    "activeWeeks": 9
+  },
+  "languages": [
+    {
+      "name": "TypeScript",
+      "bytes": 7311415,
+      "share": 0.49092462092644995
+    },
+    {
+      "name": "Go",
+      "bytes": 3040872,
+      "share": 0.20417920934399916
+    },
+    {
+      "name": "Vue",
+      "bytes": 2518880,
+      "share": 0.169130080724349
+    },
+    {
+      "name": "JavaScript",
+      "bytes": 666426,
+      "share": 0.04474714284793441
+    },
+    {
+      "name": "HTML",
+      "bytes": 480886,
+      "share": 0.03228906815696234
+    },
+    {
+      "name": "CSS",
+      "bytes": 320779,
+      "share": 0.02153869107090292
+    },
+    {
+      "name": "SCSS",
+      "bytes": 237992,
+      "share": 0.0159799617972072
+    },
+    {
+      "name": "PowerShell",
+      "bytes": 68104,
+      "share": 0.004572839919984702
+    },
+    {
+      "name": "MDX",
+      "bytes": 64878,
+      "share": 0.004356230299670614
+    },
+    {
+      "name": "Dart",
+      "bytes": 55942,
+      "share": 0.003756222994299662
+    },
+    {
+      "name": "Shell",
+      "bytes": 55757,
+      "share": 0.003743801177883634
+    },
+    {
+      "name": "PLpgSQL",
+      "bytes": 34506,
+      "share": 0.0023169037689268197
+    },
+    {
+      "name": "Swift",
+      "bytes": 10504,
+      "share": 0.0007052905926159889
+    },
+    {
+      "name": "Go Template",
+      "bytes": 8203,
+      "share": 0.0005507900543820409
+    },
+    {
+      "name": "Batchfile",
+      "bytes": 8191,
+      "share": 0.000549984314938839
+    },
+    {
+      "name": "Kotlin",
+      "bytes": 3380,
+      "share": 0.00022694994316851128
+    },
+    {
+      "name": "Java",
+      "bytes": 2954,
+      "share": 0.00019834619293484682
+    },
+    {
+      "name": "Dockerfile",
+      "bytes": 2495,
+      "share": 0.0001675266592323774
+    },
+    {
+      "name": "Objective-C",
+      "bytes": 988,
+      "share": 0.00006633921415694945
+    }
+  ],
+  "totalSourceBytes": 14893152,
+  "totalCommits": 4194,
+  "lastPush": {
+    "repo": "hunnes-ikas-theme",
+    "at": "2026-08-23T22:35:29Z"
+  },
+  "recentPushes": [
+    {
+      "repo": "hunnes-ikas-theme",
+      "at": "2026-08-23T22:35:29Z",
+      "url": "https://github.com/hakanduyar/hunnes-ikas-theme",
+      "description": "Hunnes storefront — ikas Studio Code Mode theme"
+    },
+    {
+      "repo": "software-factory",
+      "at": "2026-08-23T08:17:07Z",
+      "url": "https://github.com/hakanduyar/software-factory",
+      "description": null
+    }
+  ],
+  "featured": [
+    {
+      "key": "dropspot",
+      "name": "dropspot-project",
+      "url": "https://github.com/hakanduyar/dropspot-project",
+      "description": "Limited-stock drop platform with priority-scored waitlists and idempotent, transactional claim handling",
+      "language": "JavaScript",
+      "commits": 31,
+      "stars": 0,
+      "pushedAt": "2025-11-07T16:25:10Z",
+      "createdAt": "2025-11-06T18:25:36Z"
+    },
+    {
+      "key": "motion-system",
+      "name": "Hunnes-Academy-motion-system",
+      "url": "https://github.com/hakanduyar/Hunnes-Academy-motion-system",
+      "description": "Composable GSAP motion system - nine motion modules over a shared base, behind one declarative config",
+      "language": "JavaScript",
+      "commits": 9,
+      "stars": 0,
+      "pushedAt": "2026-08-16T14:51:10Z",
+      "createdAt": "2026-08-16T13:05:05Z"
+    },
+    {
+      "key": "stock",
+      "name": "stock-management-system",
+      "url": "https://github.com/hakanduyar/stock-management-system",
+      "description": "Role-aware inventory system - NestJS, Next.js, PostgreSQL/Prisma, JWT auth with three-role access control",
+      "language": "TypeScript",
+      "commits": 10,
+      "stars": 0,
+      "pushedAt": "2025-11-10T22:44:58Z",
+      "createdAt": "2025-11-10T12:45:09Z"
+    },
+    {
+      "key": "spark",
+      "name": "spark",
+      "url": "https://github.com/hakanduyar/spark",
+      "description": "Personal Planning, Focus, and Growth System",
+      "language": "TypeScript",
+      "commits": 25,
+      "stars": 0,
+      "pushedAt": "2026-07-02T13:06:47Z",
+      "createdAt": "2026-06-28T21:33:35Z"
+    }
+  ],
+  "methods": {
+    "publicRepos": "PUBLIC, NON-FORK, OWNED BY @hakanduyar",
+    "totalCommits": "DEFAULT BRANCHES, 59 PUBLIC REPOSITORIES",
+    "primaryLanguage": "SHARE OF 14.89 MB PUBLIC SOURCE",
+    "activity": "135 PUBLIC CONTRIBUTIONS - 52 WEEKS TO 2026-08-22",
+    "lastPush": "MOST RECENT PUSH TO A PUBLIC REPOSITORY",
+    "activeSince": "GITHUB ACCOUNT CREATED 2021-02-20"
+  }
+}
