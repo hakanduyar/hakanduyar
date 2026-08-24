@@ -105,3 +105,27 @@ With the histogram gone, the peak-week mark went with it, so the page's single
 chromatic element is now the largest share in the distribution. It is still
 load-bearing — it moves when the measurement moves — and a test asserts that
 `signal` is the only chromatic panel on the page.
+
+
+## Round-3 review outcome — FINAL VERDICT: PASS
+
+Codex returned **PASS** on `980ee52`. Full text: [05-review-3.md](05-review-3.md).
+
+All eight design gates pass, including E and H, which failed in earlier rounds.
+No CRITICAL or MAJOR findings. The ordinal argument was ruled ACCEPT: `01`–`04`
+over the shared rail is a valid cohesion device and supports a heading-free
+README.
+
+Two non-blocking MINOR findings were raised and have since been cleared:
+
+- `docs/visual-system.md` still listed the deleted `metricXl`, `heading` and
+  `micro` roles, and claimed sentence case never appears inside an asset — which
+  the signal panel's closing lines, the plate subjects and the capability lines
+  all contradict. The table now lists the five roles that exist, and the
+  two-register rule is stated properly: uppercase for anything that labels or
+  measures, mixed case for anything the page says in its own voice.
+- Chart-era wording and undocumented retained fields in
+  `src/shared/telemetry-types.ts`, `scripts/generate/snapshot.ts` and
+  `docs/maintenance.md`. `activity.max`, `maxIndex` and `activeWeeks` are kept
+  and now say why: they are measured provenance for the weekly series, recorded
+  next to it rather than left for the next reader to recompute.

@@ -52,14 +52,25 @@ at build time; prose lives in Markdown and renders in the reader's own font.
 | Role | Size (u) | Weight | Use |
 |---|---|---|---|
 | display | 72 | 800 | The wordmark. Once per document. |
-| metricXl | 60 | 500 | Headline telemetry values |
-| metric | 40 | 500 | Secondary values |
-| heading | 32 | 700 | In-asset headings |
-| label | 26 | 500 | **The floor for information-carrying text.** ~10.5 CSS px at a 360px viewport. |
-| micro | 22 | 400 | Annotation only, and only when duplicated verbatim in Markdown. Absolute floor 16u. |
+| metric | 40 | 500 | The identity plate's three readouts |
+| strong | 28 | 700 | The one item a panel leads with — currently a repository name |
+| label | 26 | 500 | Uppercase register: section marks, row keys, values |
+| body | 26 | 400 | Mixed-case running text inside a panel |
 
-Uppercase with tracking for labels; sentence case never appears inside an
-asset. No italics, no glow, no text stroke.
+Five roles, and every one of them is drawn — `tests/tokens.test.ts` asserts
+that, because an unused step is an invitation to reach for the wrong size. v1
+also had `metricXl`, `heading` and `micro`; the first two went unused and
+`micro` (22u) sat below the floor, which only worked while the README repeated
+those strings in Markdown.
+
+**26u is the floor for every string on a panel**, roughly 10.5 CSS px at a
+360px viewport. There is no tier beneath it.
+
+Two registers, deliberately: uppercase with tracking for anything that labels
+or measures, mixed case for anything the page says in its own voice — the
+capability lines, the plate subjects, the signal panel's closing facts. The
+mixed-case register is what stops a page of measurements reading as an
+instrument panel. No italics, no glow, no text stroke.
 
 ## Grid
 

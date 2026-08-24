@@ -13,9 +13,9 @@ committed assets or README no longer match their generators.
 Known refresh exception: contributions that touch no owned public default
 branch (issues or PRs on other accounts' repositories, work on non-default
 branches) change only the sliding activity fields, which are deliberately
-excluded from the material-change view. The signal panel's activity plot then
-refreshes with the next owned public push rather than immediately. Accepted trade-off; the
-alternative is a weekly metronome commit.
+excluded from the material-change view. The signal panel's activity summary
+then refreshes with the next owned public push rather than immediately.
+Accepted trade-off; the alternative is a weekly metronome commit.
 
 Collapse guard: the refresh refuses to commit (and fails loudly) if any
 headline gauge (repositories, commits, source bytes, trailing-year

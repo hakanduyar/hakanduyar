@@ -67,18 +67,26 @@ export interface Telemetry {
   activity: {
     /** 52 weekly contribution totals, oldest first. */
     weekly: number[];
-    /** Sum of the 52 plotted weeks. Slightly below the trailing-365-day figure
-     *  because the partial current week is excluded; the caption quotes this. */
+    /** Sum of the 52 complete weeks. Slightly below the trailing-365-day
+     *  figure because the partial current week is excluded; the signal panel
+     *  quotes this one, so the stated window and the stated total agree. */
     total: number;
     /** ISO date of the Sunday starting the first complete week. */
     start: string;
     /** ISO date of the Saturday ending the last complete week. */
     end: string;
-    /** Highest single-week total; the y-axis is scaled to exactly this. */
+    /**
+     * Highest single-week total, the index of that week, and the number of
+     * weeks with any activity.
+     *
+     * Nothing draws these. They sized and marked the 52-week histogram v2
+     * removed, and they are kept as measured provenance for the weekly series
+     * rather than deleted: `weekly` is in the snapshot, so the figures derived
+     * from it should be recorded next to it rather than recomputed by whoever
+     * reads the data next.
+     */
     max: number;
-    /** Index of that week, so the renderer can mark it. */
     maxIndex: number;
-    /** Weeks with at least one contribution. Public activity here is burst-shaped. */
     activeWeeks: number;
   };
   languages: LanguageShare[];
