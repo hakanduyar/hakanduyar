@@ -7,7 +7,7 @@
  * desktop/mobile widths in both themes.
  */
 
-import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
+import { mkdirSync, rmSync, writeFileSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { Browser } from 'puppeteer-core';
@@ -97,9 +97,12 @@ async function assertTimelineLiveness(browser: Browser): Promise<void> {
       await seekAnimations(page, id === 'identity' ? 1.25 : 3.4);
       const second = (await page.screenshot({ type: 'png' })) as Buffer;
       await page.close();
+      // Always save the pair as evidence, not only on failure — a passing run
+      // that leaves no visual proof is indistinguishable from one that was
+      // never actually checked.
+      writeFileSync(resolve(OUT, `timeline-${id}-${theme}-a.png`), first);
+      writeFileSync(resolve(OUT, `timeline-${id}-${theme}-b.png`), second);
       if (first.equals(second)) {
-        writeFileSync(resolve(OUT, `timeline-${id}-${theme}-a.png`), first);
-        writeFileSync(resolve(OUT, `timeline-${id}-${theme}-b.png`), second);
         throw new Error(`${file} produced identical frames at its liveness timeline offsets`);
       }
     }
@@ -125,9 +128,9 @@ async function assertImgLiveness(browser: Browser): Promise<void> {
       await new Promise((resolveWait) => setTimeout(resolveWait, id === 'identity' ? 1200 : 1800));
       const second = (await image!.screenshot({ type: 'png' })) as Buffer;
       await page.close();
+      writeFileSync(resolve(OUT, `img-liveness-${id}-${theme}-a.png`), first);
+      writeFileSync(resolve(OUT, `img-liveness-${id}-${theme}-b.png`), second);
       if (first.equals(second)) {
-        writeFileSync(resolve(OUT, `img-liveness-${id}-${theme}-a.png`), first);
-        writeFileSync(resolve(OUT, `img-liveness-${id}-${theme}-b.png`), second);
         throw new Error(`${file} did not animate when embedded through <img>`);
       }
     }
@@ -198,6 +201,11 @@ async function captureReadmePage(browser: Browser): Promise<void> {
 }
 
 async function main(): Promise<void> {
+  // Clear before capturing: this directory is git-ignored evidence, and a
+  // stale file from a previous era (a removed panel, an old effect) sitting
+  // alongside a fresh capture is a contradiction a reviewer has no way to
+  // resolve from the file listing alone.
+  rmSync(OUT, { recursive: true, force: true });
   mkdirSync(OUT, { recursive: true });
   const browser = await launch();
   try {

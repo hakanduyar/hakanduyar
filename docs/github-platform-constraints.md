@@ -25,15 +25,18 @@ animated hero, the ruling was: use unguarded CSS keyframes, because they
 compose better than SMIL and are the only technique giving per-glyph stagger
 without an element explosion.
 
-**Current ruling: static SVG only.** Nothing this repository generates
-animates, and the engine cannot produce motion — `Canvas` has no animation
-register and `checkSvg` fails the build on keyframes, `animation`,
-`transition`, SMIL or a motion query. The table above is kept because it is the
+**Current ruling: constrained motion on two panels.** Identity and signal use
+unguarded CSS keyframes for their named effects, and each ships a static
+variant selected by a reduced-motion `<picture>` fallback. The other six
+panels remain static and use the same two-source dark/light pair established
+by V2. `Canvas` exposes only the constrained motion register; validation still
+rejects transitions, SMIL, reduced-motion queries and effects outside the
+owning panel's allowlist. The table above is kept because it is the
 measurement, and the row that matters most is the second one: a
-`prefers-reduced-motion` guard *does not work* inside an SVG image, so any
-future animation here would have to ship a second static file and choose
-between them in the README document. That cost is a large part of why v2 does
-not animate. See [architecture.md](architecture.md#why-nothing-animates).
+`prefers-reduced-motion` guard *does not work* inside an SVG image. That is why
+the reduced-motion strategy is a static fallback `<picture>` ladder rather
+than an in-SVG guard. See
+[architecture.md](architecture.md#why-most-things-dont-animate).
 
 ## 3. Media queries inside an SVG image
 
@@ -65,14 +68,13 @@ compound queries. Verified against `POST /markdown`:
 survives verbatim. First matching `<source>` wins, so the reduced-motion pair
 must be declared before the theme pair.
 
-**This repository no longer uses that ladder.** It is recorded here because the
-measurement is the reason it was ever needed: a `prefers-reduced-motion` guard
-placed *inside* an SVG image does not report the viewer's real setting (§3), so
-honouring the preference meant shipping a second file and choosing between them
-in the README document. v2 ships nothing that moves, so every asset is a plain
-dark/light pair and each `<picture>` declares exactly one `<source>`. Anyone
-reintroducing motion here needs this section again — and needs to ship four
-files per animated asset, not two.
+This repository uses that ladder for identity and signal only. Each animated
+panel ships animated and static light/dark variants, and its README
+`<picture>` has four entries: the two reduced-motion static choices first,
+then the dark animated `<source>` and light `<img>` fallback. Every other
+panel remains static, ships only its dark/light pair, and its `<picture>` uses
+the two-source ladder. First matching `<source>` still wins, so the reduced-
+motion pair must remain before the theme pair.
 
 ## 5. What GitHub's sanitizer keeps and drops
 

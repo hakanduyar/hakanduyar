@@ -72,11 +72,14 @@ series ramps, so a palette edit that breaks accessibility or theme logic fails
 1. Write a scene module returning `RenderedAsset` via `Canvas`, opening with
    `frame()` and `head()` from `src/shared/panel.ts` so it joins the system
    rather than sitting next to it.
-2. Add its id to `PANEL_IDS` and build it in `src/build.ts` (both themes).
-   `expectedAssetPaths()` derives from that list, so the validators pick up the
-   new panel automatically.
-3. Reference it from `scripts/generate/readme.ts` with a `<picture>` block and
-   alt text that can stand in for the panel when the image does not load.
+2. Add its id to `PANEL_IDS` and build it in `src/build.ts` for both themes.
+   Static panels contribute a two-source dark/light pair; an intentionally
+   animated panel must use the constrained motion modes and contribute four
+   animated/static theme variants. `expectedAssetPaths()` derives from that
+   list, so the validators pick up the new panel automatically.
+3. Reference it from `scripts/generate/readme.ts` with a `<picture>` block —
+   using the four-entry reduced-motion ladder for an animated panel — and alt
+   text that can stand in for the panel when the image does not load.
 4. `npm run build` and let the harness complain until it stops.
 
 Note the prose budget: the README allows three lines of text outside the
@@ -89,7 +92,7 @@ npm ci
 npm run build        # snapshot -> render -> readme -> validate
 npm test
 npm run qa:github    # GitHub's own renderer must preserve every construct
-npm run qa:visual    # screenshots at 890px/360px + stillness proof (needs Chrome)
+npm run qa:visual    # screenshots at 890px/360px + static/motion proof (needs Chrome)
 ```
 
 `qa:visual` writes evidence under `.ai/evidence/visual/` (git-ignored except
@@ -99,10 +102,11 @@ when intentionally committed for review).
 
 - **Adding a webfont or `<text>` to an SVG** — cannot load / shifts per-OS.
   The build rejects both.
-- **Adding "just a subtle" animation** — v2 is static by construction, and the
-  validator rejects keyframes, `animation`, `transition`, SMIL and motion
-  queries in any asset. The reasoning is in
-  [architecture.md](architecture.md#why-nothing-animates); the platform
+- **Adding an unregistered animation** — V3 permits motion only through the
+  named identity and signal effects, with static `<picture>` fallbacks. The
+  validator rejects transitions, SMIL, reduced-motion queries and effects
+  outside the owning panel's allowlist. The reasoning is in
+  [architecture.md](architecture.md#why-most-things-dont-animate); the platform
   measurement behind it is in
   [github-platform-constraints.md](github-platform-constraints.md).
 - **Adding one line of explanation under a panel** — this is how v1 became a

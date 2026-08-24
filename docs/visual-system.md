@@ -87,10 +87,19 @@ from dark, so transparency would sit on an unpredictable colour.
 
 ## Motion
 
-There is none. Every asset is static, and the engine cannot produce anything
-else: `Canvas` has no animation register, and `scripts/validate/checks.ts`
-fails the build on CSS keyframes, an `animation` or `transition` property, a
-SMIL element, or a `prefers-reduced-motion` query in any generated file.
+Two panels animate: identity and signal. Their animated variants use
+unguarded CSS keyframes for the constrained acquisition, pulse and scan
+effects; the identity text and information-bearing composition remain still.
+Each also has a static light/dark variant selected by the reduced-motion
+`<source>` entries in the README `<picture>` ladder. The other six panels
+remain static and ship only the two-source dark/light pair.
+
+The eight logical panels therefore produce 20 files: identity and signal have
+animated and static variants for each theme, while the remaining six have two
+theme files each. `Canvas` has a constrained animation register rather than a
+general motion system, and the validators allow only the named effects on
+their owning panels. Static variants emit no motion CSS; transitions, SMIL and
+`prefers-reduced-motion` queries remain forbidden in generated SVGs.
 
 v1 animated the identity plate — a 2.4s entrance and one 9s index drift — and
 paired it with a static variant selected by a reduced-motion `<source>`. The
@@ -98,7 +107,7 @@ reasoning behind that pairing is still sound and still documented in
 [github-platform-constraints.md](github-platform-constraints.md); what changed
 is the judgement that the entrance was worth its cost. It played once, above
 the fold, and resolved to the composition that actually carries the page.
-Shipping that resting state directly is what v2 does.
+Shipping that resting state directly is what v2 did.
 
 ## Vocabulary
 
