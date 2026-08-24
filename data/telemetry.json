@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-08-23T22:36:00Z",
+  "capturedAt": "2026-08-24T18:11:00Z",
   "login": "hakanduyar",
   "name": "Hakan Duyar",
   "memberSince": "2021-02-20",
@@ -9,12 +9,12 @@
   "contributions": {
     "windowStart": "2025-08-24",
     "windowEnd": "2026-08-24",
-    "total": 137,
-    "commits": 114,
-    "pullRequests": 12,
+    "total": 172,
+    "commits": 144,
+    "pullRequests": 14,
     "issues": 0,
     "repositoriesCreated": 10,
-    "activeDays": 24,
+    "activeDays": 25,
     "longestActiveRun": 6,
     "peakDay": 37
   },
@@ -83,105 +83,105 @@
   "languages": [
     {
       "name": "TypeScript",
-      "bytes": 7311415,
-      "share": 0.49092462092644995
+      "bytes": 7594538,
+      "share": 0.4986947455126398
     },
     {
       "name": "Go",
       "bytes": 3040872,
-      "share": 0.20417920934399916
+      "share": 0.19967862273867246
     },
     {
       "name": "Vue",
       "bytes": 2518880,
-      "share": 0.169130080724349
+      "share": 0.16540205876603398
     },
     {
       "name": "JavaScript",
-      "bytes": 666426,
-      "share": 0.04474714284793441
+      "bytes": 718982,
+      "share": 0.04721189696044299
     },
     {
       "name": "HTML",
       "bytes": 480886,
-      "share": 0.03228906815696234
+      "share": 0.03157734168827535
     },
     {
       "name": "CSS",
       "bytes": 320779,
-      "share": 0.02153869107090292
+      "share": 0.021063928019163125
     },
     {
       "name": "SCSS",
       "bytes": 237992,
-      "share": 0.0159799617972072
+      "share": 0.015627726120278043
     },
     {
       "name": "PowerShell",
       "bytes": 68104,
-      "share": 0.004572839919984702
+      "share": 0.004472043848933644
     },
     {
       "name": "MDX",
       "bytes": 64878,
-      "share": 0.004356230299670614
+      "share": 0.004260208810512114
     },
     {
       "name": "Dart",
       "bytes": 55942,
-      "share": 0.003756222994299662
+      "share": 0.0036734270673829134
     },
     {
       "name": "Shell",
       "bytes": 55757,
-      "share": 0.003743801177883634
+      "share": 0.003661279056810073
     },
     {
       "name": "PLpgSQL",
       "bytes": 34506,
-      "share": 0.0023169037689268197
+      "share": 0.0022658337990617925
     },
     {
       "name": "Swift",
       "bytes": 10504,
-      "share": 0.0007052905926159889
+      "share": 0.0006897443408492746
     },
     {
       "name": "Go Template",
       "bytes": 8203,
-      "share": 0.0005507900543820409
+      "share": 0.0005386493552919459
     },
     {
       "name": "Batchfile",
       "bytes": 8191,
-      "share": 0.000549984314938839
+      "share": 0.0005378613762277617
     },
     {
       "name": "Kotlin",
       "bytes": 3380,
-      "share": 0.00022694994316851128
+      "share": 0.00022194743641189532
     },
     {
       "name": "Java",
       "bytes": 2954,
-      "share": 0.00019834619293484682
+      "share": 0.00019397417963335466
     },
     {
       "name": "Dockerfile",
       "bytes": 2495,
-      "share": 0.0001675266592323774
+      "share": 0.00016383398042830734
     },
     {
       "name": "Objective-C",
       "bytes": 988,
-      "share": 0.00006633921415694945
+      "share": 0.0000648769429511694
     }
   ],
-  "totalSourceBytes": 14893152,
-  "totalCommits": 4194,
+  "totalSourceBytes": 15228831,
+  "totalCommits": 4237,
   "lastPush": {
-    "repo": "hunnes-ikas-theme",
-    "at": "2026-08-23T22:35:29Z"
+    "repo": "software-factory",
+    "at": "2026-08-24T17:38:31Z"
   },
   "featured": [
     {
@@ -232,7 +232,7 @@
   "methods": {
     "publicRepos": "PUBLIC, NON-FORK, OWNED BY @hakanduyar",
     "totalCommits": "DEFAULT BRANCHES, 59 PUBLIC REPOSITORIES",
-    "primaryLanguage": "SHARE OF 14.89 MB PUBLIC SOURCE",
+    "primaryLanguage": "SHARE OF 15.23 MB PUBLIC SOURCE",
     "activity": "135 PUBLIC CONTRIBUTIONS - 52 WEEKS TO 2026-08-22",
     "lastPush": "MOST RECENT PUSH TO A PUBLIC REPOSITORY",
     "activeSince": "GITHUB ACCOUNT CREATED 2021-02-20"
