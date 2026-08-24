@@ -238,22 +238,13 @@ function main(): void {
     for (const text of build.asset.texts) {
       findings.push(...checkEnglishOnly(text.value, `${build.path} [text "${text.value}"]`));
       findings.push(...checkLexicon(text.value, `${build.path} [text "${text.value}"]`));
-      if (!text.decorative && text.size < MIN_INFO_TYPE_SIZE) {
+      if (text.size < MIN_INFO_TYPE_SIZE) {
         findings.push({
           level: 'error',
           check: 'legibility',
           message:
             `${build.path} draws "${text.value}" at ${text.size}u - below the ${MIN_INFO_TYPE_SIZE}u floor ` +
             'for information-carrying text (unreadable at mobile scale)',
-        });
-      }
-      // Even annotation that is duplicated in Markdown has an absolute floor:
-      // below 16u the string is pure texture, and texture violates RULE 1.
-      if (text.decorative && text.size < 16) {
-        findings.push({
-          level: 'error',
-          check: 'legibility',
-          message: `${build.path} draws decorative text "${text.value}" at ${text.size}u, below the 16u absolute floor`,
         });
       }
     }

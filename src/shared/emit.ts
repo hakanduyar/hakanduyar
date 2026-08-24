@@ -24,21 +24,10 @@ const SVGO_CONFIG: Config = {
       name: 'preset-default',
       params: {
         overrides: {
-          // Ids are animation and aria targets, not decoration.
+          // The <title>/<desc> ids are the targets of aria-labelledby. SVGO
+          // does not track that reference, so cleaning ids would silently
+          // break the accessibility contract on every asset.
           cleanupIds: false,
-          // Would hoist <style> rules onto elements and destroy keyframes.
-          inlineStyles: false,
-          // Collapsing groups moves transforms that animations depend on.
-          collapseGroups: false,
-          // Merging paths across animated groups changes what animates.
-          mergePaths: false,
-          // Critical. SVGO computes the stylesheet and deletes anything it
-          // resolves to opacity:0 or display:none. Every element in an entrance
-          // sequence starts at opacity:0, so leaving this on silently strips
-          // most of the animated hero - it shrank from 25 paths to 6 before
-          // this was turned off. tests/scene.test.ts asserts that the
-          // animated and static variants keep the same element count.
-          removeHiddenElems: false,
           // role="img" is the accessibility contract; SVGO treats it as an
           // unknown attribute and strips it without this flag.
           removeUnknownsAndDefaults: { keepRoleAttr: true },

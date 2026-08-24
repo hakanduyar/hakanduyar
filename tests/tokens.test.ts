@@ -121,13 +121,15 @@ describe('grid arithmetic', () => {
 });
 
 describe('type scale', () => {
-  it('the information floor is the label size', () => {
+  it('the information floor is the label size, and nothing sits below it', () => {
     expect(TYPE.label.size).toBe(26);
-    expect(TYPE.micro.size).toBeLessThan(TYPE.label.size);
+    for (const style of Object.values(TYPE)) {
+      expect(style.size).toBeGreaterThanOrEqual(TYPE.label.size);
+    }
   });
 
-  it('sizes descend display > metricXl > metric > heading > label > micro', () => {
-    const sizes = [TYPE.display, TYPE.metricXl, TYPE.metric, TYPE.heading, TYPE.label, TYPE.micro].map(
+  it('sizes descend display > metricXl > metric > heading > strong > label', () => {
+    const sizes = [TYPE.display, TYPE.metricXl, TYPE.metric, TYPE.heading, TYPE.strong, TYPE.label].map(
       (t) => t.size,
     );
     for (let i = 1; i < sizes.length; i++) expect(sizes[i]!).toBeLessThan(sizes[i - 1]!);

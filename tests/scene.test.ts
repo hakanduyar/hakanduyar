@@ -268,18 +268,16 @@ describe('legibility and language policy inside assets', () => {
   it('no information-carrying string is drawn below the mobile floor', () => {
     for (const build of builds) {
       for (const text of build.asset.texts) {
-        if (text.decorative) continue;
         expect(text.size, `${build.path}: "${text.value}"`).toBeGreaterThanOrEqual(TYPE.label.size);
       }
     }
   });
 
-  it('v2 draws nothing decoratively: every string carries itself', () => {
-    // v1 could drop strings below the floor because Markdown repeated them
-    // verbatim. There is no Markdown to fall back on now.
-    for (const build of builds) {
-      const decorative = build.asset.texts.filter((t) => t.decorative);
-      expect(decorative.map((t) => t.value), build.path).toEqual([]);
+  it('the type scale offers no step below the floor to reach for', () => {
+    // v1 exempted strings the README repeated in Markdown. There is no Markdown
+    // to fall back on now, so the exemption and the sub-floor tier are both gone.
+    for (const style of Object.values(TYPE)) {
+      expect(style.size, JSON.stringify(style)).toBeGreaterThanOrEqual(TYPE.label.size);
     }
   });
 

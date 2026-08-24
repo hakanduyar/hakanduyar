@@ -96,10 +96,16 @@ export const TYPE = {
    * is a string someone may retype, and `label`'s uppercase would misreport it.
    */
   strong: { size: 28, font: 'w700', tracking: 0.02, upper: false },
-  micro: { size: 22, font: 'w400', tracking: 0.14, upper: true },
 } as const satisfies Record<string, TypeStyle>;
 
-/** Smallest size permitted for text that carries information. */
+/**
+ * Smallest size permitted for any text at all.
+ *
+ * v1 had a second, lower tier — `micro`, 22u — for annotation the README
+ * repeated verbatim in Markdown. v2 has no Markdown beneath the panels, so a
+ * string below this floor would simply be unreadable on a phone. The tier is
+ * gone rather than merely unused, so it cannot be reached for.
+ */
 export const MIN_INFO_TYPE_SIZE = TYPE.label.size;
 
 // ---------------------------------------------------------------------------

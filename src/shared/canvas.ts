@@ -13,9 +13,14 @@
  * Nothing on the page moves any more, so the register, the `animated` flag and
  * the variant pairing that depended on it are gone — a static-only engine
  * cannot emit motion by accident.
+ *
+ * The `decorative` flag went with it. It existed so a string could be drawn
+ * below the information floor when the README repeated it verbatim in Markdown;
+ * v2 has no Markdown to fall back on, so every string on a panel has to carry
+ * itself and there is nothing left to exempt.
  */
 
-import { el, g, esc, svgDocument, n, type Attrs } from './svg.js';
+import { el, svgDocument, n } from './svg.js';
 import { layout, anchorOffset, type Anchor, type TextOptions } from './type.js';
 import type { Palette, TypeStyle } from './tokens.js';
 
@@ -25,17 +30,11 @@ export interface TextPlacement {
   y: number;
   anchor?: Anchor;
   fill: string;
-  /**
-   * Set when the string is decorative or duplicated verbatim in the README,
-   * so the legibility check can allow it below the information-carrying floor.
-   */
-  decorative?: boolean;
 }
 
 export interface RegisteredText {
   value: string;
   size: number;
-  decorative: boolean;
 }
 
 export interface RenderedAsset {
@@ -64,11 +63,6 @@ export class Canvas {
     for (const item of markup) if (item) this.body.push(item);
   }
 
-  /** Append a `<g>` wrapper around markup. */
-  addGroup(attrs: Attrs, ...children: (string | null | undefined | false)[]): void {
-    this.body.push(g(attrs, ...children));
-  }
-
   /**
    * Draw a string as outlines and register it in the manifest.
    *
@@ -84,11 +78,7 @@ export class Canvas {
     };
     const run = layout(value, options);
     const dx = anchorOffset(run.width, place.anchor ?? 'start');
-    this.texts.push({
-      value: style.upper ? value.toUpperCase() : value,
-      size: style.size,
-      decorative: place.decorative ?? false,
-    });
+    this.texts.push({ value: style.upper ? value.toUpperCase() : value, size: style.size });
     return el('path', {
       d: run.d,
       fill: place.fill,
@@ -104,11 +94,6 @@ export class Canvas {
       tracking: style.tracking,
       upper: style.upper,
     }).width;
-  }
-
-  /** Namespaced id, so two assets on the same page cannot collide. */
-  id(local: string): string {
-    return `${this.idPrefix}-${local}`;
   }
 
   build(opts: { id: string; title: string; desc: string }): RenderedAsset {
@@ -138,6 +123,3 @@ export class Canvas {
     };
   }
 }
-
-/** Escape helper re-exported so scene modules need only one import. */
-export { esc };
