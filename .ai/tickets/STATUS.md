@@ -3,6 +3,10 @@
 Implementer-owned. Verdicts are recorded only after an independent review in
 `.ai/reviews/`; a ticket is DONE only with a PASS on file.
 
+DONE basis (2026-08-24): six-dimension round-2 re-review, all PASS with zero
+unresolved findings and zero regressions (`.ai/reviews/round-2.md`), plus the
+full-repository final-acceptance PASS (`.ai/reviews/final-acceptance-raw.json`).
+
 Reviewer note (2026-08-23): the Codex CLI is installed and authenticated but
 its account quota is exhausted until 2026-09-22 (evidence:
 `.ai/reviews/codex-availability.md`). Per the operating model, independent
@@ -14,18 +18,18 @@ returns.
 
 | Ticket | Title | Status | Evidence |
 |---|---|---|---|
-| T-001 | Scaffold + data snapshot | CLAUDE_TESTED | `data/telemetry.json`, `scripts/generate/snapshot.ts`, snapshot runs in build log |
-| T-002 | Design tokens | CLAUDE_TESTED | `src/shared/tokens.ts`, `tests/tokens.test.ts` (contrast + ramp direction) |
-| T-003 | Render pipeline + text manifests | CLAUDE_TESTED | `src/shared/{canvas,type,svg,emit}.ts`, determinism test, drift gate `npm run render -- --check` |
-| T-004 | Verification harness | CLAUDE_TESTED | `scripts/validate/*`, 62 unit tests, `npm run qa:github`, `npm run qa:visual` |
-| T-005 | Hero (animated + static, both themes) | CLAUDE_TESTED | `src/hero/hero.ts`, timeline frames + `<img>` liveness proof under `.ai/evidence/visual/` |
-| T-006 | Structural assets (core modules, system plates) | CLAUDE_TESTED | `src/modules/`, `src/systems/`, screenshots |
-| T-007 | Data assets (telemetry panel, activity strip) | CLAUDE_TESTED | `src/telemetry/`, `src/activity/`, screenshots |
-| T-008 | Cross-repo prerequisite (English descriptions + topics on featured repos) | CLAUDE_TESTED | `.ai/reports/cross-repo.md` - descriptions and topics verified via gh |
-| T-009 | README assembly | CLAUDE_TESTED | `scripts/generate/readme.ts`, `tests/readme.test.ts`, GitHub-renderer check green |
-| T-010 | GitHub Actions | CLAUDE_TESTED | `.github/workflows/{ci,refresh-telemetry}.yml`, material-change guard |
-| T-011 | Documentation | CLAUDE_TESTED | `docs/architecture.md`, `docs/visual-system.md`, `docs/maintenance.md`, platform constraints doc |
-| T-012 | Integration + final acceptance | PLANNED | awaits per-domain PASS on T-001..T-011 |
+| T-001 | Scaffold + data snapshot | DONE | `data/telemetry.json`, `scripts/generate/snapshot.ts`, snapshot runs in build log |
+| T-002 | Design tokens | DONE | `src/shared/tokens.ts`, `tests/tokens.test.ts` (contrast + ramp direction) |
+| T-003 | Render pipeline + text manifests | DONE | `src/shared/{canvas,type,svg,emit}.ts`, determinism test, drift gate `npm run render -- --check` |
+| T-004 | Verification harness | DONE | `scripts/validate/*`, 62 unit tests, `npm run qa:github`, `npm run qa:visual` |
+| T-005 | Hero (animated + static, both themes) | DONE | `src/hero/hero.ts`, timeline frames + `<img>` liveness proof under `.ai/evidence/visual/` |
+| T-006 | Structural assets (core modules, system plates) | DONE | `src/modules/`, `src/systems/`, screenshots |
+| T-007 | Data assets (telemetry panel, activity strip) | DONE | `src/telemetry/`, `src/activity/`, screenshots |
+| T-008 | Cross-repo prerequisite (English descriptions + topics on featured repos) | DONE | `.ai/reports/cross-repo.md` - descriptions and topics verified via gh |
+| T-009 | README assembly | DONE | `scripts/generate/readme.ts`, `tests/readme.test.ts`, GitHub-renderer check green |
+| T-010 | GitHub Actions | DONE | `.github/workflows/{ci,refresh-telemetry}.yml`, material-change guard |
+| T-011 | Documentation | DONE | `docs/architecture.md`, `docs/visual-system.md`, `docs/maintenance.md`, platform constraints doc |
+| T-012 | Integration + final acceptance | DONE | full-repo acceptance PASS (final-acceptance-raw.json), six-dimension round-2 PASS (round-2.md), sign-off in .ai/project/05-signoff.md |
 
 ## Deviations from the backlog as specified (with grounds)
 

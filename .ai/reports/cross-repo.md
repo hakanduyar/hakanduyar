@@ -44,6 +44,11 @@ deployment-target claim entirely; verified via gh).
    login. Owner action:
    `gh auth refresh -h github.com -s user` then
    `gh api -X PATCH user -f bio="Front-end and systems engineering. TypeScript, React, Node."`
-3. `spark`'s README is Turkish on a public featured repository; an English
+3. **spark description register**: the live description ("Personal Planning,
+   Focus, and Growth System") is Title-Case marketing phrasing; a
+   sentence-cased, factual alternative would match the profile register,
+   e.g. "Local-first planning PWA - offline, no backend". Left to the owner:
+   T-008 was scoped to additive changes only.
+4. `spark`'s README is Turkish on a public featured repository; an English
    README there would complete the language story. Out of scope for this
    project (do not rewrite unrelated repositories).
