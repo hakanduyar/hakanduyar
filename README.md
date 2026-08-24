@@ -1,13 +1,13 @@
 <!-- GENERATED FILE - do not edit by hand.
      Source: scripts/generate/readme.ts
-     Data:   data/telemetry.json (measured 2026-08-24)
+     Data:   data/telemetry.json (measured 2026-08-23)
      Build:  npm run build -->
 
 <picture>
   <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/identity-static-dark.svg">
   <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/identity-static-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/generated/identity-dark.svg">
-  <img src="assets/generated/identity-light.svg" alt="Hakan Duyar, interface and systems engineer. 59 public repositories, 4237 commits on default branches, TypeScript 49.9 percent of public source." width="890">
+  <img src="assets/generated/identity-light.svg" alt="Hakan Duyar, interface and systems engineer. 59 public repositories, 4194 commits on default branches, TypeScript 49.1 percent of public source." width="890">
 </picture>
 
 **Hakan Duyar — interface and systems engineer. TypeScript, React, Node.**
@@ -49,7 +49,7 @@
   <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/signal-static-dark.svg">
   <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/signal-static-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/generated/signal-dark.svg">
-  <img src="assets/generated/signal-light.svg" alt="Measured signal. Source distribution across 15.23 MB of public source: TypeScript 49.9 percent, Go 20.0 percent, Vue 16.5 percent, JavaScript 4.7 percent, and 8.9 percent across all other languages. 135 contributions in the 52 weeks to 2026-08-22." width="890">
+  <img src="assets/generated/signal-light.svg" alt="Measured signal. Source distribution across 14.89 MB of public source: TypeScript 49.1 percent, Go 20.4 percent, Vue 16.9 percent, JavaScript 4.5 percent, and 9.1 percent across all other languages. 135 contributions in the 52 weeks to 2026-08-22." width="890">
 </picture>
 
 <picture>
@@ -59,4 +59,4 @@
 
 [GitHub](https://github.com/hakanduyar) · [LinkedIn](https://www.linkedin.com/in/hakanduyar) · [Medium](https://medium.com/@hakanduyar) · [Email](mailto:iamhakanduyar@gmail.com)
 
-*Every image on this page is generated from source in this repository. Nothing is fetched from a third-party service. Measured 2026-08-24. Source: [hakanduyar/hakanduyar](https://github.com/hakanduyar/hakanduyar).*
+*Every image on this page is generated from source in this repository. Nothing is fetched from a third-party service. Measured 2026-08-23. Source: [hakanduyar/hakanduyar](https://github.com/hakanduyar/hakanduyar).*
