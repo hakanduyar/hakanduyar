@@ -18,10 +18,25 @@ import { REPO_ROOT } from '../../src/shared/emit.js';
 import { LOGIN } from '../../src/shared/config.js';
 import { PANEL_IDS } from '../../src/build.js';
 
+/**
+ * Thrown when no usable credential exists — distinct from a renderer assertion
+ * failing, so a caller (or a reviewer reading the exit output) cannot mistake
+ * "nothing to check with" for "checked, and it's broken".
+ */
+class NoCredentialError extends Error {}
+
 function token(): string {
   const fromEnv = process.env['GITHUB_TOKEN'] ?? process.env['GH_TOKEN'];
   if (fromEnv) return fromEnv;
-  return execFileSync('gh', ['auth', 'token'], { encoding: 'utf8', shell: true }).trim();
+  try {
+    // No shell: a literal argv, not a string a shell would need to parse.
+    return execFileSync('gh', ['auth', 'token'], { encoding: 'utf8' }).trim();
+  } catch (error) {
+    throw new NoCredentialError(
+      'No GitHub token available: GITHUB_TOKEN/GH_TOKEN are unset and `gh auth token` failed ' +
+        `(${error instanceof Error ? error.message : error}). Set a token or run \`gh auth login\`.`,
+    );
+  }
 }
 
 async function main(): Promise<void> {
@@ -119,6 +134,11 @@ async function main(): Promise<void> {
 }
 
 main().catch((error: unknown) => {
+  if (error instanceof NoCredentialError) {
+    console.error('[qa:github] SKIPPED (no credentials):', error.message);
+    process.exitCode = 1;
+    return;
+  }
   console.error('[qa:github] FAILED:', error instanceof Error ? error.message : error);
   process.exitCode = 1;
 });

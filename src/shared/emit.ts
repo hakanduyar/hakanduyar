@@ -1,10 +1,11 @@
 /**
  * Asset emission: optimise, write, and report.
  *
- * SVGO is configured conservatively. Most of the overrides this file once
- * carried existed to protect animation; v2 ships none, and they were removed.
- * What remains is one override protecting the aria wiring and one precision
- * setting, each documented at its line. Do not add more without re-running
+ * SVGO is configured conservatively. v2 accumulated a set of overrides that
+ * protected animation, then removed them when it went static; v3 restored a
+ * small, constrained motion register for two panels only, so those overrides
+ * are back — see the precision comment below and canvas.ts for the animation
+ * register itself. Do not add more overrides without re-running
  * `npm run validate` — the earlier set was accumulated one breakage at a
  * time.
  */
@@ -35,10 +36,11 @@ const SVGO_CONFIG: Config = {
           // profile column and 0.04 px on a 360px phone — below the rendering
           // resolution either way, and verified against captures at both
           // widths. Every panel is outlined text, so path data is essentially
-          // the whole payload. Set this back to 2 and re-run `npm run render`
-          // to see it: the same content measures 412 KB at two decimals and
-          // 295 KB at one. That saving is what let panel 02 afford a fourth
-          // line without breaching the 400 KB payload budget.
+          // the whole payload; at two decimals the current 20-asset v3 set
+          // (identity + signal now shipping animated and static variants)
+          // measures well over the 400 KB budget. Set this back to 2 and
+          // re-run `npm run render` to see the actual difference for
+          // yourself rather than trusting a stale figure here.
           convertPathData: { floatPrecision: 1, transformPrecision: 1 },
           // <title>/<desc> are the accessibility contract for these assets, and
           // the viewBox is what lets GitHub scale them: SVGO 4 keeps all three
