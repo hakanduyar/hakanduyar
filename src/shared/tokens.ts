@@ -78,9 +78,7 @@ export interface TypeStyle {
  */
 export const TYPE = {
   display: { size: 72, font: 'w800', tracking: 0.16, upper: true },
-  metricXl: { size: 60, font: 'w500', tracking: 0, upper: false },
   metric: { size: 40, font: 'w500', tracking: 0, upper: false },
-  heading: { size: 32, font: 'w700', tracking: 0.2, upper: true },
   label: { size: 26, font: 'w500', tracking: 0.18, upper: true },
   /**
    * Mixed-case running text inside a panel. Same 26u body as `label` so it

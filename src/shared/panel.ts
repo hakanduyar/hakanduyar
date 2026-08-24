@@ -6,11 +6,15 @@
  * rather than as one composition: the heading belonged to the page, the
  * graphic belonged to itself, and nothing tied them together.
  *
- * v2 moves the heading inside the asset. Every panel opens with the same
+ * v2 moves the heading inside the asset. Every section opens with the same
  * two-part mark — a zero-padded index and a section name — over the same
  * hairline rail, at the same baselines, on the same 890u grid. Repetition is
- * the whole point: five panels sharing one opening gesture read as five parts
- * of one system, and the README needs no headings at all.
+ * the whole point: four sections sharing one opening gesture read as parts of
+ * one system, and the README needs no headings at all.
+ *
+ * The identity plate is the exception and takes no head. It is not a section
+ * of the document; it is what the document is about, and a numbered rail above
+ * the name would rank it against the sections beneath it.
  */
 
 import type { Canvas } from './canvas.js';

@@ -7,6 +7,11 @@
  * wordmark, states one discipline line, and then produces three measured
  * numbers as evidence rather than as decoration.
  *
+ * Each of those three belongs to this panel and to no other. That is a rule the
+ * whole page keeps, and it is the rule v1 broke worst: the repository and commit
+ * counts appeared on the hero, again on the telemetry panel, and a third time in
+ * a Markdown table.
+ *
  * No motion. v1 built this plate twice — animated and at rest — and shipped a
  * reduced-motion `<picture>` ladder to choose between them. The entrance was
  * the most expensive thing on the page and the least load-bearing: it played
@@ -17,13 +22,12 @@
  */
 
 import { Canvas, type RenderedAsset } from '../shared/canvas.js';
-import { el, linePath } from '../shared/svg.js';
-import { TYPE, GRID, STROKE, type Palette } from '../shared/tokens.js';
-import { frame, rail, fit, fitted } from '../shared/panel.js';
+import { TYPE, GRID, type Palette } from '../shared/tokens.js';
+import { frame, rail, fitted } from '../shared/panel.js';
 import type { Telemetry } from '../shared/telemetry-types.js';
 
 const W = GRID.width;
-const H = 268;
+const H = 254;
 const L = GRID.margin;
 const R = GRID.right;
 
@@ -34,13 +38,10 @@ const Y = {
   rail: 162,
   valueBaseline: 208,
   keyBaseline: 234,
-  track: 250,
 } as const;
 
 /** Three readout columns on the 10-column grid. */
 const CELL_X = [40, 310, 580] as const;
-const TRACK_X = 580;
-const TRACK_W = R - TRACK_X; // 270
 
 export interface IdentityInput {
   telemetry: Telemetry;
@@ -52,10 +53,6 @@ export function renderIdentity(input: IdentityInput, palette: Palette): Rendered
   const t = input.telemetry;
   const canvas = new Canvas(W, H, palette, `hdu-identity-${palette.name}`);
   const p = palette;
-
-  const primary = t.languages[0];
-  if (!primary) throw new Error('Telemetry has no language data');
-  const share = primary.share;
 
   canvas.add(frame(canvas, p));
 
@@ -76,10 +73,15 @@ export function renderIdentity(input: IdentityInput, palette: Palette): Rendered
   // the word underneath says what was counted. v1 ran it the other way and the
   // eye landed on "REPOSITORIES" three times before it found a figure.
 
+  // Three counts, each owned by this panel alone. The third was the primary
+  // language share until review caught it: the signal panel draws the whole
+  // distribution, so stating one row of it here was the page contradicting its
+  // own rule against saying anything twice. Longevity is the fact this panel
+  // is uniquely placed to give, and nothing else on the page carries it.
   const readouts = [
     { value: String(t.publicRepos), key: 'REPOSITORIES' },
     { value: String(t.totalCommits), key: 'COMMITS' },
-    { value: `${(share * 100).toFixed(1)}%`, key: primary.name.toUpperCase() },
+    { value: t.memberSince.slice(0, 4), key: 'ACTIVE SINCE' },
   ];
 
   readouts.forEach((readout, index) => {
@@ -93,41 +95,16 @@ export function renderIdentity(input: IdentityInput, palette: Palette): Rendered
     );
   });
 
-  // -- the one signal element ----------------------------------------------
-  //
-  // The primary-language share, drawn as the fraction of the track it actually
-  // is. This is the only chromatic mark on the plate, and it is load-bearing:
-  // if the measured share changes, the fill changes with it.
-
-  const fillWidth = TRACK_W * share;
-  canvas.add(
-    el('path', {
-      d: linePath(TRACK_X, Y.track, R, Y.track),
-      stroke: p.signalTrace,
-      'stroke-width': STROKE.track,
-      'stroke-linecap': 'butt',
-      fill: 'none',
-    }),
-    el('path', {
-      d: linePath(TRACK_X, Y.track, TRACK_X + fillWidth, Y.track),
-      stroke: p.signal,
-      'stroke-width': STROKE.track,
-      'stroke-linecap': 'butt',
-      fill: 'none',
-    }),
-  );
-
-  // Guard the arithmetic that the drawing depends on: a share outside 0..1
-  // would silently draw a track that runs backwards or past the margin.
-  if (share < 0 || share > 1) {
-    fit('language share track', TRACK_X + fillWidth, R);
-  }
+  // No chromatic mark here. The plate used to carry a signal-coloured track
+  // for the primary-language share; with that readout gone the accent had
+  // nothing left to measure, and rather than find it a job the page now spends
+  // its single chroma exactly once, on the peak contribution week in panel 03.
 
   const disciplineSentence = input.discipline.charAt(0) + input.discipline.slice(1).toLowerCase();
   const desc =
     `${t.name}. ${disciplineSentence}. ` +
     `${t.publicRepos} public repositories, ${t.totalCommits} commits on default branches, ` +
-    `${primary.name} ${(share * 100).toFixed(1)} percent of ${(t.totalSourceBytes / 1e6).toFixed(2)} MB of public source.`;
+    `active on GitHub since ${t.memberSince.slice(0, 4)}.`;
 
   return canvas.build({
     id: 'identity',

@@ -38,7 +38,6 @@ const Y = {
   rowPitch: 36,
   midRail: 306,
   actLabel: 342,
-  baseline: 420,
 } as const;
 
 /** The distribution track: name column to the left of it, share to the right. */
@@ -46,11 +45,28 @@ const TRACK_X = 280;
 const TRACK_W = 440;
 const TRACK_H = 8;
 
-const BAR_W = 11;
-const BAR_GAP = 4;
-const MAX_BAR_H = 62;
-/** Zero weeks still draw this much, so the series reads as a floor not a hole. */
-const ZERO_STUB = 1.5;
+/**
+ * Activity plot geometry, exported so the scene test can recompute every bar's
+ * position and height from the snapshot and assert the emitted rects against
+ * its own arithmetic. Counting rects proved almost nothing: a chart that drew
+ * the right number of bars in the wrong places passed.
+ */
+export const PLOT = {
+  barWidth: 11,
+  barGap: 4,
+  maxBarHeight: 62,
+  /** Zero weeks still draw this much, so the series reads as a floor not a hole. */
+  zeroStub: 1.5,
+} as const;
+
+/** Left edge of the first bar, for a plot of `weeks` columns. */
+export function plotStartX(weeks: number): number {
+  const plotWidth = weeks * PLOT.barWidth + (weeks - 1) * PLOT.barGap;
+  return GRID.margin + (GRID.contentWidth - plotWidth) / 2;
+}
+
+/** Baseline the bars stand on. */
+export const PLOT_BASELINE = 420;
 
 /** Languages drawn individually before the measured remainder. */
 const NAMED_LANGUAGES = 4;
@@ -86,7 +102,10 @@ export function renderSignal(input: SignalInput, palette: Palette): RenderedAsse
 
   canvas.add(
     frame(canvas, p),
-    head(canvas, p, { index: SECTIONS.signal, name: 'SIGNAL', meta: `MEASURED ${t.capturedAt.slice(0, 10)}` }),
+    // No "MEASURED <date>" rail here: the README's provenance line already
+    // carries the date, and a second copy on the panel was both a duplication
+    // and the driest thing on the page.
+    head(canvas, p, { index: SECTIONS.signal, name: 'SIGNAL' }),
   );
 
   // -- source distribution --------------------------------------------------
@@ -167,26 +186,26 @@ export function renderSignal(input: SignalInput, palette: Palette): RenderedAsse
     canvas.text(actMeta, TYPE.label, { x: R, y: Y.actLabel, anchor: 'end', fill: p.text.secondary }),
   );
 
-  const plotWidth = weekly.length * BAR_W + (weekly.length - 1) * BAR_GAP;
+  const plotWidth = weekly.length * PLOT.barWidth + (weekly.length - 1) * PLOT.barGap;
   fit('activity plot', plotWidth, GRID.contentWidth);
-  const startX = L + (GRID.contentWidth - plotWidth) / 2;
+  const startX = plotStartX(weekly.length);
 
   const bars: string[] = [];
   const stubs: string[] = [];
   let peakBar = '';
 
   weekly.forEach((count, index) => {
-    const x = startX + index * (BAR_W + BAR_GAP);
+    const x = startX + index * (PLOT.barWidth + PLOT.barGap);
     if (count === 0) {
-      stubs.push(linePath(x, Y.baseline - ZERO_STUB / 2, x + BAR_W, Y.baseline - ZERO_STUB / 2));
+      stubs.push(linePath(x, PLOT_BASELINE - PLOT.zeroStub / 2, x + PLOT.barWidth, PLOT_BASELINE - PLOT.zeroStub / 2));
       return;
     }
-    const barHeight = t.activity.max > 0 ? (count / t.activity.max) * MAX_BAR_H : 0;
+    const barHeight = t.activity.max > 0 ? (count / t.activity.max) * PLOT.maxBarHeight : 0;
     // The peak week is the one signal-coloured mark on this panel.
     const drawn = el('rect', {
       x,
-      y: Y.baseline - barHeight,
-      width: BAR_W,
+      y: PLOT_BASELINE - barHeight,
+      width: PLOT.barWidth,
       height: barHeight,
       fill: index === t.activity.maxIndex ? p.signal : p.series[1],
     });
@@ -196,12 +215,12 @@ export function renderSignal(input: SignalInput, palette: Palette): RenderedAsse
 
   canvas.add(
     el('path', {
-      d: linePath(L, Y.baseline + 0.75, R, Y.baseline + 0.75),
+      d: linePath(L, PLOT_BASELINE + 0.75, R, PLOT_BASELINE + 0.75),
       stroke: p.rule.strong,
       'stroke-width': STROKE.strong,
       fill: 'none',
     }),
-    el('path', { d: stubs.join(''), stroke: p.rule.tick, 'stroke-width': ZERO_STUB, fill: 'none' }),
+    el('path', { d: stubs.join(''), stroke: p.rule.tick, 'stroke-width': PLOT.zeroStub, fill: 'none' }),
     ...bars,
     peakBar,
   );

@@ -7,7 +7,8 @@
  * of that came to 60 lines of prose restating four images.
  *
  * v2 keeps the plate and deletes the prose. Everything the reader needs is
- * drawn: what the system is, what it is built from, when it last moved. The
+ * drawn: what the system is, the one fact that distinguishes it, what it is
+ * built from, and when it last moved. The
  * plate itself is wrapped in a link by the README assembler, so the repository
  * stays one click away without a line of text asking for the click.
  *
@@ -29,15 +30,17 @@ const L = GRID.margin;
 const R = GRID.right;
 
 /** Height of the plate body, excluding any section header above it. */
-const BODY_H = 136;
+const BODY_H = 168;
 /** Text column, clearing the index rule at the margin. */
 const TEXT_X = 64;
 
 /** Baselines within the plate body, relative to its top. */
-const ROW = { name: 42, line: 78, stack: 110 } as const;
+const ROW = { name: 42, subject: 78, line: 110, stack: 142 } as const;
 
 /** Longest implementation line that clears the right-aligned push month. */
 const MAX_IMPLEMENTATION_CHARS = 25;
+/** Longest subject line the plate holds beside the index rule. */
+const MAX_SUBJECT_CHARS = 30;
 
 export interface SystemPlateInput {
   telemetry: Telemetry;
@@ -71,6 +74,12 @@ export function renderSystemPlate(input: SystemPlateInput, palette: Palette): Re
         `${MAX_IMPLEMENTATION_CHARS} before it collides with the meta column. Shorten it in src/shared/config.ts.`,
     );
   }
+  if (config.subject.length > MAX_SUBJECT_CHARS) {
+    throw new Error(
+      `subject for "${input.key}" is ${config.subject.length} characters; the plate fits ` +
+        `${MAX_SUBJECT_CHARS}. Shorten it in src/shared/config.ts.`,
+    );
+  }
 
   // The index rule: the plate's left edge, spanning every text row. Same mark
   // on all four, which is most of what makes them read as a set.
@@ -88,12 +97,17 @@ export function renderSystemPlate(input: SystemPlateInput, palette: Palette): Re
 
   const monthWidth = fitted(canvas, pushMonth, TYPE.label, R - TEXT_X, `push month ${pushMonth}`);
   fitted(canvas, featured.name, TYPE.strong, R - TEXT_X - monthWidth - 24, `plate name ${featured.name}`);
+  fitted(canvas, config.subject, TYPE.body, R - TEXT_X, `plate subject ${input.key}`);
   fitted(canvas, implementation, TYPE.body, R - TEXT_X, `plate line ${input.key}`);
   fitted(canvas, stack, TYPE.body, R - TEXT_X, `plate stack ${input.key}`);
 
   canvas.add(
     canvas.text(featured.name, TYPE.strong, { x: TEXT_X, y: top + ROW.name, fill: p.text.primary }),
     canvas.text(pushMonth, TYPE.label, { x: R, y: top + ROW.name, anchor: 'end', fill: p.text.tertiary }),
+    // What it is, then the one fact that distinguishes it, then what it is
+    // built from. A reader who stops after the second line still knows what
+    // the repository is.
+    canvas.text(config.subject, TYPE.body, { x: TEXT_X, y: top + ROW.subject, fill: p.text.primary }),
     canvas.text(implementation, TYPE.body, { x: TEXT_X, y: top + ROW.line, fill: p.text.secondary }),
     canvas.text(stack, TYPE.body, { x: TEXT_X, y: top + ROW.stack, fill: p.text.tertiary }),
   );

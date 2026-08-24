@@ -128,10 +128,14 @@ describe('type scale', () => {
     }
   });
 
-  it('sizes descend display > metricXl > metric > heading > strong > label', () => {
-    const sizes = [TYPE.display, TYPE.metricXl, TYPE.metric, TYPE.heading, TYPE.strong, TYPE.label].map(
-      (t) => t.size,
-    );
+  it('sizes descend display > metric > strong > label', () => {
+    const sizes = [TYPE.display, TYPE.metric, TYPE.strong, TYPE.label].map((t) => t.size);
     for (let i = 1; i < sizes.length; i++) expect(sizes[i]!).toBeLessThan(sizes[i - 1]!);
+  });
+
+  it('every step on the scale is drawn by a panel', () => {
+    // v1's scale carried steps nothing used. An unused step is an invitation to
+    // reach for the wrong size, so the scale is kept to what the panels draw.
+    expect(Object.keys(TYPE).sort()).toEqual(['body', 'display', 'label', 'metric', 'strong']);
   });
 });

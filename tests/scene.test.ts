@@ -14,7 +14,7 @@ import { buildAll, loadTelemetry, expectedAssetPaths, PANEL_IDS, type AssetBuild
 import { DARK, LIGHT, TYPE } from '../src/shared/tokens.js';
 import { PROFILE } from '../src/shared/profile.js';
 import { CHANNELS, FEATURED_REPOS } from '../src/shared/config.js';
-import { remainderShare } from '../src/signal/signal.js';
+import { remainderShare, PLOT, PLOT_BASELINE, plotStartX } from '../src/signal/signal.js';
 import { SECTIONS } from '../src/shared/panel.js';
 import type { Telemetry } from '../src/shared/telemetry-types.js';
 
@@ -199,13 +199,42 @@ describe('metric ownership', () => {
   /**
    * The v1 failure this encodes: the repository and commit counts appeared on
    * the hero, again on the telemetry panel, and a third time in a Markdown
-   * table. Each headline figure now belongs to exactly one panel.
+   * table.
+   *
+   * Round-1 review caught this test being too narrow — it covered two counts
+   * while the primary-language share was live on two panels at once. Every
+   * figure the page presents is now assigned an owner, and the assertion runs
+   * in both directions: the owner must draw it, and nobody else may.
    */
-  it('no headline figure is drawn on two different panels', () => {
-    const figures = [String(telemetry.publicRepos), String(telemetry.totalCommits)];
-    for (const figure of figures) {
-      const owners = PANEL_IDS.filter((id) => manifest(id).includes(figure));
-      expect(owners, `"${figure}" is drawn on ${owners.join(' and ')}`).toHaveLength(1);
+  function ownership(): { figure: string; owner: string }[] {
+    const entries: { figure: string; owner: string }[] = [
+      { figure: String(telemetry.publicRepos), owner: 'identity' },
+      { figure: String(telemetry.totalCommits), owner: 'identity' },
+      { figure: telemetry.memberSince.slice(0, 4), owner: 'identity' },
+      { figure: String(telemetry.activity.total), owner: 'signal' },
+      { figure: String(telemetry.activity.max), owner: 'signal' },
+      { figure: `${(remainderShare(telemetry) * 100).toFixed(1)}%`, owner: 'signal' },
+    ];
+    for (const language of telemetry.languages.slice(0, 4)) {
+      entries.push({ figure: `${(language.share * 100).toFixed(1)}%`, owner: 'signal' });
+    }
+    return entries;
+  }
+
+  it('every presented figure is drawn by its owning panel', () => {
+    for (const { figure, owner } of ownership()) {
+      expect(manifest(owner).some((text) => text.includes(figure)), `${owner} should draw "${figure}"`).toBe(
+        true,
+      );
+    }
+  });
+
+  it('no presented figure is drawn by any other panel', () => {
+    for (const { figure, owner } of ownership()) {
+      const others = PANEL_IDS.filter((id) => id !== owner).filter((id) =>
+        manifest(id).some((text) => text.includes(figure)),
+      );
+      expect(others, `"${figure}" belongs to ${owner} but is also drawn by ${others.join(', ')}`).toEqual([]);
     }
   });
 });
@@ -244,23 +273,44 @@ describe('data honesty', () => {
     }
   });
 
-  it('the identity share track is drawn at the measured share, not a rounded one', () => {
-    const identity = panel('identity');
-    const share = telemetry.languages[0]!.share;
-    // Track runs 580..850; the fill ends at the measured fraction of it.
-    const expectedX = 580 + 270 * share;
-    expect(identity.asset.svg).toContain(`L${expectedX.toFixed(2).replace(/\.?0+$/, '')} `);
-  });
 
-  it('activity bars match the weekly series exactly (count and the marked maximum)', () => {
-    const signal = panel('signal');
-    const nonZeroWeeks = telemetry.activity.weekly.filter((w) => w > 0).length;
-    const rects = (signal.asset.svg.match(/<rect/g) ?? []).length;
-    // Ground + frame + one track and one fill per distribution row, then one
-    // bar per active week. Zero weeks draw a stub path, never a rect.
-    const rows = telemetry.languages.slice(0, 4).length + 1;
-    expect(rects).toBe(2 + rows * 2 + nonZeroWeeks);
-    expect(countInsensitive(signal.asset.svg, DARK.signal)).toBe(1);
+  it('every weekly bar stands at the position and height its count implies', () => {
+    const svg = panel('signal').asset.svg;
+    const weekly = telemetry.activity.weekly;
+    const startX = plotStartX(weekly.length);
+    const round = (value: number): string => {
+      const fixed = value.toFixed(2);
+      return fixed.includes('.') ? fixed.replace(/\.?0+$/, '') : fixed;
+    };
+
+    let drawn = 0;
+    weekly.forEach((count, index) => {
+      const x = startX + index * (PLOT.barWidth + PLOT.barGap);
+      if (count === 0) {
+        // Zero weeks draw a stub on the baseline, never a bar.
+        const stubY = round(PLOT_BASELINE - PLOT.zeroStub / 2);
+        expect(svg, `week ${index} is zero and should draw a stub at x=${round(x)}`).toContain(
+          `M${round(x)} ${stubY}L${round(x + PLOT.barWidth)} ${stubY}`,
+        );
+        return;
+      }
+      drawn++;
+      const height = (count / telemetry.activity.max) * PLOT.maxBarHeight;
+      const rect =
+        `<rect x="${round(x)}" y="${round(PLOT_BASELINE - height)}" ` +
+        `width="${round(PLOT.barWidth)}" height="${round(height)}"`;
+      expect(svg, `week ${index} (count ${count}) should draw ${rect}`).toContain(rect);
+    });
+
+    expect(drawn).toBe(weekly.filter((w) => w > 0).length);
+    // The tallest week is the page's single chromatic mark.
+    const peak = telemetry.activity.maxIndex;
+    const peakX = round(startX + peak * (PLOT.barWidth + PLOT.barGap));
+    const peakHeight = round(PLOT.maxBarHeight);
+    expect(svg).toContain(
+      `<rect x="${peakX}" y="${round(PLOT_BASELINE - PLOT.maxBarHeight)}" ` +
+        `width="${round(PLOT.barWidth)}" height="${peakHeight}" fill="${DARK.signal}"`,
+    );
   });
 });
 

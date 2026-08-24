@@ -58,7 +58,7 @@ export interface Telemetry {
   /**
    * Exactly 52 complete weekly totals, oldest first.
    *
-   * A 53x7 daily grid is deliberately not produced. With 136 contributions
+   * A 53x7 daily grid is deliberately not produced. With 135 contributions
    * across 365 days, roughly 340 cells would be empty: the graphic would say
    * "nothing happened here" far louder than it said anything else, and it is
    * the single most template-recognisable image on GitHub. Weekly aggregation
@@ -87,12 +87,15 @@ export interface Telemetry {
   /** Commits on the default branch, summed across every counted repository. */
   totalCommits: number;
   lastPush: { repo: string; at: string };
-  /** The two most recently pushed public repositories, for the Active work section. */
-  recentPushes: { repo: string; at: string; url: string; description: string | null }[];
   featured: FeaturedRepo[];
   /**
-   * Human-readable measurement method for each headline figure. Rendered
-   * beside the value so no number ever appears without saying what it counts.
+   * Human-readable measurement method for each headline figure.
+   *
+   * v1 drew these beside the values. v2 does not: the panels state what they
+   * counted in their own labels, and a method column was a large part of what
+   * made the page read as an audit sheet. They are kept in the snapshot because
+   * they are the recorded provenance of each figure — the answer to "counted
+   * how?" for anyone reading the data rather than the page.
    */
   methods: Record<'publicRepos' | 'totalCommits' | 'primaryLanguage' | 'activity' | 'lastPush' | 'activeSince', string>;
 }

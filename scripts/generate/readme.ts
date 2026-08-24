@@ -20,6 +20,14 @@
  * on body copy, and each `alt` is written to stand alone: read in order with no
  * images loaded, they still say who this is, what he works on, what he built
  * and how to reach him.
+ *
+ * That is why alt text is the one place the page repeats a figure. The
+ * no-duplicate-metrics rule exists so a sighted reader is not told the same
+ * number twice in two registers; alt text is not a second telling, it is the
+ * same telling for a reader who cannot see the panel. Stripping the numbers out
+ * of it to satisfy the rule would leave that reader with strictly less than
+ * everyone else. `tests/readme.test.ts` states this exemption explicitly and
+ * asserts the panels themselves still obey the rule.
  */
 
 import { writeFileSync } from 'node:fs';

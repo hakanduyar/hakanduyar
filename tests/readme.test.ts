@@ -85,6 +85,8 @@ describe('the prose budget', () => {
   });
 
   it('states no metric in prose — every figure lives inside a panel', () => {
+    // Tag stripping also removes alt text, which is deliberately exempt: see
+    // the alt-text exemption test below.
     const prose = body.replace(/<[^>]*>/g, ' ');
     for (const figure of [String(telemetry.publicRepos), String(telemetry.totalCommits)]) {
       expect(prose).not.toContain(figure);
@@ -135,5 +137,19 @@ describe('accessibility carries the page when images fail', () => {
   it('the identity alt names the person, because nothing else on the page does', () => {
     const first = /<img[^>]*\balt="([^"]*)"/.exec(readme)?.[1] ?? '';
     expect(first).toContain(telemetry.name);
+  });
+
+  it('alt text is exempt from the no-duplicate-metrics rule, and uses the exemption', () => {
+    // The rule stops a sighted reader being told the same number twice. Alt
+    // text is not a second telling — it is the only telling for a reader who
+    // cannot see the panel, so it carries the figures the panel draws.
+    const alts = [...readme.matchAll(/<img[^>]*\balt="([^"]*)"/g)].map((m) => m[1]!);
+    const identityAlt = alts[0]!;
+    expect(identityAlt).toContain(String(telemetry.publicRepos));
+    expect(identityAlt).toContain(String(telemetry.totalCommits));
+
+    const signalAlt = alts.find((alt) => alt.startsWith('Measured signal'))!;
+    expect(signalAlt).toContain(`${(telemetry.languages[0]!.share * 100).toFixed(1)} percent`);
+    expect(signalAlt).toContain(String(telemetry.activity.total));
   });
 });

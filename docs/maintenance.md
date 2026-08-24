@@ -13,8 +13,8 @@ committed assets or README no longer match their generators.
 Known refresh exception: contributions that touch no owned public default
 branch (issues or PRs on other accounts' repositories, work on non-default
 branches) change only the sliding activity fields, which are deliberately
-excluded from the material-change view. The activity strip then refreshes with
-the next owned public push rather than immediately. Accepted trade-off; the
+excluded from the material-change view. The signal panel's activity plot then
+refreshes with the next owned public push rather than immediately. Accepted trade-off; the
 alternative is a weekly metronome commit.
 
 Collapse guard: the refresh refuses to commit (and fails loudly) if any
@@ -38,10 +38,11 @@ the workflow from the Actions tab (one click) or push any commit.
 
 Curated text lives in exactly two files:
 
-- `src/shared/profile.ts` — identity paragraphs, strapline, capability
-  modules, operating principles, private-work sentence, provenance note.
-- `src/shared/config.ts` — featured repositories: headline, signals, stack,
-  the 27-character plate line, and the verified contact channels.
+- `src/shared/profile.ts` — the discipline line, the strapline, the four
+  capability modules, and the provenance note.
+- `src/shared/config.ts` — featured repositories: the subject line (max 30
+  characters), the plate line (max 25), the stack, the headline that becomes
+  alt text and `<desc>`, and the verified contact channels.
 
 After editing: `npm run build`. The renderers re-measure every string; if a new
 string overflows its box the build fails with the arithmetic in the error

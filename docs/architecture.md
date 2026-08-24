@@ -16,7 +16,7 @@ data/telemetry.json          <- committed snapshot; single source of every numbe
         |
         |  src/build.ts                    (pure, deterministic)
         v
-in-memory scene graph        <- 18 RenderedAssets, each with a text manifest
+in-memory scene graph        <- 16 RenderedAssets, each with a text manifest
         |                       |
         |  scripts/render/      |  scripts/validate/validate-all.ts
         |  render-all.ts        |  (lints the manifests grep cannot see)
@@ -46,13 +46,13 @@ Two properties carry the whole design:
 |---|---|
 | `src/shared/svg.ts` | Element builders, escaping, numeric precision |
 | `src/shared/type.ts` | Text -> vector outlines via fontkit (vendored JetBrains Mono) |
-| `src/shared/tokens.ts` | Palettes, type scale, grid, motion tokens, contrast math |
+| `src/shared/tokens.ts` | Palettes, type scale, grid, contrast math |
 | `src/shared/canvas.ts` | Drawing surface; records every drawn string in a manifest |
 | `src/shared/config.ts` | Featured repositories, channels — decisions, not data |
 | `src/shared/profile.ts` | Curated English copy — decisions, not data |
 | `src/identity/` `src/focus/` `src/systems/` `src/signal/` `src/channels/` | One scene module per panel |
 | `src/shared/panel.ts` | Panel chrome: the frame, section head and fit guards every panel shares |
-| `src/build.ts` | The scene graph: every asset, both themes, both variants |
+| `src/build.ts` | The scene graph: eight panels x two themes, and `PANEL_IDS`, the contract the validators and the README assembler both check themselves against |
 | `scripts/generate/` | Snapshot, README assembly, material-change guard |
 | `scripts/render/` | Emit + SVGO optimise + drift check |
 | `scripts/validate/` | Offline harness, GitHub-renderer check, visual QA capture |
