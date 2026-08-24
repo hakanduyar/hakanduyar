@@ -67,6 +67,5 @@ Git, GitHub, Docker, Vercel, Netlify, JIRA
 
 ### 📊 GitHub İstatistiklerim
 <p>
-<img align="center" src="https://github-readme-stats.vercel.app/api/top-langs?username=hakanduyar&show_icons=true&locale=tr&layout=compact" alt="hakanduyar" />
 <img align="center" src="https://github-readme-streak-stats.herokuapp.com/?user=hakanduyar&" alt="hakanduyar" />
 </p>
