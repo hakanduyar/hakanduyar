@@ -1,71 +1,54 @@
-# Merhaba 👋, ben Hakan Duyar
+<!-- GENERATED FILE: edit src/ and scripts/, then run npm run build. -->
 
-### Temiz, duyarlı ve piksel mükemmelliğinde web arayüzleri tasarlayan Ön Uç Geliştiricisiyim
+<picture>
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/hero-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/hero-static-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/hero-dark.svg">
+  <img src="assets/generated/hero-light.svg" alt="Hakan Duyar identity field: a circular signal nucleus transitions through Flight, Signal, and Spatial engineering modes." width="960">
+</picture>
 
-React, Next.js ve TypeScript kullanarak modern, ölçeklenebilir uygulamalar geliştirmeye odaklanıyorum ve her zaman yüksek performans ve mükemmel bir kullanıcı deneyimi hedefliyorum.  
+**Front-end and systems engineering. TypeScript, React, Node.**
 
-Figma tasarımlarını, ayrıntılara dikkat ederek ve bakımı kolay kod mimarisiyle **üretime hazır, erişilebilir kullanıcı arayüzlerine** dönüştürmekten keyif alıyorum.  
+I build product interfaces and the systems behind them, with particular attention to state, data integrity, performance, and accessibility.
 
-Şu anda daha sağlam ve verimli uygulamalar oluşturmak için **durum yönetimi, test ve ön uç performans optimizasyonu** alanındaki bilgilerimi genişletiyorum.  
+## Selected systems
 
----
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/systems-dark.svg">
+  <img src="assets/generated/systems-light.svg" alt="Four selected systems arranged as a connected mission path: DropSpot, Spark, Stock Management System, and Hunnes Academy Motion System." width="960">
+</picture>
 
-### 🛠️ Teknolojiler
+- [dropspot-project](https://github.com/hakanduyar/dropspot-project) — Limited-stock distribution with fair, idempotent claim handling. _React · Node.js · PostgreSQL_
+- [spark](https://github.com/hakanduyar/spark) — Offline planning that runs without an account or backend. _React · TypeScript · Dexie_
+- [stock-management-system](https://github.com/hakanduyar/stock-management-system) — Role-aware inventory across the stock movement lifecycle. _Next.js · NestJS · Prisma_
+- [Hunnes-Academy-motion-system](https://github.com/hakanduyar/Hunnes-Academy-motion-system) — Composable motion modules behind one declarative system. _JavaScript · GSAP · ES Modules_
 
-**Frontend:**  
-JavaScript, TypeScript, React, Next.js, Redux Toolkit, Zustand, React Router, React Hook Form, TanStack Query  
+## Architecture
 
-**Stil & UI Kitleri:**  
-Tailwind CSS, Sass/SCSS, Styled Components, Material UI, Ant Design, Chakra UI, ShadCN, Bootstrap  
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/architecture-dark.svg">
+  <img src="assets/generated/architecture-light.svg" alt="A layered architecture moving from interface through state and services into delivery, with an accountable engineering feedback loop." width="960">
+</picture>
 
-**Backend & Veritabanı:**  
-Node.js, Express.js, Prisma, MongoDB, PostgreSQL, RESTful API, GraphQL, Firebase, Supabase, WebSocket  
+The work moves from interface decisions through state and services into delivery. AI-assisted development supports the process; engineering judgment remains accountable.
 
-**Araçlar & DevOps:**  
-Git, GitHub, Docker, Vercel, Netlify, JIRA  
+## Public signal
 
----
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/signal-dark.svg">
+  <img src="assets/generated/signal-light.svg" alt="Measured public GitHub activity across 52 complete weeks ending 2026-08-22, plus the language distribution of public non-fork repositories." width="960">
+</picture>
 
-### ⚡ Teknolojiler
+The signal above is generated from GitHub's public GraphQL data: **135 contributions across 52 complete weeks**, **59 public repositories**, and **4,244 default-branch commits**. Snapshot: 2026-08-24.
 
-<p align="left">
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" alt="typescript" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="40" height="40"/>
-  <img src="https://cdn.worldvectorlogo.com/logos/nextjs-2.svg" alt="nextjs" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" alt="nodejs" width="40" height="40"/>
-  <img src="https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg" alt="tailwind" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/sass/sass-original.svg" alt="sass" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/express/express-original-wordmark.svg" alt="express" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/prisma/prisma-original.svg" alt="prisma" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mongodb/mongodb-original-wordmark.svg" alt="mongodb" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original-wordmark.svg" alt="postgresql" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/git/git-original.svg" alt="git" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/github/github-original.svg" alt="github" width="40" height="40"/>
-  <img src="https://www.vectorlogo.zone/logos/figma/figma-icon.svg" alt="figma" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/graphql/graphql-plain.svg" alt="graphql" width="40" height="40"/>
-  <img src="https://www.vectorlogo.zone/logos/firebase/firebase-icon.svg" alt="firebase" width="40" height="40"/>
-  <img src="https://www.vectorlogo.zone/logos/supabase/supabase-icon.svg" alt="supabase" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/redux/redux-original.svg" alt="redux" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/reactrouter/reactrouter-original.svg" alt="react-router" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/styledcomponents/styledcomponents-original.svg" alt="styled-components" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/materialui/materialui-original.svg" alt="material-ui" width="40" height="40"/>
-  <img src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="ant-design" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/bootstrap/bootstrap-plain-wordmark.svg" alt="bootstrap" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original.svg" alt="docker" width="40" height="40"/>
-  <img src="https://www.vectorlogo.zone/logos/vercel/vercel-icon.svg" alt="vercel" width="40" height="40"/>
-  <img src="https://www.vectorlogo.zone/logos/netlify/netlify-icon.svg" alt="netlify" width="40" height="40"/>
-  <img src="https://www.vectorlogo.zone/logos/atlassian_jira/atlassian_jira-icon.svg" alt="jira" width="40" height="40"/>
-</p>
+## Current public work
 
----
+- [software-factory](https://github.com/hakanduyar/software-factory) — pushed Aug 2026
+- [hunnes-ikas-theme](https://github.com/hakanduyar/hunnes-ikas-theme) — pushed Aug 2026; Hunnes storefront — ikas Studio Code Mode theme
+- [portfolio](https://github.com/hakanduyar/portfolio) — pushed Aug 2026; Personal portfolio and engineering case studies — Built in Layers
 
-### 📫 Bana Ulaşın
-[Email](mailto:iamhakanduyar@gmail.com) | [LinkedIn](https://linkedin.com/in/hakanduyar) | [Medium](https://medium.com/@hakanduyar)
+## Channels
 
----
+[GitHub](https://github.com/hakanduyar) · [LinkedIn](https://www.linkedin.com/in/hakanduyar) · [Medium](https://medium.com/@hakanduyar) · [Email](mailto:iamhakanduyar@gmail.com)
 
-### 📊 GitHub İstatistiklerim
-<p>
-<img align="center" src="https://github-readme-streak-stats.herokuapp.com/?user=hakanduyar&" alt="hakanduyar" />
-</p>
+<sub>Every visual is generated from source in this repository. No third-party statistics or remote image services are used.</sub>
