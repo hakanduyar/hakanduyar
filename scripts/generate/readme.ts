@@ -134,13 +134,13 @@ function main(): void {
   push(
     picture({
       base: 'signal',
+      // Describes what the panel draws, and no more: the active-week count and
+      // the peak week left the page with the histogram.
       alt:
         `Measured signal. Source distribution across ${(t.totalSourceBytes / 1e6).toFixed(2)} MB of public source: ` +
         named.map((l) => `${l.name} ${share(l.share)}`).join(', ') +
         `, and ${share(remainderShare(t))} across all other languages. ` +
-        `Public contributions: ${t.activity.total} across ${t.activity.weekly.length} weeks to ${t.activity.end}, ` +
-        `in ${t.activity.activeWeeks} active weeks, at most ${t.activity.max} in a single week. ` +
-        `Measured ${capturedDate}.`,
+        `${t.activity.total} contributions in the ${t.activity.weekly.length} weeks to ${t.activity.end}.`,
     }),
     '',
   );

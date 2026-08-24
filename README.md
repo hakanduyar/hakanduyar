@@ -45,7 +45,7 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/generated/signal-dark.svg">
-  <img src="assets/generated/signal-light.svg" alt="Measured signal. Source distribution across 14.89 MB of public source: TypeScript 49.1 percent, Go 20.4 percent, Vue 16.9 percent, JavaScript 4.5 percent, and 9.1 percent across all other languages. Public contributions: 135 across 52 weeks to 2026-08-22, in 9 active weeks, at most 46 in a single week. Measured 2026-08-23." width="890">
+  <img src="assets/generated/signal-light.svg" alt="Measured signal. Source distribution across 14.89 MB of public source: TypeScript 49.1 percent, Go 20.4 percent, Vue 16.9 percent, JavaScript 4.5 percent, and 9.1 percent across all other languages. 135 contributions in the 52 weeks to 2026-08-22." width="890">
 </picture>
 
 <picture>

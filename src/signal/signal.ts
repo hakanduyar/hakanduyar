@@ -151,12 +151,18 @@ export function renderSignal(input: SignalInput, palette: Palette): RenderedAsse
   );
 
   const breakdown = named.map((l) => `${l.name} ${(l.share * 100).toFixed(1)} percent`).join(', ');
+  // The description says what the panel says, and stops there. It used to
+  // carry the active-week count and the peak week too — figures that belonged
+  // to the removed histogram. Describing more than the image shows leaves a
+  // screen-reader user unable to trust that the description matches the page.
   const desc =
     `Measured signal. Source distribution across ${megabytes}: ${breakdown}, ` +
-    `with ${(remainder * 100).toFixed(1)} percent across all other languages. ` +
-    `Public contributions: ${t.activity.total} across ${t.activity.weekly.length} weeks to ${t.activity.end}, ` +
-    `in ${t.activity.activeWeeks} active weeks, at most ${t.activity.max} in a single week. ` +
-    `Measured ${t.capturedAt.slice(0, 10)}.`;
+    `and ${(remainder * 100).toFixed(1)} percent across all other languages. ` +
+    `${contributions}.`;
 
-  return canvas.build({ id: 'signal', title: 'Measured signal - source distribution and activity', desc });
+  return canvas.build({
+    id: 'signal',
+    title: 'Measured signal - source distribution and contribution volume',
+    desc,
+  });
 }
