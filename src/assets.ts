@@ -1,4 +1,5 @@
 export const GENERATED_ASSET_NAMES = [
+  'expand-dark.svg',
   'hero-dark.svg',
   'hero-static-dark.svg',
   'systems-dark.svg',

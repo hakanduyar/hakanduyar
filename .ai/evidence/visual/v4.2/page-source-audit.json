@@ -1,121 +1,145 @@
 {
   "version": "4.2",
-  "capturedAt": "2026-08-25T15:18:21.789Z",
-  "previewDigest": "7f902c4d43ef8b42550f71033c7f1b4cc988315002517aafac81a9b44b562ec8",
+  "capturedAt": "2026-08-25T16:35:10.711Z",
+  "previewDigest": "766770b56fd833be5f26e7154af968cf3d3a35d7d789425f2de9558fdf36100e",
   "results": [
     {
       "file": "page-dark-desktop-reduced-motion.png",
       "broken": 0,
+      "detailsImages": 3,
+      "detailsOpen": true,
       "innerWidth": 1440,
       "nativeText": "",
       "readmeElements": [
         "IMG",
         "IMG",
-        "IMG",
-        "IMG"
+        "DETAILS"
       ],
       "scrollWidth": 1425,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/systems-static-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/expand-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-static-dark.svg"
-      ]
+      ],
+      "summaryImages": 1,
+      "summaryText": ""
     },
     {
       "file": "page-light-desktop.png",
       "broken": 0,
+      "detailsImages": 3,
+      "detailsOpen": false,
       "innerWidth": 1440,
       "nativeText": "",
       "readmeElements": [
         "IMG",
         "IMG",
-        "IMG",
-        "IMG"
+        "DETAILS"
       ],
       "scrollWidth": 1425,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-dark.svg",
         "http://127.0.0.1:4184/assets/generated/systems-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/expand-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-dark.svg"
-      ]
+      ],
+      "summaryImages": 1,
+      "summaryText": ""
     },
     {
       "file": "page-dark-mobile.png",
       "broken": 0,
+      "detailsImages": 3,
+      "detailsOpen": true,
       "innerWidth": 390,
       "nativeText": "",
       "readmeElements": [
         "IMG",
         "IMG",
-        "IMG",
-        "IMG"
+        "DETAILS"
       ],
       "scrollWidth": 375,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-dark.svg",
         "http://127.0.0.1:4184/assets/generated/systems-mobile-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/expand-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-mobile-dark.svg"
-      ]
+      ],
+      "summaryImages": 1,
+      "summaryText": ""
     },
     {
       "file": "page-light-mobile.png",
       "broken": 0,
+      "detailsImages": 3,
+      "detailsOpen": false,
       "innerWidth": 390,
       "nativeText": "",
       "readmeElements": [
         "IMG",
         "IMG",
-        "IMG",
-        "IMG"
+        "DETAILS"
       ],
       "scrollWidth": 375,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-dark.svg",
         "http://127.0.0.1:4184/assets/generated/systems-mobile-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/expand-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-mobile-dark.svg"
-      ]
+      ],
+      "summaryImages": 1,
+      "summaryText": ""
     },
     {
       "file": "page-dark-mobile-reduced-motion.png",
       "broken": 0,
+      "detailsImages": 3,
+      "detailsOpen": true,
       "innerWidth": 390,
       "nativeText": "",
       "readmeElements": [
         "IMG",
         "IMG",
-        "IMG",
-        "IMG"
+        "DETAILS"
       ],
       "scrollWidth": 375,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/systems-mobile-static-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/expand-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-mobile-static-dark.svg"
-      ]
+      ],
+      "summaryImages": 1,
+      "summaryText": ""
     },
     {
       "file": "page-intermediate-light.png",
       "broken": 0,
+      "detailsImages": 3,
+      "detailsOpen": true,
       "innerWidth": 1000,
       "nativeText": "",
       "readmeElements": [
         "IMG",
         "IMG",
-        "IMG",
-        "IMG"
+        "DETAILS"
       ],
       "scrollWidth": 985,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-dark.svg",
         "http://127.0.0.1:4184/assets/generated/systems-mobile-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/expand-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-mobile-dark.svg"
-      ]
+      ],
+      "summaryImages": 1,
+      "summaryText": ""
     }
   ]
 }

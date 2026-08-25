@@ -50,6 +50,9 @@ ${picture(
   true,
 )}
 
+<details>
+<summary><img src="assets/generated/expand-dark.svg" alt="Show architecture and public signal" width="320"></summary>
+
 ${picture(
   'architecture',
   'A layered architecture moving from interface through state and services into delivery, with an accountable engineering feedback loop.',
@@ -63,6 +66,8 @@ ${picture(
   true,
   true,
 )}
+
+</details>
 `;
 
 writeFileSync(resolve(REPO_ROOT, 'README.md'), readme, 'utf8');

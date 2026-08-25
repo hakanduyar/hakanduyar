@@ -14,8 +14,8 @@ function contrast(first: string, second: string): number {
 }
 
 describe('dark-only public profile', () => {
-  it('publishes only the fourteen canonical dark assets', () => {
-    expect(GENERATED_ASSET_NAMES).toHaveLength(14);
+  it('publishes only the fifteen canonical dark assets', () => {
+    expect(GENERATED_ASSET_NAMES).toHaveLength(15);
     for (const asset of GENERATED_ASSET_NAMES) {
       expect(asset).toMatch(/-dark\.svg$/);
       expect(asset).not.toMatch(/theme-control|-light\.svg/);

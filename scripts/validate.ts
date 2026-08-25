@@ -13,6 +13,15 @@ const fail = (message: string): void => {
   errors.push(message);
 };
 
+if (assets.length !== 15) fail(`asset manifest: expected exactly 15 dark-only SVGs, found ${assets.length}`);
+if (new Set(assets).size !== assets.length) fail('asset manifest: duplicate SVG name detected');
+if (!assets.includes('expand-dark.svg')) fail('asset manifest: expand-dark.svg is missing');
+for (const asset of assets) {
+  if (!asset.endsWith('-dark.svg') || asset.includes('-light.svg') || asset.includes('theme-control')) {
+    fail(`asset manifest: unexpected non-dark public asset ${asset}`);
+  }
+}
+
 for (const asset of assets) {
   const path = resolve(REPO_ROOT, 'assets/generated', asset);
   if (!existsSync(path)) {
@@ -39,7 +48,7 @@ for (const asset of assets) {
   if (/\b(?:href|src)=["']https?:/i.test(source) || /data:/i.test(source)) fail(`${asset}: contains an external resource`);
   if (/<polygon\b/i.test(source)) fail(`${asset}: rejected polygon identity returned`);
   if (/\bHDU\b/.test(source)) fail(`${asset}: rejected HDU monogram returned`);
-  if (!asset.startsWith('hero-') && (!source.includes('data-audit-text') || !source.includes('data-audit-geometry'))) {
+  if (asset !== 'expand-dark.svg' && !asset.startsWith('hero-') && (!source.includes('data-audit-text') || !source.includes('data-audit-geometry'))) {
     fail(`${asset}: collision-audit hooks are missing`);
   }
   const limit = asset.includes('static') ? 25_000 : asset.startsWith('hero-') ? 80_000 : 35_000;
@@ -94,11 +103,44 @@ if (!readme.startsWith('<!-- GENERATED FILE:')) fail('README.md: generated-file 
 const readmeWithoutComments = readme.replace(/<!--[\s\S]*?-->/g, '');
 const pictureBlocks = readmeWithoutComments.match(/<picture>[\s\S]*?<\/picture>/g) ?? [];
 if (pictureBlocks.length !== 4) fail(`README.md: expected exactly four picture blocks, found ${pictureBlocks.length}`);
-const appearanceLinks = readmeWithoutComments.match(/<a\b[\s\S]*?<\/a>/g) ?? [];
+const appearanceLinks = readmeWithoutComments.match(/<a\b/gi) ?? [];
 if (appearanceLinks.length !== 0) fail(`README.md: expected no visible links, found ${appearanceLinks.length}`);
-if (readmeWithoutComments.replace(/<picture>[\s\S]*?<\/picture>/g, '').trim()) {
-  fail('README.md: visible native text or markup exists outside the picture blocks');
+
+const topLevel = readmeWithoutComments.match(
+  /^\s*(<picture>[\s\S]*?<\/picture>)\s*(<picture>[\s\S]*?<\/picture>)\s*(<details>[\s\S]*<\/details>)\s*$/,
+);
+if (!topLevel) {
+  fail('README.md: top-level structure must be hero picture, systems picture, then one disclosure');
 }
+
+const detailsBlocks = readmeWithoutComments.match(/<details\b[\s\S]*?<\/details>/g) ?? [];
+const summaryBlocks = readmeWithoutComments.match(/<summary\b[\s\S]*?<\/summary>/g) ?? [];
+if (detailsBlocks.length !== 1) fail(`README.md: expected exactly one details disclosure, found ${detailsBlocks.length}`);
+if (summaryBlocks.length !== 1) fail(`README.md: expected exactly one summary control, found ${summaryBlocks.length}`);
+
+const details = detailsBlocks[0] ?? '';
+const detailsStructure = details.match(
+  /^<details>\s*(<summary>[\s\S]*?<\/summary>)\s*(<picture>[\s\S]*?<\/picture>)\s*(<picture>[\s\S]*?<\/picture>)\s*<\/details>$/,
+);
+if (!detailsStructure) {
+  fail('README.md: disclosure must contain only its image summary, architecture picture, and signal picture');
+}
+
+const summary = summaryBlocks[0] ?? '';
+if ((summary.match(/<img\b/g) ?? []).length !== 1) fail('README.md: summary must contain exactly one image');
+const summaryResidue = summary
+  .replace(/^<summary>\s*/, '')
+  .replace(/\s*<\/summary>$/, '')
+  .replace(/<img\b[^>]*>/g, '')
+  .trim();
+if (summaryResidue) fail('README.md: summary contains visible native text or markup');
+if (!/<img\b[^>]*\bsrc="assets\/generated\/expand-dark\.svg"/.test(summary)) {
+  fail('README.md: summary must use expand-dark.svg');
+}
+if (!/<img\b[^>]*\bwidth="320"/.test(summary)) fail('README.md: summary image must be 320 pixels wide');
+if (!/<img\b[^>]*\balt="[^"]+"/.test(summary)) fail('README.md: summary image is missing non-empty alt text');
+
+const expectedPictureOrder = ['hero', 'systems', 'architecture', 'signal'] as const;
 for (const [index, block] of pictureBlocks.entries()) {
   if ((block.match(/<img\b/g) ?? []).length !== 1) fail(`README.md: picture block ${index + 1} must contain exactly one image`);
   const innerResidue = block
@@ -109,6 +151,10 @@ for (const [index, block] of pictureBlocks.entries()) {
     .trim();
   if (innerResidue) fail(`README.md: picture block ${index + 1} contains visible native content`);
   if (!/<img\b[^>]*\balt="[^"]+"/.test(block)) fail(`README.md: picture block ${index + 1} is missing non-empty alt text`);
+  const expectedScene = expectedPictureOrder[index];
+  if (expectedScene && !block.includes(`src="assets/generated/${expectedScene}-dark.svg"`)) {
+    fail(`README.md: picture block ${index + 1} must render ${expectedScene}-dark.svg`);
+  }
 }
 if (/<(?:img|source)\b[^>]*(?:src|srcset)="https?:/i.test(readme) || /!\[[^\]]*\]\(https?:/i.test(readme)) {
   fail('README.md: remote image dependency detected');

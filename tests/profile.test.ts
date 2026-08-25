@@ -23,15 +23,34 @@ describe('generated profile', () => {
     expect(telemetry.activity.total).toBe(telemetry.activity.weekly.reduce((sum, value) => sum + value, 0));
   });
 
-  it('renders the visible README as four local dark-only picture blocks', () => {
+  it('renders two visible pictures followed by an image-only native disclosure', () => {
     expect(readme).not.toMatch(/<(?:img|source)[^>]+(?:src|srcset)="https?:/i);
     const withoutComments = readme.replace(/<!--[\s\S]*?-->/g, '');
     const blocks = withoutComments.match(/<picture>[\s\S]*?<\/picture>/g) ?? [];
     expect(blocks).toHaveLength(4);
     expect(withoutComments).not.toMatch(/<a\b/);
+    const skeleton = withoutComments
+      .replace(/<picture>[\s\S]*?<\/picture>/g, 'PICTURE')
+      .replace(/<summary>[\s\S]*?<\/summary>/g, 'SUMMARY')
+      .replace(/\s+/g, ' ')
+      .trim();
+    expect(skeleton).toBe('PICTURE PICTURE <details> SUMMARY PICTURE PICTURE </details>');
+
+    const details = withoutComments.match(/<details>\s*([\s\S]*?)\s*<\/details>/)?.[1] ?? '';
+    const summary = details.match(/<summary>\s*([\s\S]*?)\s*<\/summary>/)?.[1] ?? '';
+    expect(summary.match(/<img\b[^>]*>/g)).toHaveLength(1);
+    expect(summary).toContain('src="assets/generated/expand-dark.svg"');
+    expect(summary).toContain('width="320"');
+    expect(summary.replace(/<img\b[^>]*>/g, '').trim()).toBe('');
+    const detailsContent = details.replace(/<summary>[\s\S]*?<\/summary>/, '');
+    expect(detailsContent.match(/<picture>[\s\S]*?<\/picture>/g)).toHaveLength(2);
+    expect(detailsContent).toContain('assets/generated/architecture-dark.svg');
+    expect(detailsContent).toContain('assets/generated/signal-dark.svg');
     expect(
       withoutComments
         .replace(/<picture>[\s\S]*?<\/picture>/g, '')
+        .replace(/<summary>[\s\S]*?<\/summary>/g, '')
+        .replace(/<\/?details>/g, '')
         .trim(),
     ).toBe('');
     for (const block of blocks) {
