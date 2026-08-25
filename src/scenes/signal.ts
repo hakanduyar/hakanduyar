@@ -213,6 +213,7 @@ function renderDesktop(theme: Theme, telemetry: Telemetry, animated: boolean): s
     id: `signal-${theme.name}`,
     title: 'Measured public engineering signal',
     description: `${telemetry.activity.total} public contributions across 52 complete weeks ending ${telemetry.activity.end}; ${telemetry.publicRepos} public non-fork repositories; primary public source language ${primary.name} at ${(primary.share * 100).toFixed(1)} percent.`,
+    background: theme.bg,
     body: [styles(theme, false, animated), definitions(theme), heading, grid, trace, constellation, measured, motion].join(''),
   });
 }
@@ -311,6 +312,7 @@ function renderMobile(theme: Theme, telemetry: Telemetry, animated: boolean): st
     id: `signal-mobile-${theme.name}`,
     title: 'Mobile measured public engineering signal',
     description: `${telemetry.activity.total} public contributions across 52 complete weeks ending ${telemetry.activity.end}; ${telemetry.publicRepos} public non-fork repositories; primary public source language ${primary.name} at ${(primary.share * 100).toFixed(1)} percent.`,
+    background: theme.bg,
     body: body.join(''),
   });
 }

@@ -203,6 +203,7 @@ function renderDesktop(theme: Theme, telemetry: Telemetry, animated: boolean): s
     id: `systems-${theme.name}`,
     title: 'Selected public systems mapped as a mission and relationship graph',
     description: FEATURED_SYSTEMS.map((system) => `${system.repo}: ${system.summary}`).join(' '),
+    background: theme.bg,
     body: [styles, animated ? motionStyles() : '', defs, title, animated ? phaseReadout(theme, 906, 58, 84, 'end') : '', route, motionTrace, ...nodes, status, motionSignals].join(''),
   });
 }
@@ -281,6 +282,7 @@ function renderMobile(theme: Theme, telemetry: Telemetry, animated: boolean): st
     id: `systems-mobile-${theme.name}`,
     title: 'Selected public systems in a mobile mission graph',
     description: FEATURED_SYSTEMS.map((system) => `${system.repo}: ${system.summary}`).join(' '),
+    background: theme.bg,
     body: body.join(''),
   });
 }

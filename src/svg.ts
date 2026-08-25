@@ -48,11 +48,13 @@ export function svgDocument(options: {
   id: string;
   title: string;
   description: string;
+  background: string;
   body: string;
 }): string {
   const titleId = `${options.id}-title`;
   const descId = `${options.id}-desc`;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${options.width} ${options.height}" role="img" aria-labelledby="${titleId} ${descId}"><title id="${titleId}">${esc(options.title)}</title><desc id="${descId}">${esc(options.description)}</desc>${options.body}</svg>`;
+  const background = el('rect', { width: options.width, height: options.height, fill: options.background });
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${options.width} ${options.height}" role="img" aria-labelledby="${titleId} ${descId}"><title id="${titleId}">${esc(options.title)}</title><desc id="${descId}">${esc(options.description)}</desc>${background}${options.body}</svg>`;
 }
 
 export const FONT_SANS = "system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";

@@ -175,6 +175,7 @@ function renderDesktop(theme: Theme, animated: boolean): string {
     id: `architecture-${theme.name}`,
     title: 'Spatial engineering architecture from interface through delivery',
     description: 'Four connected layers: interface, state, services, and delivery. AI-assisted development supports the process while engineering judgment remains accountable.',
+    background: theme.bg,
     body: [styles(theme, false, animated), definitions(theme), heading, flow, acquisition, ai, ...layerShapes, status, motion].join(''),
   });
 }
@@ -249,6 +250,7 @@ function renderMobile(theme: Theme, animated: boolean): string {
     id: `architecture-mobile-${theme.name}`,
     title: 'Mobile spatial engineering architecture from interface through delivery',
     description: 'Four separated spatial layers: interface, state, services, and delivery. AI-assisted development supports an accountable engineering process.',
+    background: theme.bg,
     body: body.join(''),
   });
 }

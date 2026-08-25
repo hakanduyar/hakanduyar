@@ -15,37 +15,15 @@ function escapeAttribute(value: string): string {
 function picture(name: string, alt: string, animated = false, responsive = false): string {
   const sources: string[] = [];
   if (animated && responsive) {
-    sources.push(
-      `  <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/${name}-mobile-static-dark.svg">`,
-      `  <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px)" srcset="assets/generated/${name}-mobile-static-light.svg">`,
-    );
+    sources.push(`  <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px)" srcset="assets/generated/${name}-mobile-static-dark.svg">`);
   }
   if (animated) {
-    sources.push(
-      `  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/${name}-static-dark.svg">`,
-      `  <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/${name}-static-light.svg">`,
-    );
+    sources.push(`  <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/${name}-static-dark.svg">`);
   }
   if (responsive) {
-    sources.push(
-      `  <source media="(max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/${name}-mobile-dark.svg">`,
-      `  <source media="(max-width: 1080px)" srcset="assets/generated/${name}-mobile-light.svg">`,
-    );
+    sources.push(`  <source media="(max-width: 1080px)" srcset="assets/generated/${name}-mobile-dark.svg">`);
   }
-  sources.push(`  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/${name}-dark.svg">`);
-  return ['<picture>', ...sources, `  <img src="assets/generated/${name}-light.svg" alt="${escapeAttribute(alt)}" width="960">`, '</picture>'].join('\n');
-}
-
-function themeControl(): string {
-  const alt = 'Open GitHub Appearance settings. Profile visuals automatically follow your GitHub light or dark preference.';
-  return `<a href="https://github.com/settings/appearance">
-<picture>
-  <source media="(max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/theme-control-mobile-dark.svg">
-  <source media="(max-width: 1080px)" srcset="assets/generated/theme-control-mobile-light.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/theme-control-dark.svg">
-  <img src="assets/generated/theme-control-light.svg" alt="${escapeAttribute(alt)}" width="960">
-</picture>
-</a>`;
+  return ['<picture>', ...sources, `  <img src="assets/generated/${name}-dark.svg" alt="${escapeAttribute(alt)}" width="960">`, '</picture>'].join('\n');
 }
 
 const measuredThrough = telemetry.activity.end;
@@ -58,8 +36,6 @@ const languagesAlt = telemetry.languages
   .join(', ');
 
 const readme = `<!-- GENERATED FILE: edit src/ and scripts/, then run npm run build. -->
-
-${themeControl()}
 
 ${picture(
   'hero',
