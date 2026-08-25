@@ -15,15 +15,15 @@ function escapeHtml(value: string): string {
 function profileImage(name: string, alt: string, animated = false, responsive = false): string {
   const base = `../assets/generated/${name}`;
   const staticAttrs = animated
-    ? ` data-static-light="${base}-static-light.svg" data-static-dark="${base}-static-dark.svg"`
+    ? ` data-static="${base}-static-dark.svg"`
     : '';
   const mobileAttrs = responsive
-    ? ` data-mobile-light="${base}-mobile-light.svg" data-mobile-dark="${base}-mobile-dark.svg"`
+    ? ` data-mobile="${base}-mobile-dark.svg"`
     : '';
   const mobileStaticAttrs = animated && responsive
-    ? ` data-mobile-static-light="${base}-mobile-static-light.svg" data-mobile-static-dark="${base}-mobile-static-dark.svg"`
+    ? ` data-mobile-static="${base}-mobile-static-dark.svg"`
     : '';
-  return `<img class="profile-visual" data-light="${base}-light.svg" data-dark="${base}-dark.svg"${staticAttrs}${mobileAttrs}${mobileStaticAttrs} src="${base}-light.svg" alt="${escapeHtml(alt)}">`;
+  return `<img class="profile-visual" data-desktop="${base}-dark.svg"${staticAttrs}${mobileAttrs}${mobileStaticAttrs} src="${base}-dark.svg" alt="${escapeHtml(alt)}">`;
 }
 
 const pins = telemetry.featured.map((repo) => `<article class="pin">
@@ -57,7 +57,6 @@ html.mobile .top{padding:0 14px;height:56px}.mobile .search,.mobile .top nav{dis
 <aside class="sidebar"><div class="avatar" aria-label="Abstract circular signal avatar"></div><h1>Hakan Duyar</h1><h2>hakanduyar</h2><p class="bio">${PROFILE_COPY.strapline}</p><button class="follow">Follow</button><ul class="meta"><li>◉ ${telemetry.followers} followers</li><li>⌖ Turkey</li><li>◫ ${telemetry.publicRepos} public repositories</li></ul></aside>
 <section>
 <article class="readme"><div class="readme-head">hakanduyar / README.md</div><div class="markdown">
-<a class="theme-settings-link" href="https://github.com/settings/appearance">${profileImage('theme-control', 'Open GitHub Appearance settings. Profile visuals follow your light or dark preference.', false, true)}</a>
 ${profileImage('hero', 'Hakan Duyar circular identity field with Flight, Signal, and Spatial modes.', true)}
 ${profileImage('systems', 'Four selected systems arranged on a connected engineering path.', true, true)}
 ${profileImage('architecture', 'Interface, state, services, and delivery shown as spatial architecture layers.', true, true)}
@@ -69,7 +68,7 @@ ${profileImage('signal', 'Measured 52-week public contribution signal and langua
 <script>
 const params=new URLSearchParams(location.search);const root=document.documentElement;
 let theme=params.get('theme')==='dark'?'dark':'light';let mobile=params.get('mobile')==='1';let reduced=params.get('motion')==='reduce';let clean=params.get('clean')==='1';
-function render(){root.dataset.theme=theme;root.classList.toggle('mobile',mobile);document.body.classList.toggle('clean',clean);const compact=mobile||innerWidth<=1080;document.querySelectorAll('.profile-visual').forEach((image)=>{const cap=theme[0].toUpperCase()+theme.slice(1);const staticKey='static'+cap;const mobileKey='mobile'+cap;const mobileStaticKey='mobileStatic'+cap;const key=theme;image.src=reduced&&compact&&image.dataset[mobileStaticKey]?image.dataset[mobileStaticKey]:reduced&&image.dataset[staticKey]?image.dataset[staticKey]:compact&&image.dataset[mobileKey]?image.dataset[mobileKey]:image.dataset[key]});}
+function render(){root.dataset.theme=theme;root.classList.toggle('mobile',mobile);document.body.classList.toggle('clean',clean);const compact=mobile||innerWidth<=1080;document.querySelectorAll('.profile-visual').forEach((image)=>{image.src=reduced&&compact&&image.dataset.mobileStatic?image.dataset.mobileStatic:reduced&&image.dataset.static?image.dataset.static:compact&&image.dataset.mobile?image.dataset.mobile:image.dataset.desktop});}
 document.querySelector('[data-action=theme]').onclick=()=>{theme=theme==='light'?'dark':'light';render()};
 document.querySelector('[data-action=viewport]').onclick=()=>{mobile=!mobile;render()};
 document.querySelector('[data-action=motion]').onclick=()=>{reduced=!reduced;render()};addEventListener('resize',render);render();
@@ -79,8 +78,8 @@ document.querySelector('[data-action=motion]').onclick=()=>{reduced=!reduced;ren
 const out = resolve(REPO_ROOT, 'preview/index.html');
 mkdirSync(resolve(REPO_ROOT, 'preview'), { recursive: true });
 writeFileSync(out, html, 'utf8');
-const heroStage = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}html,body{margin:0;min-height:100%;overflow:hidden}body{display:grid;place-items:center;background:#fff}body.dark{background:#0d1117}img{display:block;width:890px;max-width:100vw;height:auto}</style></head><body><img alt="Hakan Duyar three-mode hero QA stage"><script>const p=new URLSearchParams(location.search);const dark=p.get('theme')==='dark';const reduced=p.get('motion')==='reduce';document.body.classList.toggle('dark',dark);document.querySelector('img').src='../assets/generated/hero'+(reduced?'-static':'')+'-'+(dark?'dark':'light')+'.svg';</script></body></html>`;
+const heroStage = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}html,body{margin:0;min-height:100%;overflow:hidden}body{display:grid;place-items:center;background:#0d1117}img{display:block;width:890px;max-width:100vw;height:auto}</style></head><body><img alt="Hakan Duyar three-mode hero QA stage"><script>const p=new URLSearchParams(location.search);const reduced=p.get('motion')==='reduce';document.querySelector('img').src='../assets/generated/hero'+(reduced?'-static':'')+'-dark.svg';</script></body></html>`;
 writeFileSync(resolve(REPO_ROOT, 'preview/hero-stage.html'), heroStage, 'utf8');
-const sceneStage = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}html,body{margin:0;min-height:100%;overflow:hidden}body{display:grid;place-items:center;background:#fff}body.dark{background:#0d1117}img{display:block;width:min(890px,100vw);height:auto}body.mobile img{width:min(390px,100vw)}</style></head><body><img alt="V4.2 scene animation QA stage"><script>const p=new URLSearchParams(location.search);const allowed=new Set(['theme-control','hero','systems','architecture','signal']);const scene=allowed.has(p.get('scene'))?p.get('scene'):'hero';const dark=p.get('theme')==='dark';const reduced=p.get('motion')==='reduce'&&scene!=='theme-control';const mobile=p.get('mobile')==='1'&&scene!=='hero';const run=p.get('run');document.body.classList.toggle('dark',dark);document.body.classList.toggle('mobile',mobile);const parts=[scene];if(mobile)parts.push('mobile');if(reduced)parts.push('static');parts.push(dark?'dark':'light');document.querySelector('img').src='../assets/generated/'+parts.join('-')+'.svg'+(run?'?run='+encodeURIComponent(run):'');</script></body></html>`;
+const sceneStage = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}html,body{margin:0;min-height:100%;overflow:hidden}body{display:grid;place-items:center;background:#0d1117}img{display:block;width:min(890px,100vw);height:auto}body.mobile img{width:min(390px,100vw)}</style></head><body><img alt="V4.2 scene animation QA stage"><script>const p=new URLSearchParams(location.search);const allowed=new Set(['hero','systems','architecture','signal']);const scene=allowed.has(p.get('scene'))?p.get('scene'):'hero';const reduced=p.get('motion')==='reduce';const mobile=p.get('mobile')==='1'&&scene!=='hero';const run=p.get('run');document.body.classList.toggle('mobile',mobile);const parts=[scene];if(mobile)parts.push('mobile');if(reduced)parts.push('static');parts.push('dark');document.querySelector('img').src='../assets/generated/'+parts.join('-')+'.svg'+(run?'?run='+encodeURIComponent(run):'');</script></body></html>`;
 writeFileSync(resolve(REPO_ROOT, 'preview/scene-stage.html'), sceneStage, 'utf8');
 console.log('[preview] wrote preview/index.html, preview/hero-stage.html, and preview/scene-stage.html');

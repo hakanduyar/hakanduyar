@@ -23,20 +23,14 @@ describe('generated profile', () => {
     expect(telemetry.activity.total).toBe(telemetry.activity.weekly.reduce((sum, value) => sum + value, 0));
   });
 
-  it('renders the visible README as five local picture blocks with one official appearance link', () => {
+  it('renders the visible README as four local dark-only picture blocks', () => {
     expect(readme).not.toMatch(/<(?:img|source)[^>]+(?:src|srcset)="https?:/i);
     const withoutComments = readme.replace(/<!--[\s\S]*?-->/g, '');
     const blocks = withoutComments.match(/<picture>[\s\S]*?<\/picture>/g) ?? [];
-    expect(blocks).toHaveLength(5);
-    const appearanceOpen = '<a href="https://github.com/settings/appearance">';
-    expect(withoutComments.match(/<a\b/g)).toHaveLength(1);
-    expect(withoutComments).toContain(appearanceOpen);
-    const appearanceBlock = withoutComments.match(/<a\b[\s\S]*?<\/a>/)?.[0] ?? '';
-    expect(appearanceBlock.match(/<picture>/g)).toHaveLength(1);
+    expect(blocks).toHaveLength(4);
+    expect(withoutComments).not.toMatch(/<a\b/);
     expect(
       withoutComments
-        .replace(appearanceOpen, '')
-        .replace('</a>', '')
         .replace(/<picture>[\s\S]*?<\/picture>/g, '')
         .trim(),
     ).toBe('');
@@ -54,22 +48,17 @@ describe('generated profile', () => {
     }
     for (const system of FEATURED_SYSTEMS) expect(readme).toContain(system.summary);
     expect(readme).toContain(`${telemetry.totalCommits} default-branch commits`);
-    expect(readme).toContain('assets/generated/theme-control-light.svg');
-    expect(readme).toContain('assets/generated/theme-control-dark.svg');
-    expect(readme).toContain('assets/generated/theme-control-mobile-light.svg');
-    expect(readme).toContain('assets/generated/theme-control-mobile-dark.svg');
+    expect(readme).not.toMatch(/theme-control|prefers-color-scheme|-light\.svg/);
+    expect(readme).toContain('assets/generated/hero-dark.svg');
+    expect(readme).toContain('assets/generated/hero-static-dark.svg');
   });
 
   it('provides animated, responsive, and reduced-motion sources for every intelligence scene', () => {
     for (const scene of ['systems', 'architecture', 'signal']) {
       for (const suffix of [
-        'light.svg',
         'dark.svg',
-        'static-light.svg',
         'static-dark.svg',
-        'mobile-light.svg',
         'mobile-dark.svg',
-        'mobile-static-light.svg',
         'mobile-static-dark.svg',
       ]) {
         expect(readme).toContain(`assets/generated/${scene}-${suffix}`);

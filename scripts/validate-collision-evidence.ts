@@ -6,8 +6,8 @@ import { GENERATED_ASSET_NAMES } from '../src/assets.js';
 
 interface AuditResult {
   name: string;
-  scene: 'hero' | 'systems' | 'architecture' | 'signal' | 'theme-control';
-  theme: 'dark' | 'light';
+  scene: 'hero' | 'systems' | 'architecture' | 'signal';
+  theme: 'dark';
   layout: 'desktop' | 'mobile' | 'intermediate';
   frame: string;
   renderedWidth: number;
@@ -71,32 +71,24 @@ const required = [
   'hero-dark-desktop-spatial-resolved',
   'hero-dark-desktop-spatial-flight-mid',
   'hero-dark-desktop-loop-boundary',
-  'hero-light-desktop-flight',
-  'hero-light-desktop-signal-resolved',
-  'hero-light-desktop-spatial-resolved',
 ];
 for (const scene of ['systems', 'architecture', 'signal']) {
   for (const layout of ['desktop', 'mobile']) {
     for (const frame of ['start', 'acquire', 'mid', 'resolved', 'reset']) required.push(`${scene}-dark-${layout}-${frame}`);
-    required.push(`${scene}-light-${layout}-resolved`);
   }
-  for (const theme of ['dark', 'light']) {
-    for (const layout of ['desktop', 'mobile']) required.push(`${scene}-${theme}-${layout}-static`);
-    for (const frame of ['mid', 'resolved']) required.push(`${scene}-${theme}-intermediate-${frame}`);
-  }
-}
-for (const theme of ['dark', 'light']) {
-  for (const layout of ['desktop', 'mobile']) required.push(`theme-control-${theme}-${layout}-static`);
+  for (const layout of ['desktop', 'mobile']) required.push(`${scene}-dark-${layout}-static`);
+  for (const frame of ['mid', 'resolved']) required.push(`${scene}-dark-intermediate-${frame}`);
 }
 
 const names = evidence.results.map((result) => result.name);
+if (evidence.results.length !== 50) throw new Error(`V4.2 collision evidence must contain exactly 50 dark-only audits, found ${evidence.results.length}`);
 if (new Set(names).size !== names.length) throw new Error('V4.2 collision evidence contains duplicate result names');
 for (const name of required) {
   if (!names.includes(name)) throw new Error(`V4.2 collision evidence is missing ${name}`);
 }
 for (const result of evidence.results) {
-  if (!['hero', 'systems', 'architecture', 'signal', 'theme-control'].includes(result.scene)) throw new Error(`${result.name}: invalid scene metadata`);
-  if (!['dark', 'light'].includes(result.theme)) throw new Error(`${result.name}: invalid theme metadata`);
+  if (!['hero', 'systems', 'architecture', 'signal'].includes(result.scene)) throw new Error(`${result.name}: invalid scene metadata`);
+  if (result.theme !== 'dark') throw new Error(`${result.name}: invalid theme metadata`);
   if (!['desktop', 'mobile', 'intermediate'].includes(result.layout)) throw new Error(`${result.name}: invalid layout metadata`);
   if (result.name !== `${result.scene}-${result.theme}-${result.layout}-${result.frame}`) {
     throw new Error(`${result.name}: evidence metadata does not match its canonical name`);
@@ -122,12 +114,12 @@ if (pageEvidence.version !== '4.2' || pageEvidence.previewDigest !== previewHash
   throw new Error('V4.2 preview source-selection evidence is stale');
 }
 const expectedSources: Record<string, string[]> = {
-  'page-dark-desktop-reduced-motion.png': ['theme-control-dark.svg', 'hero-static-dark.svg', 'systems-static-dark.svg', 'architecture-static-dark.svg', 'signal-static-dark.svg'],
-  'page-light-desktop.png': ['theme-control-light.svg', 'hero-light.svg', 'systems-light.svg', 'architecture-light.svg', 'signal-light.svg'],
-  'page-dark-mobile.png': ['theme-control-mobile-dark.svg', 'hero-dark.svg', 'systems-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
-  'page-light-mobile.png': ['theme-control-mobile-light.svg', 'hero-light.svg', 'systems-mobile-light.svg', 'architecture-mobile-light.svg', 'signal-mobile-light.svg'],
-  'page-dark-mobile-reduced-motion.png': ['theme-control-mobile-dark.svg', 'hero-static-dark.svg', 'systems-mobile-static-dark.svg', 'architecture-mobile-static-dark.svg', 'signal-mobile-static-dark.svg'],
-  'page-intermediate-light.png': ['theme-control-mobile-light.svg', 'hero-light.svg', 'systems-mobile-light.svg', 'architecture-mobile-light.svg', 'signal-mobile-light.svg'],
+  'page-dark-desktop-reduced-motion.png': ['hero-static-dark.svg', 'systems-static-dark.svg', 'architecture-static-dark.svg', 'signal-static-dark.svg'],
+  'page-light-desktop.png': ['hero-dark.svg', 'systems-dark.svg', 'architecture-dark.svg', 'signal-dark.svg'],
+  'page-dark-mobile.png': ['hero-dark.svg', 'systems-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
+  'page-light-mobile.png': ['hero-dark.svg', 'systems-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
+  'page-dark-mobile-reduced-motion.png': ['hero-static-dark.svg', 'systems-mobile-static-dark.svg', 'architecture-mobile-static-dark.svg', 'signal-mobile-static-dark.svg'],
+  'page-intermediate-light.png': ['hero-dark.svg', 'systems-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
 };
 for (const [file, expected] of Object.entries(expectedSources)) {
   const result = pageEvidence.results.find((candidate) => candidate.file === file);
@@ -135,7 +127,7 @@ for (const [file, expected] of Object.entries(expectedSources)) {
   const actual = result.sources.map((source) => source.split('/').at(-1));
   if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error(`${file}: unexpected responsive/reduced source selection`);
   if (result.broken !== 0 || result.scrollWidth > result.innerWidth) throw new Error(`${file}: broken image or horizontal overflow`);
-  if (result.nativeText.trim() || JSON.stringify(result.readmeElements) !== JSON.stringify(['A', 'IMG', 'IMG', 'IMG', 'IMG'])) {
+  if (result.nativeText.trim() || JSON.stringify(result.readmeElements) !== JSON.stringify(['IMG', 'IMG', 'IMG', 'IMG'])) {
     throw new Error(`${file}: simulated README body is not image-only`);
   }
 }

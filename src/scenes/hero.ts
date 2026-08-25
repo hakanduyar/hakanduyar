@@ -561,6 +561,7 @@ export function renderHero(theme: Theme, animated: boolean): string {
     description: animated
       ? 'A single twelve-second loop transitions from orbital flight calibration to a relationship signal field, then to spatial architecture layers, before returning to flight.'
       : 'A reduced-motion view of the circular identity nucleus in flight calibration mode.',
+    background: theme.bg,
     body,
   });
 }
