@@ -1,0 +1,12 @@
+{
+  "broken": 0,
+  "hero": {
+    "alt": "Hakan Duyar circular identity field with Flight, Signal, and Spatial modes.",
+    "currentSrc": "http://127.0.0.1:4184/assets/generated/hero-static-dark.svg",
+    "src": "../assets/generated/hero-static-dark.svg"
+  },
+  "innerWidth": 390,
+  "reduced": true,
+  "scrollWidth": 390,
+  "staticSelected": true
+}

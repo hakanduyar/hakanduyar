@@ -1,71 +1,41 @@
-# Merhaba 👋, ben Hakan Duyar
+<!-- GENERATED FILE: edit src/ and scripts/, then run npm run build. -->
 
-### Temiz, duyarlı ve piksel mükemmelliğinde web arayüzleri tasarlayan Ön Uç Geliştiricisiyim
+<picture>
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/hero-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/hero-static-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/hero-dark.svg">
+  <img src="assets/generated/hero-light.svg" alt="Hakan Duyar. Front-end and systems engineering. TypeScript, React, Node. I build product interfaces and the systems behind them, with particular attention to state, data integrity, performance, and accessibility. A circular signal nucleus transitions through Flight, Signal, and Spatial engineering modes." width="960">
+</picture>
 
-React, Next.js ve TypeScript kullanarak modern, ölçeklenebilir uygulamalar geliştirmeye odaklanıyorum ve her zaman yüksek performans ve mükemmel bir kullanıcı deneyimi hedefliyorum.  
+<picture>
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/systems-mobile-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px)" srcset="assets/generated/systems-mobile-static-light.svg">
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/systems-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/systems-static-light.svg">
+  <source media="(max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/systems-mobile-dark.svg">
+  <source media="(max-width: 1080px)" srcset="assets/generated/systems-mobile-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/systems-dark.svg">
+  <img src="assets/generated/systems-light.svg" alt="Four selected systems arranged as a connected mission path. dropspot-project: Limited-stock distribution with fair, idempotent claim handling. Stack: React, Node.js, PostgreSQL. spark: Offline planning that runs without an account or backend. Stack: React, TypeScript, Dexie. stock-management-system: Role-aware inventory across the stock movement lifecycle. Stack: Next.js, NestJS, Prisma. Hunnes-Academy-motion-system: Composable motion modules behind one declarative system. Stack: JavaScript, GSAP, ES Modules." width="960">
+</picture>
 
-Figma tasarımlarını, ayrıntılara dikkat ederek ve bakımı kolay kod mimarisiyle **üretime hazır, erişilebilir kullanıcı arayüzlerine** dönüştürmekten keyif alıyorum.  
+<picture>
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/architecture-mobile-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px)" srcset="assets/generated/architecture-mobile-static-light.svg">
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/architecture-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/architecture-static-light.svg">
+  <source media="(max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/architecture-mobile-dark.svg">
+  <source media="(max-width: 1080px)" srcset="assets/generated/architecture-mobile-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/architecture-dark.svg">
+  <img src="assets/generated/architecture-light.svg" alt="A layered architecture moving from interface through state and services into delivery, with an accountable engineering feedback loop." width="960">
+</picture>
 
-Şu anda daha sağlam ve verimli uygulamalar oluşturmak için **durum yönetimi, test ve ön uç performans optimizasyonu** alanındaki bilgilerimi genişletiyorum.  
-
----
-
-### 🛠️ Teknolojiler
-
-**Frontend:**  
-JavaScript, TypeScript, React, Next.js, Redux Toolkit, Zustand, React Router, React Hook Form, TanStack Query  
-
-**Stil & UI Kitleri:**  
-Tailwind CSS, Sass/SCSS, Styled Components, Material UI, Ant Design, Chakra UI, ShadCN, Bootstrap  
-
-**Backend & Veritabanı:**  
-Node.js, Express.js, Prisma, MongoDB, PostgreSQL, RESTful API, GraphQL, Firebase, Supabase, WebSocket  
-
-**Araçlar & DevOps:**  
-Git, GitHub, Docker, Vercel, Netlify, JIRA  
-
----
-
-### ⚡ Teknolojiler
-
-<p align="left">
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" alt="typescript" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="40" height="40"/>
-  <img src="https://cdn.worldvectorlogo.com/logos/nextjs-2.svg" alt="nextjs" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" alt="nodejs" width="40" height="40"/>
-  <img src="https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg" alt="tailwind" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/sass/sass-original.svg" alt="sass" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/express/express-original-wordmark.svg" alt="express" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/prisma/prisma-original.svg" alt="prisma" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mongodb/mongodb-original-wordmark.svg" alt="mongodb" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original-wordmark.svg" alt="postgresql" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/git/git-original.svg" alt="git" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/github/github-original.svg" alt="github" width="40" height="40"/>
-  <img src="https://www.vectorlogo.zone/logos/figma/figma-icon.svg" alt="figma" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/graphql/graphql-plain.svg" alt="graphql" width="40" height="40"/>
-  <img src="https://www.vectorlogo.zone/logos/firebase/firebase-icon.svg" alt="firebase" width="40" height="40"/>
-  <img src="https://www.vectorlogo.zone/logos/supabase/supabase-icon.svg" alt="supabase" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/redux/redux-original.svg" alt="redux" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/reactrouter/reactrouter-original.svg" alt="react-router" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/styledcomponents/styledcomponents-original.svg" alt="styled-components" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/materialui/materialui-original.svg" alt="material-ui" width="40" height="40"/>
-  <img src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="ant-design" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/bootstrap/bootstrap-plain-wordmark.svg" alt="bootstrap" width="40" height="40"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original.svg" alt="docker" width="40" height="40"/>
-  <img src="https://www.vectorlogo.zone/logos/vercel/vercel-icon.svg" alt="vercel" width="40" height="40"/>
-  <img src="https://www.vectorlogo.zone/logos/netlify/netlify-icon.svg" alt="netlify" width="40" height="40"/>
-  <img src="https://www.vectorlogo.zone/logos/atlassian_jira/atlassian_jira-icon.svg" alt="jira" width="40" height="40"/>
-</p>
-
----
-
-### 📫 Bana Ulaşın
-[Email](mailto:iamhakanduyar@gmail.com) | [LinkedIn](https://linkedin.com/in/hakanduyar) | [Medium](https://medium.com/@hakanduyar)
-
----
-
-### 📊 GitHub İstatistiklerim
-<p>
-<img align="center" src="https://github-readme-streak-stats.herokuapp.com/?user=hakanduyar&" alt="hakanduyar" />
-</p>
+<picture>
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/signal-mobile-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px)" srcset="assets/generated/signal-mobile-static-light.svg">
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/signal-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/signal-static-light.svg">
+  <source media="(max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/signal-mobile-dark.svg">
+  <source media="(max-width: 1080px)" srcset="assets/generated/signal-mobile-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/signal-dark.svg">
+  <img src="assets/generated/signal-light.svg" alt="Measured public GitHub activity: 135 contributions across 52 complete weeks ending 2026-08-22; 59 public non-fork repositories; 4244 default-branch commits. Public source languages: TypeScript 49.4 percent, Go 20.2 percent, Vue 16.7 percent, JavaScript 4.7 percent. Snapshot 2026-08-24." width="960">
+</picture>
