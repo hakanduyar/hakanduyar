@@ -147,10 +147,11 @@ function heroStyles(theme: Theme, animated: boolean): string {
   </style>`;
 }
 function commonDefinitions(theme: Theme): string {
+  const glowOpacity = theme.name === 'light' ? { blue: .32, violet: .13 } : { blue: .22, violet: .08 };
   return `<defs>
     <radialGradient id="hero-glow" cx="50%" cy="50%" r="50%">
-      <stop offset="0" stop-color="${theme.blue}" stop-opacity=".22"/>
-      <stop offset=".48" stop-color="${theme.violet}" stop-opacity=".08"/>
+      <stop offset="0" stop-color="${theme.blue}" stop-opacity="${glowOpacity.blue}"/>
+      <stop offset=".48" stop-color="${theme.violet}" stop-opacity="${glowOpacity.violet}"/>
       <stop offset="1" stop-color="${theme.blue}" stop-opacity="0"/>
     </radialGradient>
     <filter id="hero-soft-glow" x="-80%" y="-80%" width="260%" height="260%">
@@ -174,13 +175,16 @@ function identity(theme: Theme): string {
 }
 
 function fieldGrid(theme: Theme): string {
+  const gridOpacity = theme.name === 'light' ? .92 : .48;
+  const minorOpacity = theme.name === 'light' ? .72 : .34;
+  const majorOpacity = theme.name === 'light' ? .92 : .55;
   const vertical = Array.from({ length: 14 }, (_, index) =>
-    line(430 + index * 38, 54, 430 + index * 38, 394, { stroke: theme.lineSoft, opacity: index % 2 ? .34 : .55 }),
+    line(430 + index * 38, 54, 430 + index * 38, 394, { stroke: theme.lineSoft, opacity: index % 2 ? minorOpacity : majorOpacity }),
   );
   const horizontal = Array.from({ length: 10 }, (_, index) =>
-    line(404, 60 + index * 37, 942, 60 + index * 37, { stroke: theme.lineSoft, opacity: index % 2 ? .34 : .55 }),
+    line(404, 60 + index * 37, 942, 60 + index * 37, { stroke: theme.lineSoft, opacity: index % 2 ? minorOpacity : majorOpacity }),
   );
-  return node('g', { opacity: .48 }, [...vertical, ...horizontal]);
+  return node('g', { opacity: gridOpacity }, [...vertical, ...horizontal]);
 }
 
 function nucleus(theme: Theme): string {

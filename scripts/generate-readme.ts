@@ -36,9 +36,21 @@ function picture(name: string, alt: string, animated = false, responsive = false
   return ['<picture>', ...sources, `  <img src="assets/generated/${name}-light.svg" alt="${escapeAttribute(alt)}" width="960">`, '</picture>'].join('\n');
 }
 
+function themeControl(): string {
+  const alt = 'Open GitHub Appearance settings. Profile visuals automatically follow your GitHub light or dark preference.';
+  return `<a href="https://github.com/settings/appearance">
+<picture>
+  <source media="(max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/theme-control-mobile-dark.svg">
+  <source media="(max-width: 1080px)" srcset="assets/generated/theme-control-mobile-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/theme-control-dark.svg">
+  <img src="assets/generated/theme-control-light.svg" alt="${escapeAttribute(alt)}" width="960">
+</picture>
+</a>`;
+}
+
 const measuredThrough = telemetry.activity.end;
 const systemsAlt = FEATURED_SYSTEMS
-  .map((system) => `${system.repo}: ${system.summary} Stack: ${system.stack.join(', ')}.`)
+  .map((system) => `${system.label}: ${system.summary} Stack: ${system.stack.join(', ')}.`)
   .join(' ');
 const languagesAlt = telemetry.languages
   .slice(0, 4)
@@ -46,6 +58,8 @@ const languagesAlt = telemetry.languages
   .join(', ');
 
 const readme = `<!-- GENERATED FILE: edit src/ and scripts/, then run npm run build. -->
+
+${themeControl()}
 
 ${picture(
   'hero',

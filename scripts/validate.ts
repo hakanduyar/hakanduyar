@@ -84,9 +84,21 @@ const readme = readFileSync(readmePath, 'utf8');
 if (!readme.startsWith('<!-- GENERATED FILE:')) fail('README.md: generated-file marker is missing');
 const readmeWithoutComments = readme.replace(/<!--[\s\S]*?-->/g, '');
 const pictureBlocks = readmeWithoutComments.match(/<picture>[\s\S]*?<\/picture>/g) ?? [];
-if (pictureBlocks.length !== 4) fail(`README.md: expected exactly four picture blocks, found ${pictureBlocks.length}`);
-if (readmeWithoutComments.replace(/<picture>[\s\S]*?<\/picture>/g, '').trim()) {
-  fail('README.md: visible native text or markup exists outside the picture blocks');
+if (pictureBlocks.length !== 5) fail(`README.md: expected exactly five picture blocks, found ${pictureBlocks.length}`);
+const appearanceOpen = '<a href="https://github.com/settings/appearance">';
+const appearanceLinks = readmeWithoutComments.match(/<a\b[\s\S]*?<\/a>/g) ?? [];
+if (appearanceLinks.length !== 1) fail(`README.md: expected exactly one Appearance link, found ${appearanceLinks.length}`);
+const appearanceLink = appearanceLinks[0] ?? '';
+if (!appearanceLink.startsWith(appearanceOpen)
+  || !appearanceLink.includes('assets/generated/theme-control-light.svg')
+  || !appearanceLink.includes('assets/generated/theme-control-dark.svg')
+  || !appearanceLink.includes('assets/generated/theme-control-mobile-light.svg')
+  || !appearanceLink.includes('assets/generated/theme-control-mobile-dark.svg')
+  || (appearanceLink.match(/<picture>/g) ?? []).length !== 1) {
+  fail('README.md: Appearance link must wrap only the theme-control picture');
+}
+if (readmeWithoutComments.replace(appearanceLink, '').replace(/<picture>[\s\S]*?<\/picture>/g, '').trim()) {
+  fail('README.md: visible native text or markup exists outside the picture blocks and Appearance link');
 }
 for (const [index, block] of pictureBlocks.entries()) {
   if ((block.match(/<img\b/g) ?? []).length !== 1) fail(`README.md: picture block ${index + 1} must contain exactly one image`);
@@ -117,9 +129,18 @@ for (const mobileScene of ['systems', 'architecture', 'signal']) {
     fail(`README.md: ${mobileScene} responsive source ordering is invalid`);
   }
 }
-const reducedDark = readme.indexOf('<source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)"');
-const reducedLight = readme.indexOf('<source media="(prefers-reduced-motion: reduce)"');
-const normalDark = readme.indexOf('<source media="(prefers-color-scheme: dark)"');
+const themeControlSources = [
+  '<source media="(max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/theme-control-mobile-dark.svg">',
+  '<source media="(max-width: 1080px)" srcset="assets/generated/theme-control-mobile-light.svg">',
+  '<source media="(prefers-color-scheme: dark)" srcset="assets/generated/theme-control-dark.svg">',
+].map((source) => readme.indexOf(source));
+if (themeControlSources.some((position) => position < 0)
+  || themeControlSources.some((position, index) => index > 0 && position <= themeControlSources[index - 1]!)) {
+  fail('README.md: theme-control responsive source ordering is invalid');
+}
+const reducedDark = readme.indexOf('<source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/hero-static-dark.svg">');
+const reducedLight = readme.indexOf('<source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/hero-static-light.svg">');
+const normalDark = readme.indexOf('<source media="(prefers-color-scheme: dark)" srcset="assets/generated/hero-dark.svg">');
 if (!(reducedDark >= 0 && reducedLight > reducedDark && normalDark > reducedLight)) {
   fail('README.md: reduced-motion and dark-mode source ordering is invalid');
 }

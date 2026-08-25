@@ -7,7 +7,10 @@ const stage = readFileSync(resolve(process.cwd(), 'preview/scene-stage.html'), '
 
 describe('preview asset selection smoke coverage', () => {
   it('emits one profile image per scene with every required responsive fallback', () => {
-    expect(preview.match(/class="profile-visual"/g)).toHaveLength(4);
+    expect(preview.match(/class="profile-visual"/g)).toHaveLength(5);
+    expect(preview).toContain('href="https://github.com/settings/appearance"');
+    expect(preview).toContain('data-dark="../assets/generated/theme-control-dark.svg"');
+    expect(preview).toContain('data-mobile-light="../assets/generated/theme-control-mobile-light.svg"');
     expect(preview).toContain('data-static-light="../assets/generated/hero-static-light.svg"');
     for (const scene of ['systems', 'architecture', 'signal']) {
       expect(preview).toContain(`data-static-dark="../assets/generated/${scene}-static-dark.svg"`);
@@ -18,8 +21,14 @@ describe('preview asset selection smoke coverage', () => {
 
   it('keeps the simulated README body image-only', () => {
     const body = preview.match(/<div class="markdown">\s*([\s\S]*?)\s*<\/div><\/article>/)?.[1] ?? '';
-    expect(body.match(/<img\b[^>]*class="profile-visual"[^>]*>/g)).toHaveLength(4);
-    expect(body.replace(/<img\b[^>]*>/g, '').trim()).toBe('');
+    expect(body.match(/<img\b[^>]*class="profile-visual"[^>]*>/g)).toHaveLength(5);
+    expect(
+      body
+        .replace('<a class="theme-settings-link" href="https://github.com/settings/appearance">', '')
+        .replace('</a>', '')
+        .replace(/<img\b[^>]*>/g, '')
+        .trim(),
+    ).toBe('');
   });
 
   it('selects reduced mobile before reduced desktop, then animated mobile and desktop', () => {
@@ -34,8 +43,8 @@ describe('preview asset selection smoke coverage', () => {
     expect(order).toEqual([...order].sort((a, b) => a - b));
   });
 
-  it('builds deterministic QA-stage names for all four scenes', () => {
-    for (const scene of ['hero', 'systems', 'architecture', 'signal']) expect(stage).toContain(`'${scene}'`);
+  it('builds deterministic QA-stage names for all five scenes', () => {
+    for (const scene of ['theme-control', 'hero', 'systems', 'architecture', 'signal']) expect(stage).toContain(`'${scene}'`);
     expect(stage).toContain("if(mobile)parts.push('mobile')");
     expect(stage).toContain("if(reduced)parts.push('static')");
     expect(stage).toContain("parts.push(dark?'dark':'light')");

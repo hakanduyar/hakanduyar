@@ -1,7 +1,7 @@
 {
   "version": "4.2",
-  "capturedAt": "2026-08-25T10:11:53.733Z",
-  "previewDigest": "c5dac3a33ec28054e6d62da1ba8b010eb5929b7cd4e6813a98eaed211621b88b",
+  "capturedAt": "2026-08-25T11:31:06.260Z",
+  "previewDigest": "fcac8bf322e0283ec8ee9717da23542e3b94e398e3085548262512348c58744f",
   "results": [
     {
       "file": "page-dark-desktop-reduced-motion.png",
@@ -9,6 +9,7 @@
       "innerWidth": 1440,
       "nativeText": "",
       "readmeElements": [
+        "A",
         "IMG",
         "IMG",
         "IMG",
@@ -16,6 +17,7 @@
       ],
       "scrollWidth": 1425,
       "sources": [
+        "http://127.0.0.1:4184/assets/generated/theme-control-dark.svg",
         "http://127.0.0.1:4184/assets/generated/hero-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/systems-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-static-dark.svg",
@@ -28,6 +30,7 @@
       "innerWidth": 1440,
       "nativeText": "",
       "readmeElements": [
+        "A",
         "IMG",
         "IMG",
         "IMG",
@@ -35,6 +38,7 @@
       ],
       "scrollWidth": 1425,
       "sources": [
+        "http://127.0.0.1:4184/assets/generated/theme-control-light.svg",
         "http://127.0.0.1:4184/assets/generated/hero-light.svg",
         "http://127.0.0.1:4184/assets/generated/systems-light.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-light.svg",
@@ -47,6 +51,7 @@
       "innerWidth": 390,
       "nativeText": "",
       "readmeElements": [
+        "A",
         "IMG",
         "IMG",
         "IMG",
@@ -54,6 +59,7 @@
       ],
       "scrollWidth": 375,
       "sources": [
+        "http://127.0.0.1:4184/assets/generated/theme-control-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/hero-dark.svg",
         "http://127.0.0.1:4184/assets/generated/systems-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-dark.svg",
@@ -66,6 +72,7 @@
       "innerWidth": 390,
       "nativeText": "",
       "readmeElements": [
+        "A",
         "IMG",
         "IMG",
         "IMG",
@@ -73,6 +80,7 @@
       ],
       "scrollWidth": 375,
       "sources": [
+        "http://127.0.0.1:4184/assets/generated/theme-control-mobile-light.svg",
         "http://127.0.0.1:4184/assets/generated/hero-light.svg",
         "http://127.0.0.1:4184/assets/generated/systems-mobile-light.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-light.svg",
@@ -85,6 +93,7 @@
       "innerWidth": 390,
       "nativeText": "",
       "readmeElements": [
+        "A",
         "IMG",
         "IMG",
         "IMG",
@@ -92,6 +101,7 @@
       ],
       "scrollWidth": 375,
       "sources": [
+        "http://127.0.0.1:4184/assets/generated/theme-control-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/hero-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/systems-mobile-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-static-dark.svg",
@@ -104,6 +114,7 @@
       "innerWidth": 1000,
       "nativeText": "",
       "readmeElements": [
+        "A",
         "IMG",
         "IMG",
         "IMG",
@@ -111,6 +122,7 @@
       ],
       "scrollWidth": 985,
       "sources": [
+        "http://127.0.0.1:4184/assets/generated/theme-control-mobile-light.svg",
         "http://127.0.0.1:4184/assets/generated/hero-light.svg",
         "http://127.0.0.1:4184/assets/generated/systems-mobile-light.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-light.svg",

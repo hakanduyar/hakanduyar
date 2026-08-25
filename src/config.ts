@@ -1,8 +1,9 @@
 export const LOGIN = 'hakanduyar';
 
 export interface FeaturedSystem {
-  key: 'dropspot' | 'spark' | 'stock' | 'motion';
+  key: 'factory' | 'spark' | 'layers' | 'ledger';
   repo: string;
+  label: string;
   code: string;
   role: string;
   summary: string;
@@ -12,17 +13,19 @@ export interface FeaturedSystem {
 
 export const FEATURED_SYSTEMS: readonly FeaturedSystem[] = [
   {
-    key: 'dropspot',
-    repo: 'dropspot-project',
-    code: 'D-01',
-    role: 'DISTRIBUTION',
-    summary: 'Limited-stock distribution with fair, idempotent claim handling.',
-    signal: 'Transactions protect concurrent claims.',
-    stack: ['React', 'Node.js', 'PostgreSQL'],
+    key: 'factory',
+    repo: 'software-factory',
+    label: 'Software Factory',
+    code: 'F-01',
+    role: 'ORCHESTRATION',
+    summary: 'Evidence-gated orchestration from planning through verified release.',
+    signal: 'Trusted identities and release snapshots prevent proof bypasses.',
+    stack: ['TypeScript', 'Node.js', 'SQLite'],
   },
   {
     key: 'spark',
     repo: 'spark',
+    label: 'spark',
     code: 'S-02',
     role: 'LOCAL-FIRST',
     summary: 'Offline planning that runs without an account or backend.',
@@ -30,22 +33,24 @@ export const FEATURED_SYSTEMS: readonly FeaturedSystem[] = [
     stack: ['React', 'TypeScript', 'Dexie'],
   },
   {
-    key: 'stock',
-    repo: 'stock-management-system',
-    code: 'O-03',
-    role: 'OPERATIONS',
-    summary: 'Role-aware inventory across the stock movement lifecycle.',
-    signal: 'Movement records preserve operational history.',
-    stack: ['Next.js', 'NestJS', 'Prisma'],
+    key: 'layers',
+    repo: 'built-in-layers',
+    label: 'Built in Layers',
+    code: 'L-03',
+    role: 'CASE STUDIES',
+    summary: 'Engineering case studies reveal interface, flow, and system decisions.',
+    signal: 'Surface, Flow, and System expose the work beneath the screen.',
+    stack: ['Next.js', 'TypeScript', 'MDX'],
   },
   {
-    key: 'motion',
-    repo: 'Hunnes-Academy-motion-system',
-    code: 'M-04',
-    role: 'MOTION',
-    summary: 'Composable motion modules behind one declarative system.',
-    signal: 'Route scope activates only the motion a page needs.',
-    stack: ['JavaScript', 'GSAP', 'ES Modules'],
+    key: 'ledger',
+    repo: 'jointledger',
+    label: 'jointledger',
+    code: 'J-04',
+    role: 'FINANCE',
+    summary: 'Self-hosted personal finance with private, portable financial records.',
+    signal: 'Multi-currency ledgers stay searchable, analyzable, and self-controlled.',
+    stack: ['Go', 'Vue', 'TypeScript'],
   },
 ] as const;
 

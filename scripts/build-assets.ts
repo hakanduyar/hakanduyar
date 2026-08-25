@@ -5,6 +5,7 @@ import { renderArchitecture } from '../src/scenes/architecture.js';
 import { renderHero } from '../src/scenes/hero.js';
 import { renderSignal } from '../src/scenes/signal.js';
 import { renderSystems } from '../src/scenes/systems.js';
+import { renderThemeControl } from '../src/scenes/theme-control.js';
 import type { Telemetry } from '../src/telemetry.js';
 import { THEMES } from '../src/theme.js';
 import { GENERATED_ASSET_NAMES } from '../src/assets.js';
@@ -13,6 +14,8 @@ const telemetry = JSON.parse(readFileSync(resolve(REPO_ROOT, 'data/telemetry.jso
 const outputs: { path: string; bytes: number; changed: boolean }[] = [];
 
 for (const [name, theme] of Object.entries(THEMES)) {
+  outputs.push(emitSvg(`assets/generated/theme-control-${name}.svg`, renderThemeControl(theme)));
+  outputs.push(emitSvg(`assets/generated/theme-control-mobile-${name}.svg`, renderThemeControl(theme, true)));
   outputs.push(emitSvg(`assets/generated/hero-${name}.svg`, renderHero(theme, true)));
   outputs.push(emitSvg(`assets/generated/hero-static-${name}.svg`, renderHero(theme, false)));
   outputs.push(emitSvg(`assets/generated/systems-${name}.svg`, renderSystems(theme, telemetry, false, true)));
