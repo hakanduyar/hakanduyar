@@ -14,6 +14,8 @@ I build product interfaces and the systems behind them, with particular attentio
 ## Selected systems
 
 <picture>
+  <source media="(max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/systems-mobile-dark.svg">
+  <source media="(max-width: 1080px)" srcset="assets/generated/systems-mobile-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/generated/systems-dark.svg">
   <img src="assets/generated/systems-light.svg" alt="Four selected systems arranged as a connected mission path: DropSpot, Spark, Stock Management System, and Hunnes Academy Motion System." width="960">
 </picture>
@@ -26,6 +28,8 @@ I build product interfaces and the systems behind them, with particular attentio
 ## Architecture
 
 <picture>
+  <source media="(max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/architecture-mobile-dark.svg">
+  <source media="(max-width: 1080px)" srcset="assets/generated/architecture-mobile-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/generated/architecture-dark.svg">
   <img src="assets/generated/architecture-light.svg" alt="A layered architecture moving from interface through state and services into delivery, with an accountable engineering feedback loop." width="960">
 </picture>
@@ -35,6 +39,8 @@ The work moves from interface decisions through state and services into delivery
 ## Public signal
 
 <picture>
+  <source media="(max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/signal-mobile-dark.svg">
+  <source media="(max-width: 1080px)" srcset="assets/generated/signal-mobile-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/generated/signal-dark.svg">
   <img src="assets/generated/signal-light.svg" alt="Measured public GitHub activity across 52 complete weeks ending 2026-08-22, plus the language distribution of public non-fork repositories." width="960">
 </picture>

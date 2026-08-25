@@ -1,0 +1,115 @@
+{
+  "generatedAt": "2026-08-24T21:12:09.272Z",
+  "sectionAssets": [
+    {
+      "asset": "systems-light.svg",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": []
+    },
+    {
+      "asset": "systems-dark.svg",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": []
+    },
+    {
+      "asset": "architecture-light.svg",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": []
+    },
+    {
+      "asset": "architecture-dark.svg",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": []
+    },
+    {
+      "asset": "signal-light.svg",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": []
+    },
+    {
+      "asset": "signal-dark.svg",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": []
+    },
+    {
+      "asset": "systems-mobile-light.svg",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": []
+    },
+    {
+      "asset": "systems-mobile-dark.svg",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": []
+    },
+    {
+      "asset": "architecture-mobile-light.svg",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": []
+    },
+    {
+      "asset": "architecture-mobile-dark.svg",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": []
+    },
+    {
+      "asset": "signal-mobile-light.svg",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": []
+    },
+    {
+      "asset": "signal-mobile-dark.svg",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": []
+    }
+  ],
+  "heroFrames": [
+    {
+      "name": "flight",
+      "outOfBounds": [],
+      "overlaps": [],
+      "visibleText": 17
+    },
+    {
+      "name": "flight-to-signal",
+      "outOfBounds": [],
+      "overlaps": [],
+      "visibleText": 15
+    },
+    {
+      "name": "signal",
+      "outOfBounds": [],
+      "overlaps": [],
+      "visibleText": 24
+    },
+    {
+      "name": "signal-to-spatial",
+      "outOfBounds": [],
+      "overlaps": [],
+      "visibleText": 15
+    },
+    {
+      "name": "spatial",
+      "outOfBounds": [],
+      "overlaps": [],
+      "visibleText": 24
+    },
+    {
+      "name": "spatial-to-flight",
+      "outOfBounds": [],
+      "overlaps": [],
+      "visibleText": 15
+    }
+  ]
+}

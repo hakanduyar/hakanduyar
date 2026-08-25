@@ -12,10 +12,16 @@ const assets = [
   'hero-static-dark.svg',
   'systems-light.svg',
   'systems-dark.svg',
+  'systems-mobile-light.svg',
+  'systems-mobile-dark.svg',
   'architecture-light.svg',
   'architecture-dark.svg',
+  'architecture-mobile-light.svg',
+  'architecture-mobile-dark.svg',
   'signal-light.svg',
   'signal-dark.svg',
+  'signal-mobile-light.svg',
+  'signal-mobile-dark.svg',
 ] as const;
 
 const errors: string[] = [];
@@ -40,6 +46,9 @@ for (const asset of assets) {
   if (/\b(?:href|src)=["']https?:/i.test(source) || /data:/i.test(source)) fail(`${asset}: contains an external resource`);
   if (/<polygon\b/i.test(source)) fail(`${asset}: rejected polygon identity returned`);
   if (/\bHDU\b/.test(source)) fail(`${asset}: rejected HDU monogram returned`);
+  if (!asset.startsWith('hero-') && (!source.includes('data-audit-text') || !source.includes('data-audit-geometry'))) {
+    fail(`${asset}: collision-audit hooks are missing`);
+  }
   const limit = asset.startsWith('hero-') ? 80_000 : 70_000;
   if (statSync(path).size > limit) fail(`${asset}: exceeds ${limit.toLocaleString()} byte budget`);
 }
@@ -51,6 +60,15 @@ for (const theme of ['light', 'dark'] as const) {
     if (!motion.includes(mode)) fail(`hero-${theme}.svg: missing ${mode}`);
   }
   if (!motion.includes('@keyframes') || !motion.includes('12s')) fail(`hero-${theme}.svg: master timeline is missing`);
+  for (const transition of ['flight-to-signal', 'signal-to-spatial', 'spatial-to-flight']) {
+    if (!motion.includes(`data-hero-transition="${transition}"`)) fail(`hero-${theme}.svg: missing ${transition} choreography`);
+  }
+  for (const semantic of ['ACQUIRE / INTERSECTIONS', 'CLASSIFY / LAYER MAP', 'ALIGN / NUCLEUS LOCK']) {
+    if (!motion.includes(semantic)) fail(`hero-${theme}.svg: missing transition semantic ${semantic}`);
+  }
+  if (!motion.includes('animation:orbit-reverse 12s') || !motion.includes('animation:core-breathe 6s')) {
+    fail(`hero-${theme}.svg: idle motion does not close cleanly on the 12s loop`);
+  }
   if (reduced.includes('@keyframes') || reduced.includes('12s')) fail(`hero-static-${theme}.svg: reduced-motion asset still animates`);
 }
 
@@ -62,6 +80,13 @@ if (/<(?:img|source)\b[^>]*(?:src|srcset)="https?:/i.test(readme) || /!\[[^\]]*\
 }
 for (const asset of assets) {
   if (!readme.includes(`assets/generated/${asset}`)) fail(`README.md: ${asset} is not referenced`);
+}
+for (const mobileScene of ['systems', 'architecture', 'signal']) {
+  const mobileDark = `<source media="(max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/${mobileScene}-mobile-dark.svg">`;
+  const mobileLight = `<source media="(max-width: 1080px)" srcset="assets/generated/${mobileScene}-mobile-light.svg">`;
+  if (!readme.includes(mobileDark) || !readme.includes(mobileLight)) {
+    fail(`README.md: ${mobileScene} responsive source ordering is invalid`);
+  }
 }
 const reducedDark = readme.indexOf('<source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)"');
 const reducedLight = readme.indexOf('<source media="(prefers-reduced-motion: reduce)"');

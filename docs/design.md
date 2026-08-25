@@ -1,4 +1,4 @@
-# V4 design system
+# V4.1 design system
 
 ## Identity
 
@@ -14,11 +14,17 @@ The selected-systems scene combines a mission path with relationship links. Arch
 
 ## Master timeline
 
-The animated hero is one SVG and one seamless 12-second loop:
+The animated hero is one SVG and one seamless 12-second loop. Idle motion uses periods that close on the same loop boundary, keeping the return frame calm and deterministic:
 
-1. `00.0–03.3s` — Mode 01 / Flight
-2. `03.3–07.8s` — Mode 02 / Signal
-3. `07.8–11.7s` — Mode 03 / Spatial
-4. `11.7–12.0s` — return to Flight
+1. `00.0–02.8s` — Mode 01 / Flight calibration
+2. `02.8–04.1s` — Flight → Signal: acquire intersections and expose relationships
+3. `04.1–06.8s` — Mode 02 / Signal topology
+4. `06.8–08.3s` — Signal → Spatial: classify relationships into layer lanes
+5. `08.3–10.8s` — Mode 03 / Spatial architecture
+6. `10.8–12.0s` — Spatial → Flight: align layers and lock the nucleus
 
-Short transition-field bursts make the state changes legible. The identity nucleus remains stable across all modes. Reduced-motion users receive a separate static Flight asset rather than a paused animated document.
+Each transition owns the right-hand field while it is active, so modes do not visually pile up. The identity nucleus remains stable across all modes. Reduced-motion users receive a separate static Flight asset rather than a paused animated document.
+
+## Responsive geometry
+
+Systems, architecture, and public-signal scenes have dedicated 390 px vertical compositions. The responsive sources switch at 1080 px because GitHub's profile sidebar reduces the README column well before a conventional phone breakpoint. Desktop, intermediate, and mobile layouts preserve independent text zones, trajectory bands, nodes, and layer boundaries rather than shrinking one desktop drawing indiscriminately.

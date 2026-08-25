@@ -15,8 +15,11 @@ for (const [name, theme] of Object.entries(THEMES)) {
   outputs.push(emitSvg(`assets/generated/hero-${name}.svg`, renderHero(theme, true)));
   outputs.push(emitSvg(`assets/generated/hero-static-${name}.svg`, renderHero(theme, false)));
   outputs.push(emitSvg(`assets/generated/systems-${name}.svg`, renderSystems(theme, telemetry)));
+  outputs.push(emitSvg(`assets/generated/systems-mobile-${name}.svg`, renderSystems(theme, telemetry, true)));
   outputs.push(emitSvg(`assets/generated/architecture-${name}.svg`, renderArchitecture(theme)));
+  outputs.push(emitSvg(`assets/generated/architecture-mobile-${name}.svg`, renderArchitecture(theme, true)));
   outputs.push(emitSvg(`assets/generated/signal-${name}.svg`, renderSignal(theme, telemetry)));
+  outputs.push(emitSvg(`assets/generated/signal-mobile-${name}.svg`, renderSignal(theme, telemetry, true)));
 }
 
 for (const output of outputs) {

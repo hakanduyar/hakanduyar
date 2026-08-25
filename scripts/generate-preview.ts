@@ -12,12 +12,15 @@ function escapeHtml(value: string): string {
   })[character] ?? character);
 }
 
-function profileImage(name: string, alt: string, staticName?: string): string {
+function profileImage(name: string, alt: string, staticName?: string, mobileName?: string): string {
   const base = `../assets/generated/${name}`;
   const staticAttrs = staticName
     ? ` data-static-light="../assets/generated/${staticName}-light.svg" data-static-dark="../assets/generated/${staticName}-dark.svg"`
     : '';
-  return `<img class="profile-visual" data-light="${base}-light.svg" data-dark="${base}-dark.svg"${staticAttrs} src="${base}-light.svg" alt="${escapeHtml(alt)}">`;
+  const mobileAttrs = mobileName
+    ? ` data-mobile-light="../assets/generated/${mobileName}-light.svg" data-mobile-dark="../assets/generated/${mobileName}-dark.svg"`
+    : '';
+  return `<img class="profile-visual" data-light="${base}-light.svg" data-dark="${base}-dark.svg"${staticAttrs}${mobileAttrs} src="${base}-light.svg" alt="${escapeHtml(alt)}">`;
 }
 
 const systemLinks = FEATURED_SYSTEMS.map((system) => {
@@ -65,9 +68,9 @@ html.mobile .top{padding:0 14px;height:56px}.mobile .search,.mobile .top nav{dis
 <article class="readme"><div class="readme-head">hakanduyar / README.md</div><div class="markdown">
 ${profileImage('hero', 'Hakan Duyar circular identity field with Flight, Signal, and Spatial modes.', 'hero-static')}
 <p class="strap">${PROFILE_COPY.strapline}</p><p>${PROFILE_COPY.introduction}</p>
-<h2>Selected systems</h2>${profileImage('systems', 'Four selected systems arranged on a connected engineering path.')}<ul>${systemLinks}</ul>
-<h2>Architecture</h2>${profileImage('architecture', 'Interface, state, services, and delivery shown as spatial architecture layers.')}<p>${PROFILE_COPY.architecture}</p>
-<h2>Public signal</h2>${profileImage('signal', 'Measured 52-week public contribution signal and language distribution.')}<p>The signal is generated from public GitHub data: <strong>${telemetry.activity.total.toLocaleString('en-US')} contributions across 52 complete weeks</strong>, <strong>${telemetry.publicRepos} public repositories</strong>, and <strong>${telemetry.totalCommits.toLocaleString('en-US')} default-branch commits</strong>.</p>
+<h2>Selected systems</h2>${profileImage('systems', 'Four selected systems arranged on a connected engineering path.', undefined, 'systems-mobile')}<ul>${systemLinks}</ul>
+<h2>Architecture</h2>${profileImage('architecture', 'Interface, state, services, and delivery shown as spatial architecture layers.', undefined, 'architecture-mobile')}<p>${PROFILE_COPY.architecture}</p>
+<h2>Public signal</h2>${profileImage('signal', 'Measured 52-week public contribution signal and language distribution.', undefined, 'signal-mobile')}<p>The signal is generated from public GitHub data: <strong>${telemetry.activity.total.toLocaleString('en-US')} contributions across 52 complete weeks</strong>, <strong>${telemetry.publicRepos} public repositories</strong>, and <strong>${telemetry.totalCommits.toLocaleString('en-US')} default-branch commits</strong>.</p>
 <h2>Current public work</h2><ul>${recent}</ul><h2>Channels</h2><p>${channels}</p><p class="fine">${PROFILE_COPY.provenance}</p>
 </div></article>
 <section class="native"><h2>Pinned</h2><div class="pins">${pins}</div><h2>${telemetry.contributions.total.toLocaleString('en-US')} contributions in the last year</h2><div class="activity"><div class="activity-head"><span>52 complete measured weeks</span><span>${telemetry.activity.start} — ${telemetry.activity.end}</span></div><div class="weeks">${activity}</div></div></section>
@@ -76,14 +79,16 @@ ${profileImage('hero', 'Hakan Duyar circular identity field with Flight, Signal,
 <script>
 const params=new URLSearchParams(location.search);const root=document.documentElement;
 let theme=params.get('theme')==='dark'?'dark':'light';let mobile=params.get('mobile')==='1';let reduced=params.get('motion')==='reduce';let clean=params.get('clean')==='1';
-function render(){root.dataset.theme=theme;root.classList.toggle('mobile',mobile);document.body.classList.toggle('clean',clean);document.querySelectorAll('.profile-visual').forEach((image)=>{const staticKey='static'+theme[0].toUpperCase()+theme.slice(1);const key=theme;image.src=reduced&&image.dataset[staticKey]?image.dataset[staticKey]:image.dataset[key]});}
+function render(){root.dataset.theme=theme;root.classList.toggle('mobile',mobile);document.body.classList.toggle('clean',clean);const compact=mobile||innerWidth<=1080;document.querySelectorAll('.profile-visual').forEach((image)=>{const cap=theme[0].toUpperCase()+theme.slice(1);const staticKey='static'+cap;const mobileKey='mobile'+cap;const key=theme;image.src=reduced&&image.dataset[staticKey]?image.dataset[staticKey]:compact&&image.dataset[mobileKey]?image.dataset[mobileKey]:image.dataset[key]});}
 document.querySelector('[data-action=theme]').onclick=()=>{theme=theme==='light'?'dark':'light';render()};
 document.querySelector('[data-action=viewport]').onclick=()=>{mobile=!mobile;render()};
-document.querySelector('[data-action=motion]').onclick=()=>{reduced=!reduced;render()};render();
+document.querySelector('[data-action=motion]').onclick=()=>{reduced=!reduced;render()};addEventListener('resize',render);render();
 </script>
 </body></html>`;
 
 const out = resolve(REPO_ROOT, 'preview/index.html');
 mkdirSync(resolve(REPO_ROOT, 'preview'), { recursive: true });
 writeFileSync(out, html, 'utf8');
-console.log('[preview] wrote preview/index.html');
+const heroStage = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}html,body{margin:0;min-height:100%;overflow:hidden}body{display:grid;place-items:center;background:#fff}body.dark{background:#0d1117}img{display:block;width:890px;max-width:100vw;height:auto}</style></head><body><img alt="Hakan Duyar three-mode hero QA stage"><script>const p=new URLSearchParams(location.search);const dark=p.get('theme')==='dark';const reduced=p.get('motion')==='reduce';document.body.classList.toggle('dark',dark);document.querySelector('img').src='../assets/generated/hero'+(reduced?'-static':'')+'-'+(dark?'dark':'light')+'.svg';</script></body></html>`;
+writeFileSync(resolve(REPO_ROOT, 'preview/hero-stage.html'), heroStage, 'utf8');
+console.log('[preview] wrote preview/index.html and preview/hero-stage.html');
