@@ -1,0 +1,79 @@
+{
+  "version": "4.2",
+  "capturedAt": "2026-08-25T06:45:13.056Z",
+  "previewDigest": "cca519dfe7f0c8d565d30d585de164ad1c5180cf6a37c30d5baa8950f34d16eb",
+  "results": [
+    {
+      "file": "page-dark-desktop-reduced-motion.png",
+      "broken": 0,
+      "innerWidth": 1440,
+      "scrollWidth": 1425,
+      "sources": [
+        "http://127.0.0.1:4184/assets/generated/hero-static-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/systems-static-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/architecture-static-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/signal-static-dark.svg"
+      ]
+    },
+    {
+      "file": "page-light-desktop.png",
+      "broken": 0,
+      "innerWidth": 1440,
+      "scrollWidth": 1425,
+      "sources": [
+        "http://127.0.0.1:4184/assets/generated/hero-light.svg",
+        "http://127.0.0.1:4184/assets/generated/systems-light.svg",
+        "http://127.0.0.1:4184/assets/generated/architecture-light.svg",
+        "http://127.0.0.1:4184/assets/generated/signal-light.svg"
+      ]
+    },
+    {
+      "file": "page-dark-mobile.png",
+      "broken": 0,
+      "innerWidth": 390,
+      "scrollWidth": 375,
+      "sources": [
+        "http://127.0.0.1:4184/assets/generated/hero-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/systems-mobile-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/architecture-mobile-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/signal-mobile-dark.svg"
+      ]
+    },
+    {
+      "file": "page-light-mobile.png",
+      "broken": 0,
+      "innerWidth": 390,
+      "scrollWidth": 375,
+      "sources": [
+        "http://127.0.0.1:4184/assets/generated/hero-light.svg",
+        "http://127.0.0.1:4184/assets/generated/systems-mobile-light.svg",
+        "http://127.0.0.1:4184/assets/generated/architecture-mobile-light.svg",
+        "http://127.0.0.1:4184/assets/generated/signal-mobile-light.svg"
+      ]
+    },
+    {
+      "file": "page-dark-mobile-reduced-motion.png",
+      "broken": 0,
+      "innerWidth": 390,
+      "scrollWidth": 375,
+      "sources": [
+        "http://127.0.0.1:4184/assets/generated/hero-static-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/systems-mobile-static-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/architecture-mobile-static-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/signal-mobile-static-dark.svg"
+      ]
+    },
+    {
+      "file": "page-intermediate-light.png",
+      "broken": 0,
+      "innerWidth": 1000,
+      "scrollWidth": 985,
+      "sources": [
+        "http://127.0.0.1:4184/assets/generated/hero-light.svg",
+        "http://127.0.0.1:4184/assets/generated/systems-mobile-light.svg",
+        "http://127.0.0.1:4184/assets/generated/architecture-mobile-light.svg",
+        "http://127.0.0.1:4184/assets/generated/signal-mobile-light.svg"
+      ]
+    }
+  ]
+}

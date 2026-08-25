@@ -14,6 +14,10 @@ I build product interfaces and the systems behind them, with particular attentio
 ## Selected systems
 
 <picture>
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/systems-mobile-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px)" srcset="assets/generated/systems-mobile-static-light.svg">
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/systems-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/systems-static-light.svg">
   <source media="(max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/systems-mobile-dark.svg">
   <source media="(max-width: 1080px)" srcset="assets/generated/systems-mobile-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/generated/systems-dark.svg">
@@ -28,6 +32,10 @@ I build product interfaces and the systems behind them, with particular attentio
 ## Architecture
 
 <picture>
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/architecture-mobile-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px)" srcset="assets/generated/architecture-mobile-static-light.svg">
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/architecture-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/architecture-static-light.svg">
   <source media="(max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/architecture-mobile-dark.svg">
   <source media="(max-width: 1080px)" srcset="assets/generated/architecture-mobile-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/generated/architecture-dark.svg">
@@ -39,6 +47,10 @@ The work moves from interface decisions through state and services into delivery
 ## Public signal
 
 <picture>
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/signal-mobile-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px)" srcset="assets/generated/signal-mobile-static-light.svg">
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/signal-static-dark.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/signal-static-light.svg">
   <source media="(max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/signal-mobile-dark.svg">
   <source media="(max-width: 1080px)" srcset="assets/generated/signal-mobile-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/generated/signal-dark.svg">

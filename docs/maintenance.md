@@ -11,6 +11,8 @@ npm run check
 
 `npm run check` type-checks the source, regenerates assets and README, validates compatibility and accessibility, builds the local preview, and runs tests.
 
+Motion or geometry changes also require a fresh browser frame audit in `.ai/evidence/visual/v4.2/collision-audit.json`. The audit includes a digest of the generated SVG set; `npm run evidence:validate` and the full check reject stale visual evidence.
+
 ## Refreshing public telemetry
 
 Telemetry is deliberately not refreshed during a normal build. With an authenticated GitHub CLI or `GITHUB_TOKEN`, run:

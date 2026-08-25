@@ -27,4 +27,21 @@ describe('generated profile', () => {
     expect(readme).not.toMatch(/<(?:img|source)[^>]+(?:src|srcset)="https?:/i);
     for (const system of FEATURED_SYSTEMS) expect(readme).toContain(`https://github.com/hakanduyar/${system.repo}`);
   });
+
+  it('provides animated, responsive, and reduced-motion sources for every intelligence scene', () => {
+    for (const scene of ['systems', 'architecture', 'signal']) {
+      for (const suffix of [
+        'light.svg',
+        'dark.svg',
+        'static-light.svg',
+        'static-dark.svg',
+        'mobile-light.svg',
+        'mobile-dark.svg',
+        'mobile-static-light.svg',
+        'mobile-static-dark.svg',
+      ]) {
+        expect(readme).toContain(`assets/generated/${scene}-${suffix}`);
+      }
+    }
+  });
 });

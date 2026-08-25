@@ -42,11 +42,74 @@ export const SYSTEMS_COLLISION_SPECS: Record<'desktop' | 'mobile', CollisionSpec
   },
 };
 
+export const SYSTEMS_MOTION_DURATION_SECONDS = 6.4;
+
+function motionStyles(): string {
+  const duration = `${SYSTEMS_MOTION_DURATION_SECONDS}s`;
+  return `<style>
+    .systems-motion{pointer-events:none}
+    .sys-acquire{opacity:0;transform-box:fill-box;transform-origin:center;animation:sys-acquire ${duration} cubic-bezier(.22,.72,.2,1) infinite}
+    .sys-trace-main{opacity:0;stroke-dasharray:.13 .87;stroke-dashoffset:1;animation:sys-trace ${duration} cubic-bezier(.2,.72,.18,1) infinite}
+    .sys-relation{opacity:0;stroke-dasharray:.08 .92;stroke-dashoffset:1;animation:sys-relation ${duration} cubic-bezier(.2,.72,.18,1) infinite}
+    .sys-node-1,.sys-node-2,.sys-node-3,.sys-node-4{opacity:0;transform-box:fill-box;transform-origin:center}
+    .sys-node-1{animation:sys-node-1 ${duration} ease-in-out infinite}
+    .sys-node-2{animation:sys-node-2 ${duration} ease-in-out infinite}
+    .sys-node-3{animation:sys-node-3 ${duration} ease-in-out infinite}
+    .sys-node-4{animation:sys-node-4 ${duration} ease-in-out infinite}
+    .sys-resolve{opacity:0;transform-box:fill-box;transform-origin:center;animation:sys-resolve ${duration} cubic-bezier(.2,.72,.18,1) infinite}
+    .sys-resolve-line{opacity:0;stroke-dasharray:1;stroke-dashoffset:1;animation:sys-resolve-line ${duration} cubic-bezier(.2,.72,.18,1) infinite}
+    .sys-phase-acquire{opacity:0;animation:sys-phase-acquire ${duration} ease-in-out infinite}
+    .sys-phase-trace{opacity:0;animation:sys-phase-trace ${duration} ease-in-out infinite}
+    .sys-phase-classify{opacity:0;animation:sys-phase-classify ${duration} ease-in-out infinite}
+    .sys-phase-resolve{opacity:0;animation:sys-phase-resolve ${duration} ease-in-out infinite}
+    .sys-phase-quiet{opacity:0;animation:sys-phase-quiet ${duration} ease-in-out infinite}
+    @keyframes sys-acquire{0%,6%,25%,100%{opacity:0;transform:scale(.78)}10%,18%{opacity:1;transform:scale(1)}22%{opacity:.38;transform:scale(1.1)}}
+    @keyframes sys-trace{0%,15%{opacity:0;stroke-dashoffset:1}18%{opacity:1}48%{opacity:.95;stroke-dashoffset:0}62%{opacity:.26;stroke-dashoffset:-.12}72%,100%{opacity:0;stroke-dashoffset:-.24}}
+    @keyframes sys-relation{0%,36%{opacity:0;stroke-dashoffset:1}40%{opacity:.84}61%{opacity:.92;stroke-dashoffset:0}72%{opacity:.32;stroke-dashoffset:-.08}80%,100%{opacity:0;stroke-dashoffset:-.16}}
+    @keyframes sys-node-1{0%,13%{opacity:0;transform:scale(.82)}17%,62%{opacity:.9;transform:scale(1)}72%{opacity:.35}82%,100%{opacity:0;transform:scale(1.08)}}
+    @keyframes sys-node-2{0%,22%{opacity:0;transform:scale(.82)}26%,62%{opacity:.9;transform:scale(1)}72%{opacity:.35}82%,100%{opacity:0;transform:scale(1.08)}}
+    @keyframes sys-node-3{0%,31%{opacity:0;transform:scale(.82)}35%,62%{opacity:.9;transform:scale(1)}72%{opacity:.35}82%,100%{opacity:0;transform:scale(1.08)}}
+    @keyframes sys-node-4{0%,40%{opacity:0;transform:scale(.82)}44%,62%{opacity:.9;transform:scale(1)}72%{opacity:.35}82%,100%{opacity:0;transform:scale(1.08)}}
+    @keyframes sys-resolve{0%,59%{opacity:0;transform:scale(.72)}64%{opacity:.78;transform:scale(.92)}69%{opacity:1;transform:scale(1)}77%{opacity:.62;transform:scale(1.08)}85%,100%{opacity:0;transform:scale(1.18)}}
+    @keyframes sys-resolve-line{0%,60%{opacity:0;stroke-dashoffset:1}65%{opacity:.8}74%{opacity:1;stroke-dashoffset:0}82%{opacity:.25}88%,100%{opacity:0;stroke-dashoffset:-.05}}
+    @keyframes sys-phase-acquire{0%,6%,19%,100%{opacity:0}9%,17.5%{opacity:1}}
+    @keyframes sys-phase-trace{0%,19%,42%,100%{opacity:0}21%,40%{opacity:1}}
+    @keyframes sys-phase-classify{0%,42%,64%,100%{opacity:0}44%,62%{opacity:1}}
+    @keyframes sys-phase-resolve{0%,64%,84%,100%{opacity:0}66%,82%{opacity:1}}
+    @keyframes sys-phase-quiet{0%,84%,96%,100%{opacity:0}86%,93%{opacity:.82}}
+  </style>`;
+}
+
+function phaseReadout(theme: Theme, x: number, labelY: number, phaseY: number, anchor: 'start' | 'end'): string {
+  return node('g', { class: 'systems-motion', 'data-audit-text': 'systems-cycle', 'aria-hidden': 'true' }, [
+    text(x, labelY, `OBSERVATION CYCLE / ${SYSTEMS_MOTION_DURATION_SECONDS.toFixed(1)}S`, { class: 'mono tiny muted', 'text-anchor': anchor }),
+    text(x, phaseY, 'ACQUIRE / SOURCE', { class: 'mono micro sys-phase-acquire', fill: theme.blue, 'text-anchor': anchor }),
+    text(x, phaseY, 'TRACE / PROPAGATE', { class: 'mono micro sys-phase-trace', fill: theme.red, 'text-anchor': anchor }),
+    text(x, phaseY, 'CLASSIFY / SYSTEMS', { class: 'mono micro sys-phase-classify', fill: theme.violet, 'text-anchor': anchor }),
+    text(x, phaseY, 'RESOLVE / RELATIONS', { class: 'mono micro sys-phase-resolve', fill: theme.mint, 'text-anchor': anchor }),
+    text(x, phaseY, 'QUIET / OBSERVE', { class: 'mono micro sys-phase-quiet muted', 'text-anchor': anchor }),
+  ]);
+}
+
+function acquisitionBrackets(x: number, y: number, radius: number, accent: string, className: string): string {
+  const outer = radius + 8;
+  const segment = 8;
+  return el('path', {
+    class: `systems-motion ${className}`,
+    d: `M${x - outer + segment} ${y - outer}H${x - outer}V${y - outer + segment}M${x + outer - segment} ${y - outer}H${x + outer}V${y - outer + segment}M${x - outer} ${y + outer - segment}V${y + outer}H${x - outer + segment}M${x + outer} ${y + outer - segment}V${y + outer}H${x + outer - segment}`,
+    fill: 'none',
+    stroke: accent,
+    'stroke-width': 1.2,
+    'stroke-linecap': 'square',
+    'aria-hidden': 'true',
+  });
+}
+
 function colors(theme: Theme): readonly string[] {
   return [theme.blue, theme.red, theme.mint, theme.violet];
 }
 
-function renderDesktop(theme: Theme, telemetry: Telemetry): string {
+function renderDesktop(theme: Theme, telemetry: Telemetry, animated: boolean): string {
   const byKey = new Map(telemetry.featured.map((repo) => [repo.key, repo]));
   const positions = [
     { x: 130, y: 274, labelX: 54, labelY: 354, anchor: 'start' },
@@ -72,7 +135,7 @@ function renderDesktop(theme: Theme, telemetry: Telemetry): string {
     <filter id="systems-glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   </defs>`;
 
-  const title = node('g', {}, [
+  const title = node('g', { 'data-audit-text': 'heading' }, [
     line(54, 54, 88, 54, { stroke: theme.blue, 'stroke-width': 2 }),
     text(104, 59, 'SELECTED SYSTEMS / 04', { class: 'mono micro', fill: theme.blue }),
     text(54, 96, 'Tracked work in one mission graph.', { 'font-size': 28, 'font-weight': 620, 'letter-spacing': -1.15 }),
@@ -87,6 +150,12 @@ function renderDesktop(theme: Theme, telemetry: Telemetry): string {
     text(520, 218, 'RELATIONSHIP TRACE / 02', { class: 'mono tiny muted', 'text-anchor': 'middle' }),
     text(906, 342, 'MISSION VECTOR / RESOLVED', { class: 'mono tiny muted', 'text-anchor': 'end' }),
   ]);
+
+  const motionTrace = animated ? node('g', { class: 'systems-motion', 'aria-hidden': 'true', fill: 'none' }, [
+    el('path', { class: 'sys-trace-main', d: 'M68 294C91 283 111 275 130 274C218 266 285 300 365 258C454 211 527 276 610 310C696 345 761 248 835 270C861 278 885 281 910 275', pathLength: 1, stroke: 'url(#systems-route)', 'stroke-width': 3, 'stroke-linecap': 'round' }),
+    el('path', { class: 'sys-relation', d: 'M130 274C252 334 470 334 610 310', pathLength: 1, stroke: theme.blue, 'stroke-width': 1.8, 'stroke-linecap': 'round' }),
+    el('path', { class: 'sys-relation', d: 'M365 258C508 232 690 231 835 270', pathLength: 1, stroke: theme.violet, 'stroke-width': 1.8, 'stroke-linecap': 'round' }),
+  ]) : '';
 
   const nodes = FEATURED_SYSTEMS.flatMap((system, index) => {
     const repo = byKey.get(system.key);
@@ -117,17 +186,28 @@ function renderDesktop(theme: Theme, telemetry: Telemetry): string {
     text(906, 484, `MEASURED ${telemetry.capturedAt.slice(0, 10)}`, { class: 'mono tiny muted', 'text-anchor': 'end' }),
   ]);
 
+  const motionSignals = animated ? node('g', { class: 'systems-motion', 'aria-hidden': 'true' }, [
+    el('circle', { class: 'sys-acquire', cx: 130, cy: 274, r: 27, fill: 'none', stroke: theme.blue, 'stroke-width': 1.3, 'stroke-dasharray': '3 4' }),
+    line(96, 274, 110, 274, { class: 'sys-acquire', stroke: theme.blue }),
+    line(150, 274, 164, 274, { class: 'sys-acquire', stroke: theme.blue }),
+    line(130, 240, 130, 254, { class: 'sys-acquire', stroke: theme.blue }),
+    line(130, 294, 130, 308, { class: 'sys-acquire', stroke: theme.blue }),
+    ...positions.map((position, index) => acquisitionBrackets(position.x, position.y, 17, colors(theme)[index] ?? theme.blue, `sys-node-${index + 1}`)),
+    ...positions.map((position, index) => el('circle', { class: 'sys-resolve', cx: position.x, cy: position.y, r: 25, fill: 'none', stroke: colors(theme)[index] ?? theme.blue, 'stroke-width': 1.1, opacity: .85 })),
+    line(54, 463, 906, 463, { class: 'sys-resolve-line', pathLength: 1, stroke: theme.mint, 'stroke-width': 1.4 }),
+  ]) : '';
+
   return svgDocument({
     width: 960,
     height: 500,
     id: `systems-${theme.name}`,
     title: 'Selected public systems mapped as a mission and relationship graph',
     description: FEATURED_SYSTEMS.map((system) => `${system.repo}: ${system.summary}`).join(' '),
-    body: [styles, defs, title, route, ...nodes, status].join(''),
+    body: [styles, animated ? motionStyles() : '', defs, title, animated ? phaseReadout(theme, 906, 58, 84, 'end') : '', route, motionTrace, ...nodes, status, motionSignals].join(''),
   });
 }
 
-function renderMobile(theme: Theme, telemetry: Telemetry): string {
+function renderMobile(theme: Theme, telemetry: Telemetry, animated: boolean): string {
   const byKey = new Map(telemetry.featured.map((repo) => [repo.key, repo]));
   const labelY = [162, 272, 382, 492] as const;
   const nodeY = [184, 294, 404, 514] as const;
@@ -141,8 +221,24 @@ function renderMobile(theme: Theme, telemetry: Telemetry): string {
     .name{font-size:16.5px;font-weight:650;letter-spacing:-.15px}
     .copy{font-size:11.5px}
   </style>`;
+  const mobileRoute = 'M46 145C31 178 61 216 46 250S31 322 46 360S61 432 46 470S31 538 46 566';
+  const motionTrace = animated ? node('g', { class: 'systems-motion', 'aria-hidden': 'true', fill: 'none' }, [
+    el('path', { class: 'sys-trace-main', d: mobileRoute, pathLength: 1, stroke: theme.blue, 'stroke-width': 2.8, 'stroke-linecap': 'round' }),
+    el('path', { class: 'sys-relation', d: 'M46 184C93 214 93 264 46 294M46 404C93 434 93 484 46 514', pathLength: 1, stroke: theme.violet, 'stroke-width': 1.5, 'stroke-linecap': 'round', 'stroke-dasharray': '2 5' }),
+  ]) : '';
+  const motionSignals = animated ? node('g', { class: 'systems-motion', 'aria-hidden': 'true' }, [
+    el('circle', { class: 'sys-acquire', cx: 46, cy: 184, r: 23, fill: 'none', stroke: theme.blue, 'stroke-width': 1.2, 'stroke-dasharray': '3 4' }),
+    line(17, 184, 25, 184, { class: 'sys-acquire', stroke: theme.blue }),
+    line(67, 184, 75, 184, { class: 'sys-acquire', stroke: theme.blue }),
+    line(46, 155, 46, 163, { class: 'sys-acquire', stroke: theme.blue }),
+    line(46, 205, 46, 213, { class: 'sys-acquire', stroke: theme.blue }),
+    ...nodeY.map((y, index) => acquisitionBrackets(46, y, 14, palette[index] ?? theme.blue, `sys-node-${index + 1}`)),
+    ...nodeY.map((y, index) => el('circle', { class: 'sys-resolve', cx: 46, cy: y, r: 21, fill: 'none', stroke: palette[index] ?? theme.blue, 'stroke-width': 1 })),
+    line(24, 603, 366, 603, { class: 'sys-resolve-line', pathLength: 1, stroke: theme.mint, 'stroke-width': 1.3 }),
+  ]) : '';
   const body = [
     styles,
+    animated ? motionStyles() : '',
     `<defs><filter id="systems-mobile-glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`,
     node('g', { 'data-audit-text': 'heading' }, [
       line(24, 38, 54, 38, { stroke: theme.blue, 'stroke-width': 2 }),
@@ -150,8 +246,10 @@ function renderMobile(theme: Theme, telemetry: Telemetry): string {
       text(24, 82, 'Tracked work in one mission graph.', { 'font-size': 21.5, 'font-weight': 620, 'letter-spacing': -.7 }),
       text(24, 110, 'Four public systems across distinct engineering signals.', { class: 'copy muted' }),
     ]),
-    el('path', { 'data-audit-geometry': 'trajectory', d: 'M46 145C31 178 61 216 46 250S31 322 46 360S61 432 46 470S31 538 46 566', fill: 'none', stroke: theme.line, 'stroke-width': 7, opacity: .14, 'stroke-linecap': 'round' }),
-    el('path', { 'data-audit-geometry': 'trajectory', d: 'M46 145C31 178 61 216 46 250S31 322 46 360S61 432 46 470S31 538 46 566', fill: 'none', stroke: theme.blue, 'stroke-width': 1.4, 'stroke-dasharray': '28 10 3 10' }),
+    animated ? phaseReadout(theme, 366, 128, 142, 'end') : '',
+    el('path', { 'data-audit-geometry': 'trajectory', d: mobileRoute, fill: 'none', stroke: theme.line, 'stroke-width': 7, opacity: .14, 'stroke-linecap': 'round' }),
+    el('path', { 'data-audit-geometry': 'trajectory', d: mobileRoute, fill: 'none', stroke: theme.blue, 'stroke-width': 1.4, 'stroke-dasharray': '28 10 3 10' }),
+    motionTrace,
     ...FEATURED_SYSTEMS.flatMap((system, index) => {
       const repo = byKey.get(system.key);
       if (!repo) throw new Error(`Missing telemetry for ${system.key}`);
@@ -175,6 +273,7 @@ function renderMobile(theme: Theme, telemetry: Telemetry): string {
     el('circle', { cx: 28, cy: 622, r: 3, fill: theme.mint }),
     text(41, 625, 'FOUR SYSTEMS / RESOLVED', { class: 'mono tiny muted' }),
     text(366, 625, telemetry.capturedAt.slice(0, 10), { class: 'mono tiny muted', 'text-anchor': 'end' }),
+    motionSignals,
   ];
   return svgDocument({
     width: 390,
@@ -186,7 +285,7 @@ function renderMobile(theme: Theme, telemetry: Telemetry): string {
   });
 }
 
-export function renderSystems(theme: Theme, telemetry: Telemetry, compact = false): string {
+export function renderSystems(theme: Theme, telemetry: Telemetry, compact = false, animated = true): string {
   assertCollisionSpec(SYSTEMS_COLLISION_SPECS[compact ? 'mobile' : 'desktop']);
-  return compact ? renderMobile(theme, telemetry) : renderDesktop(theme, telemetry);
+  return compact ? renderMobile(theme, telemetry, animated) : renderDesktop(theme, telemetry, animated);
 }

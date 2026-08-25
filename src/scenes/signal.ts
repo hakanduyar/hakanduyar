@@ -56,7 +56,40 @@ function weeklyPath(values: readonly number[], x: number, width: number, baseY: 
   }).join('');
 }
 
-function styles(theme: Theme, compact = false): string {
+function motionStyles(theme: Theme, compact: boolean): string {
+  const inspectorTravel = compact ? 342 : 550;
+  const phaseOpacity = theme.name === 'dark' ? .8 : .7;
+  return `
+    .signal-phase{opacity:${phaseOpacity};animation:signal-phase 6s ease-in-out infinite}
+    .signal-trace-inspection{fill:none;stroke-dasharray:1;stroke-dashoffset:1;animation:signal-trace-inspection 6s cubic-bezier(.42,0,.2,1) infinite}
+    .signal-inspector{opacity:0;transform-box:fill-box;transform-origin:center;animation:signal-inspector 6s cubic-bezier(.42,0,.2,1) infinite}
+    .signal-event{opacity:0;animation:signal-event 6s ease-in-out infinite}
+    .signal-event-ring{fill:none;transform-box:fill-box;transform-origin:center;animation:signal-event-ring 6s ease-out infinite}
+    .signal-inference{fill:none;stroke-dasharray:1;stroke-dashoffset:1;animation:signal-inference 6s cubic-bezier(.42,0,.2,1) infinite}
+    .signal-classification-sweep{opacity:0;transform-box:fill-box;transform-origin:50% 100%;animation:signal-classification-sweep 6s cubic-bezier(.42,0,.2,1) infinite}
+    .signal-branch{fill:none;stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
+    .signal-node-resolve{fill:none;opacity:0;transform-box:fill-box;transform-origin:center}
+    .signal-classify-1{animation:signal-classify-1 6s ease-in-out infinite}
+    .signal-classify-2{animation:signal-classify-2 6s ease-in-out infinite}
+    .signal-classify-3{animation:signal-classify-3 6s ease-in-out infinite}
+    .signal-classify-4{animation:signal-classify-4 6s ease-in-out infinite}
+    .signal-field-resolved{fill:none;opacity:0;transform-box:fill-box;transform-origin:center;animation:signal-field-resolved 6s ease-in-out infinite}
+    @keyframes signal-phase{0%,100%{opacity:${phaseOpacity * .68}}12%,78%{opacity:${phaseOpacity}}90%{opacity:${phaseOpacity * .38}}}
+    @keyframes signal-trace-inspection{0%,8%,92%,100%{opacity:0;stroke-dashoffset:1}12%{opacity:.92;stroke-dashoffset:1}39%,53%{opacity:.9;stroke-dashoffset:0}82%{opacity:.2;stroke-dashoffset:0}}
+    @keyframes signal-inspector{0%,8%,100%{opacity:0;transform:translateX(0)}12%{opacity:.88;transform:translateX(0)}39%{opacity:.88;transform:translateX(${inspectorTravel}px)}45%,92%{opacity:0;transform:translateX(${inspectorTravel}px)}}
+    @keyframes signal-event{0%,14%,31%,100%{opacity:0}17%,26%{opacity:1}}
+    @keyframes signal-event-ring{0%,14%,100%{opacity:0;transform:scale(.65)}17%{opacity:.95;transform:scale(.65)}26%{opacity:.18;transform:scale(1.5)}31%{opacity:0;transform:scale(1.72)}}
+    @keyframes signal-inference{0%,22%,88%,100%{opacity:0;stroke-dashoffset:1}26%{opacity:.82;stroke-dashoffset:1}43%,72%{opacity:.78;stroke-dashoffset:0}82%{opacity:.16;stroke-dashoffset:0}}
+    @keyframes signal-classification-sweep{0%,43%,82%,100%{opacity:0;transform:rotate(0)}48%{opacity:.75;transform:rotate(0)}72%{opacity:.55;transform:rotate(360deg)}78%{opacity:.12;transform:rotate(390deg)}}
+    @keyframes signal-classify-1{0%,46%,88%,100%{opacity:0;stroke-dashoffset:1}50%{opacity:.95;stroke-dashoffset:1}59%,76%{opacity:.9;stroke-dashoffset:0}84%{opacity:.16;stroke-dashoffset:0}}
+    @keyframes signal-classify-2{0%,51%,88%,100%{opacity:0;stroke-dashoffset:1}55%{opacity:.95;stroke-dashoffset:1}64%,76%{opacity:.9;stroke-dashoffset:0}84%{opacity:.16;stroke-dashoffset:0}}
+    @keyframes signal-classify-3{0%,56%,88%,100%{opacity:0;stroke-dashoffset:1}60%{opacity:.95;stroke-dashoffset:1}69%,76%{opacity:.9;stroke-dashoffset:0}84%{opacity:.16;stroke-dashoffset:0}}
+    @keyframes signal-classify-4{0%,61%,88%,100%{opacity:0;stroke-dashoffset:1}65%{opacity:.95;stroke-dashoffset:1}74%,78%{opacity:.9;stroke-dashoffset:0}84%{opacity:.16;stroke-dashoffset:0}}
+    @keyframes signal-field-resolved{0%,68%,91%,100%{opacity:0;transform:scale(.82)}73%{opacity:.8;transform:scale(.82)}82%{opacity:.2;transform:scale(1.16)}}
+  `;
+}
+
+function styles(theme: Theme, compact = false, animated = true): string {
   return `<style>
     text{font-family:${FONT_SANS};fill:${theme.text}}
     .mono{font-family:${FONT_MONO}}
@@ -65,6 +98,7 @@ function styles(theme: Theme, compact = false): string {
     .tiny{font-size:${compact ? 9 : 9.3}px;letter-spacing:${compact ? .65 : .85}px}
     .value{font-size:${compact ? 20 : 23}px;font-weight:650;letter-spacing:-.7px}
     .copy{font-size:${compact ? 11.5 : 12.5}px}
+    ${animated ? motionStyles(theme, compact) : ''}
   </style>`;
 }
 
@@ -76,7 +110,7 @@ function definitions(theme: Theme): string {
   </defs>`;
 }
 
-function renderDesktop(theme: Theme, telemetry: Telemetry): string {
+function renderDesktop(theme: Theme, telemetry: Telemetry, animated: boolean): string {
   const primary = telemetry.languages[0];
   if (!primary) throw new Error('Telemetry has no language data');
 
@@ -143,17 +177,47 @@ function renderDesktop(theme: Theme, telemetry: Telemetry): string {
     text(906, 406, `SOURCE ${telemetry.capturedAt.slice(0, 10)}`, { class: 'mono tiny muted', 'text-anchor': 'end' }),
   ]);
 
+  const maxX = 54 + (telemetry.activity.maxIndex / 51) * 550;
+  const motion = animated ? node('g', { 'aria-hidden': 'true' }, [
+    text(54, 144, 'ACQUIRE → TRACE → CLASSIFY → RESOLVE → QUIET', { class: 'mono tiny muted signal-phase', 'data-audit-text': 'motion-phase' }),
+    el('path', { 'data-audit-geometry': 'motion-trace', d: weeklyPath(telemetry.activity.weekly, 54, 550, 304, 138), pathLength: 1, stroke: 'url(#signal-trace)', 'stroke-width': 3, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', class: 'signal-trace-inspection' }),
+    node('g', { class: 'signal-inspector' }, [
+      line(54, 152, 54, 304, { 'data-audit-geometry': 'motion-inspector', stroke: theme.blue, 'stroke-width': 1, 'stroke-dasharray': '2 7', opacity: .78 }),
+      el('circle', { 'data-audit-geometry': 'motion-inspector', cx: 54, cy: 156, r: 3.2, fill: theme.blue }),
+    ]),
+    node('g', { class: 'signal-event', stroke: theme.red, fill: 'none' }, [
+      el('path', { 'data-audit-geometry': 'motion-event', d: `M${number(maxX - 12)} 156V152H${number(maxX - 8)}M${number(maxX + 12)} 156V152H${number(maxX + 8)}M${number(maxX - 12)} 176V180H${number(maxX - 8)}M${number(maxX + 12)} 176V180H${number(maxX + 8)}`, 'stroke-width': 1.4 }),
+      el('circle', { 'data-audit-geometry': 'motion-event', cx: maxX, cy: 166, r: 12, stroke: theme.red, 'stroke-width': 1, class: 'signal-event-ring' }),
+    ]),
+    el('path', { 'data-audit-geometry': 'motion-inference', d: `M${number(maxX)} 166C390 140 620 140 810 158`, pathLength: 1, stroke: theme.violet, 'stroke-width': 1.2, 'stroke-dasharray': '3 8', class: 'signal-inference' }),
+    node('g', { class: 'signal-classification-sweep', stroke: theme.violet, fill: 'none' }, [
+      line(810, 240, 810, 180, { 'data-audit-geometry': 'motion-classification', 'stroke-width': 1.2 }),
+      el('path', { 'data-audit-geometry': 'motion-classification', d: 'M803 184L810 176L817 184', 'stroke-width': 1.1 }),
+    ]),
+    ...languages.flatMap((language, index) => {
+      const position = positions[index];
+      const color = colors[index];
+      if (!position || !color) throw new Error(`Missing motion language position ${index}`);
+      const sequence = index + 1;
+      return [
+        el('path', { 'data-audit-geometry': 'motion-branch', d: `M${fieldCx} ${fieldCy}L${position.x} ${position.y}`, pathLength: 1, stroke: color, 'stroke-width': 2, class: `signal-branch signal-classify-${sequence}` }),
+        el('circle', { 'data-audit-geometry': 'motion-node', cx: position.x, cy: position.y, r: 10, stroke: color, 'stroke-width': 1.2, class: `signal-node-resolve signal-classify-${sequence}` }),
+      ];
+    }),
+    el('circle', { 'data-audit-geometry': 'motion-resolved', cx: fieldCx, cy: fieldCy, r: 55, stroke: theme.mint, 'stroke-width': 1.1, class: 'signal-field-resolved' }),
+  ]) : '';
+
   return svgDocument({
     width: 960,
     height: 440,
     id: `signal-${theme.name}`,
     title: 'Measured public engineering signal',
     description: `${telemetry.activity.total} public contributions across 52 complete weeks ending ${telemetry.activity.end}; ${telemetry.publicRepos} public non-fork repositories; primary public source language ${primary.name} at ${(primary.share * 100).toFixed(1)} percent.`,
-    body: [styles(theme), definitions(theme), heading, grid, trace, constellation, measured].join(''),
+    body: [styles(theme, false, animated), definitions(theme), heading, grid, trace, constellation, measured, motion].join(''),
   });
 }
 
-function renderMobile(theme: Theme, telemetry: Telemetry): string {
+function renderMobile(theme: Theme, telemetry: Telemetry, animated: boolean): string {
   const primary = telemetry.languages[0];
   if (!primary) throw new Error('Telemetry has no language data');
   const languages = telemetry.languages.slice(0, 4);
@@ -166,7 +230,7 @@ function renderMobile(theme: Theme, telemetry: Telemetry): string {
   ] as const;
   const max = Math.max(...telemetry.activity.weekly, 1);
   const body = [
-    styles(theme, true), definitions(theme),
+    styles(theme, true, animated), definitions(theme),
     node('g', { 'data-audit-text': 'heading' }, [
       line(24, 38, 54, 38, { stroke: theme.red, 'stroke-width': 2 }),
       text(67, 42, 'PUBLIC SIGNAL / MEASURED', { class: 'mono micro', fill: theme.red }),
@@ -213,6 +277,33 @@ function renderMobile(theme: Theme, telemetry: Telemetry): string {
       text(24, 638, `PRIMARY / ${primary.name.toUpperCase()}`, { class: 'mono tiny muted' }),
       text(366, 638, `SOURCE ${telemetry.capturedAt.slice(0, 10)}`, { class: 'mono tiny muted', 'text-anchor': 'end' }),
     ]),
+    animated ? node('g', { 'aria-hidden': 'true' }, [
+      text(24, 144, 'ACQUIRE → TRACE → CLASSIFY → RESOLVE → QUIET', { class: 'mono tiny muted signal-phase', 'data-audit-text': 'motion-phase' }),
+      el('path', { 'data-audit-geometry': 'motion-trace', d: weeklyPath(telemetry.activity.weekly, 24, 342, 304, 138), pathLength: 1, stroke: 'url(#signal-trace)', 'stroke-width': 3, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', class: 'signal-trace-inspection' }),
+      node('g', { class: 'signal-inspector' }, [
+        line(24, 152, 24, 304, { 'data-audit-geometry': 'motion-inspector', stroke: theme.blue, 'stroke-width': 1, 'stroke-dasharray': '2 7', opacity: .78 }),
+        el('circle', { 'data-audit-geometry': 'motion-inspector', cx: 24, cy: 156, r: 3.2, fill: theme.blue }),
+      ]),
+      node('g', { class: 'signal-event', stroke: theme.red, fill: 'none' }, [
+        el('path', { 'data-audit-geometry': 'motion-event', d: `M${number(24 + telemetry.activity.maxIndex / 51 * 342 - 11)} 156V152H${number(24 + telemetry.activity.maxIndex / 51 * 342 - 7)}M${number(24 + telemetry.activity.maxIndex / 51 * 342 + 11)} 156V152H${number(24 + telemetry.activity.maxIndex / 51 * 342 + 7)}M${number(24 + telemetry.activity.maxIndex / 51 * 342 - 11)} 176V180H${number(24 + telemetry.activity.maxIndex / 51 * 342 - 7)}M${number(24 + telemetry.activity.maxIndex / 51 * 342 + 11)} 176V180H${number(24 + telemetry.activity.maxIndex / 51 * 342 + 7)}`, 'stroke-width': 1.4 }),
+        el('circle', { 'data-audit-geometry': 'motion-event', cx: 24 + telemetry.activity.maxIndex / 51 * 342, cy: 166, r: 11, stroke: theme.red, 'stroke-width': 1, class: 'signal-event-ring' }),
+      ]),
+      node('g', { class: 'signal-classification-sweep', stroke: theme.violet, fill: 'none' }, [
+        line(195, 505, 195, 445, { 'data-audit-geometry': 'motion-classification', 'stroke-width': 1.2 }),
+        el('path', { 'data-audit-geometry': 'motion-classification', d: 'M188 449L195 441L202 449', 'stroke-width': 1.1 }),
+      ]),
+      ...languages.flatMap((language, index) => {
+        const position = positions[index];
+        const color = palette[index];
+        if (!position || !color) throw new Error(`Missing mobile motion language position ${index}`);
+        const sequence = index + 1;
+        return [
+          el('path', { 'data-audit-geometry': 'motion-branch', d: `M195 505L${position.x} ${position.y}`, pathLength: 1, stroke: color, 'stroke-width': 2, class: `signal-branch signal-classify-${sequence}` }),
+          el('circle', { 'data-audit-geometry': 'motion-node', cx: position.x, cy: position.y, r: 9, stroke: color, 'stroke-width': 1.2, class: `signal-node-resolve signal-classify-${sequence}` }),
+        ];
+      }),
+      el('circle', { 'data-audit-geometry': 'motion-resolved', cx: 195, cy: 505, r: 53, stroke: theme.mint, 'stroke-width': 1.1, class: 'signal-field-resolved' }),
+    ]) : '',
   ];
   return svgDocument({
     width: 390,
@@ -224,7 +315,7 @@ function renderMobile(theme: Theme, telemetry: Telemetry): string {
   });
 }
 
-export function renderSignal(theme: Theme, telemetry: Telemetry, compact = false): string {
+export function renderSignal(theme: Theme, telemetry: Telemetry, compact = false, animated = true): string {
   assertCollisionSpec(SIGNAL_COLLISION_SPECS[compact ? 'mobile' : 'desktop']);
-  return compact ? renderMobile(theme, telemetry) : renderDesktop(theme, telemetry);
+  return compact ? renderMobile(theme, telemetry, animated) : renderDesktop(theme, telemetry, animated);
 }

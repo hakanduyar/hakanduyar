@@ -2,27 +2,11 @@ import { existsSync, readFileSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { XMLValidator } from 'fast-xml-parser';
 import { FEATURED_SYSTEMS } from '../src/config.js';
+import { GENERATED_ASSET_NAMES } from '../src/assets.js';
 import { REPO_ROOT } from '../src/emit.js';
 import type { Telemetry } from '../src/telemetry.js';
 
-const assets = [
-  'hero-light.svg',
-  'hero-dark.svg',
-  'hero-static-light.svg',
-  'hero-static-dark.svg',
-  'systems-light.svg',
-  'systems-dark.svg',
-  'systems-mobile-light.svg',
-  'systems-mobile-dark.svg',
-  'architecture-light.svg',
-  'architecture-dark.svg',
-  'architecture-mobile-light.svg',
-  'architecture-mobile-dark.svg',
-  'signal-light.svg',
-  'signal-dark.svg',
-  'signal-mobile-light.svg',
-  'signal-mobile-dark.svg',
-] as const;
+const assets = GENERATED_ASSET_NAMES;
 
 const errors: string[] = [];
 const fail = (message: string): void => {
@@ -49,9 +33,16 @@ for (const asset of assets) {
   if (!asset.startsWith('hero-') && (!source.includes('data-audit-text') || !source.includes('data-audit-geometry'))) {
     fail(`${asset}: collision-audit hooks are missing`);
   }
-  const limit = asset.startsWith('hero-') ? 80_000 : 70_000;
+  const limit = asset.includes('static') ? 25_000 : asset.startsWith('hero-') ? 80_000 : 35_000;
   if (statSync(path).size > limit) fail(`${asset}: exceeds ${limit.toLocaleString()} byte budget`);
 }
+
+const totalBytes = assets.reduce((sum, asset) => {
+  const path = resolve(REPO_ROOT, 'assets/generated', asset);
+  return sum + (existsSync(path) ? statSync(path).size : 0);
+}, 0);
+const totalBudget = 320_000;
+if (totalBytes > totalBudget) fail(`generated profile: ${totalBytes.toLocaleString()} bytes exceeds ${totalBudget.toLocaleString()} byte total budget`);
 
 for (const theme of ['light', 'dark'] as const) {
   const motion = readFileSync(resolve(REPO_ROOT, `assets/generated/hero-${theme}.svg`), 'utf8');
@@ -63,13 +54,29 @@ for (const theme of ['light', 'dark'] as const) {
   for (const transition of ['flight-to-signal', 'signal-to-spatial', 'spatial-to-flight']) {
     if (!motion.includes(`data-hero-transition="${transition}"`)) fail(`hero-${theme}.svg: missing ${transition} choreography`);
   }
-  for (const semantic of ['ACQUIRE / INTERSECTIONS', 'CLASSIFY / LAYER MAP', 'ALIGN / NUCLEUS LOCK']) {
+  for (const semantic of ['DETECT / INTERSECTIONS', 'CLASSIFY / NODE FUNCTION', 'RESOLVE / COORDINATE FIELD']) {
     if (!motion.includes(semantic)) fail(`hero-${theme}.svg: missing transition semantic ${semantic}`);
   }
   if (!motion.includes('animation:orbit-reverse 12s') || !motion.includes('animation:core-breathe 6s')) {
     fail(`hero-${theme}.svg: idle motion does not close cleanly on the 12s loop`);
   }
   if (reduced.includes('@keyframes') || reduced.includes('12s')) fail(`hero-static-${theme}.svg: reduced-motion asset still animates`);
+}
+
+for (const scene of ['systems', 'architecture', 'signal'] as const) {
+  for (const theme of ['light', 'dark'] as const) {
+    for (const mobile of ['', '-mobile'] as const) {
+      const motionName = `${scene}${mobile}-${theme}.svg`;
+      const staticName = `${scene}${mobile}-static-${theme}.svg`;
+      const motion = readFileSync(resolve(REPO_ROOT, 'assets/generated', motionName), 'utf8');
+      const reduced = readFileSync(resolve(REPO_ROOT, 'assets/generated', staticName), 'utf8');
+      if (!motion.includes('@keyframes') || !/\b6(?:\.\d+)?s\b/.test(motion)) fail(`${motionName}: six-second interpretation loop is missing`);
+      for (const phase of ['ACQUIRE', 'TRACE', 'CLASSIFY', 'RESOLVE', 'QUIET']) {
+        if (!motion.includes(phase)) fail(`${motionName}: ${phase} phase notation is missing`);
+      }
+      if (reduced.includes('@keyframes') || /\banimation(?:-[a-z-]+)?\s*:/.test(reduced)) fail(`${staticName}: reduced-motion asset still animates`);
+    }
+  }
 }
 
 const readmePath = resolve(REPO_ROOT, 'README.md');
@@ -82,9 +89,14 @@ for (const asset of assets) {
   if (!readme.includes(`assets/generated/${asset}`)) fail(`README.md: ${asset} is not referenced`);
 }
 for (const mobileScene of ['systems', 'architecture', 'signal']) {
+  const mobileStaticDark = `<source media="(prefers-reduced-motion: reduce) and (max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/${mobileScene}-mobile-static-dark.svg">`;
+  const mobileStaticLight = `<source media="(prefers-reduced-motion: reduce) and (max-width: 1080px)" srcset="assets/generated/${mobileScene}-mobile-static-light.svg">`;
+  const staticDark = `<source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/generated/${mobileScene}-static-dark.svg">`;
+  const staticLight = `<source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/${mobileScene}-static-light.svg">`;
   const mobileDark = `<source media="(max-width: 1080px) and (prefers-color-scheme: dark)" srcset="assets/generated/${mobileScene}-mobile-dark.svg">`;
   const mobileLight = `<source media="(max-width: 1080px)" srcset="assets/generated/${mobileScene}-mobile-light.svg">`;
-  if (!readme.includes(mobileDark) || !readme.includes(mobileLight)) {
+  const positions = [mobileStaticDark, mobileStaticLight, staticDark, staticLight, mobileDark, mobileLight].map((source) => readme.indexOf(source));
+  if (positions.some((position) => position < 0) || positions.some((position, index) => index > 0 && position <= positions[index - 1]!)) {
     fail(`README.md: ${mobileScene} responsive source ordering is invalid`);
   }
 }
@@ -115,5 +127,5 @@ if (errors.length) {
   console.error(errors.map((error) => `[validate] ${error}`).join('\n'));
   process.exitCode = 1;
 } else {
-  console.log(`[validate] ${assets.length} SVG assets, README, telemetry, accessibility, budgets, and compatibility passed`);
+  console.log(`[validate] ${assets.length} SVG assets (${totalBytes.toLocaleString()} bytes), README, telemetry, accessibility, budgets, and compatibility passed`);
 }
