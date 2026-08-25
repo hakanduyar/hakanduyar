@@ -1,12 +1,19 @@
 {
   "version": "4.2",
-  "capturedAt": "2026-08-25T06:45:13.056Z",
-  "previewDigest": "cca519dfe7f0c8d565d30d585de164ad1c5180cf6a37c30d5baa8950f34d16eb",
+  "capturedAt": "2026-08-25T10:11:53.733Z",
+  "previewDigest": "c5dac3a33ec28054e6d62da1ba8b010eb5929b7cd4e6813a98eaed211621b88b",
   "results": [
     {
       "file": "page-dark-desktop-reduced-motion.png",
       "broken": 0,
       "innerWidth": 1440,
+      "nativeText": "",
+      "readmeElements": [
+        "IMG",
+        "IMG",
+        "IMG",
+        "IMG"
+      ],
       "scrollWidth": 1425,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-static-dark.svg",
@@ -19,6 +26,13 @@
       "file": "page-light-desktop.png",
       "broken": 0,
       "innerWidth": 1440,
+      "nativeText": "",
+      "readmeElements": [
+        "IMG",
+        "IMG",
+        "IMG",
+        "IMG"
+      ],
       "scrollWidth": 1425,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-light.svg",
@@ -31,6 +45,13 @@
       "file": "page-dark-mobile.png",
       "broken": 0,
       "innerWidth": 390,
+      "nativeText": "",
+      "readmeElements": [
+        "IMG",
+        "IMG",
+        "IMG",
+        "IMG"
+      ],
       "scrollWidth": 375,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-dark.svg",
@@ -43,6 +64,13 @@
       "file": "page-light-mobile.png",
       "broken": 0,
       "innerWidth": 390,
+      "nativeText": "",
+      "readmeElements": [
+        "IMG",
+        "IMG",
+        "IMG",
+        "IMG"
+      ],
       "scrollWidth": 375,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-light.svg",
@@ -55,6 +83,13 @@
       "file": "page-dark-mobile-reduced-motion.png",
       "broken": 0,
       "innerWidth": 390,
+      "nativeText": "",
+      "readmeElements": [
+        "IMG",
+        "IMG",
+        "IMG",
+        "IMG"
+      ],
       "scrollWidth": 375,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-static-dark.svg",
@@ -67,6 +102,13 @@
       "file": "page-intermediate-light.png",
       "broken": 0,
       "innerWidth": 1000,
+      "nativeText": "",
+      "readmeElements": [
+        "IMG",
+        "IMG",
+        "IMG",
+        "IMG"
+      ],
       "scrollWidth": 985,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-light.svg",

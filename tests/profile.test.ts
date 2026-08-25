@@ -23,9 +23,26 @@ describe('generated profile', () => {
     expect(telemetry.activity.total).toBe(telemetry.activity.weekly.reduce((sum, value) => sum + value, 0));
   });
 
-  it('keeps every image local and every selected repository linked', () => {
+  it('renders the visible README exclusively as four local picture blocks', () => {
     expect(readme).not.toMatch(/<(?:img|source)[^>]+(?:src|srcset)="https?:/i);
-    for (const system of FEATURED_SYSTEMS) expect(readme).toContain(`https://github.com/hakanduyar/${system.repo}`);
+    const withoutComments = readme.replace(/<!--[\s\S]*?-->/g, '');
+    const blocks = withoutComments.match(/<picture>[\s\S]*?<\/picture>/g) ?? [];
+    expect(blocks).toHaveLength(4);
+    expect(withoutComments.replace(/<picture>[\s\S]*?<\/picture>/g, '').trim()).toBe('');
+    for (const block of blocks) {
+      expect(block.match(/<img\b/g)).toHaveLength(1);
+      expect(
+        block
+          .replace(/^<picture>\s*/, '')
+          .replace(/\s*<\/picture>$/, '')
+          .replace(/<source\b[^>]*>/g, '')
+          .replace(/<img\b[^>]*>/g, '')
+          .trim(),
+      ).toBe('');
+      expect(block).toMatch(/<img\b[^>]*\balt="[^"]+"/);
+    }
+    for (const system of FEATURED_SYSTEMS) expect(readme).toContain(system.summary);
+    expect(readme).toContain(`${telemetry.totalCommits} default-branch commits`);
   });
 
   it('provides animated, responsive, and reduced-motion sources for every intelligence scene', () => {

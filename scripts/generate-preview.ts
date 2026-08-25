@@ -1,6 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { CHANNELS, FEATURED_SYSTEMS, PROFILE_COPY } from '../src/config.js';
+import { PROFILE_COPY } from '../src/config.js';
 import { REPO_ROOT } from '../src/emit.js';
 import type { Telemetry } from '../src/telemetry.js';
 
@@ -26,16 +26,6 @@ function profileImage(name: string, alt: string, animated = false, responsive = 
   return `<img class="profile-visual" data-light="${base}-light.svg" data-dark="${base}-dark.svg"${staticAttrs}${mobileAttrs}${mobileStaticAttrs} src="${base}-light.svg" alt="${escapeHtml(alt)}">`;
 }
 
-const systemLinks = FEATURED_SYSTEMS.map((system) => {
-  const repo = telemetry.featured.find((entry) => entry.key === system.key);
-  if (!repo) throw new Error(`Missing telemetry for ${system.repo}`);
-  return `<li><a href="${repo.url}">${repo.name}</a> — ${escapeHtml(system.summary)} <em>${system.stack.join(' · ')}</em></li>`;
-}).join('');
-
-const recent = telemetry.recentPushes.map((push) =>
-  `<li><a href="${push.url}">${push.repo}</a> — ${escapeHtml(push.description ?? 'Public repository')}</li>`,
-).join('');
-
 const pins = telemetry.featured.map((repo) => `<article class="pin">
   <div><span class="repo-icon">▱</span><a href="${repo.url}">${repo.name}</a><span class="public">Public</span></div>
   <p>${escapeHtml(repo.description ?? 'Public engineering project')}</p>
@@ -47,8 +37,6 @@ const activity = telemetry.activity.weekly.map((value) => {
   const level = value === 0 ? 0 : Math.max(1, Math.ceil((value / maxWeek) * 4));
   return `<i class="week l${level}" title="${value} public contributions"></i>`;
 }).join('');
-
-const channels = CHANNELS.map((channel) => `<a href="${channel.href}">${channel.label}</a>`).join(' · ');
 
 const html = `<!doctype html>
 <html lang="en" data-theme="light">
@@ -70,11 +58,9 @@ html.mobile .top{padding:0 14px;height:56px}.mobile .search,.mobile .top nav{dis
 <section>
 <article class="readme"><div class="readme-head">hakanduyar / README.md</div><div class="markdown">
 ${profileImage('hero', 'Hakan Duyar circular identity field with Flight, Signal, and Spatial modes.', true)}
-<p class="strap">${PROFILE_COPY.strapline}</p><p>${PROFILE_COPY.introduction}</p>
-<h2>Selected systems</h2>${profileImage('systems', 'Four selected systems arranged on a connected engineering path.', true, true)}<ul>${systemLinks}</ul>
-<h2>Architecture</h2>${profileImage('architecture', 'Interface, state, services, and delivery shown as spatial architecture layers.', true, true)}<p>${PROFILE_COPY.architecture}</p>
-<h2>Public signal</h2>${profileImage('signal', 'Measured 52-week public contribution signal and language distribution.', true, true)}<p>The signal is generated from public GitHub data: <strong>${telemetry.activity.total.toLocaleString('en-US')} contributions across 52 complete weeks</strong>, <strong>${telemetry.publicRepos} public repositories</strong>, and <strong>${telemetry.totalCommits.toLocaleString('en-US')} default-branch commits</strong>.</p>
-<h2>Current public work</h2><ul>${recent}</ul><h2>Channels</h2><p>${channels}</p><p class="fine">${PROFILE_COPY.provenance}</p>
+${profileImage('systems', 'Four selected systems arranged on a connected engineering path.', true, true)}
+${profileImage('architecture', 'Interface, state, services, and delivery shown as spatial architecture layers.', true, true)}
+${profileImage('signal', 'Measured 52-week public contribution signal and language distribution.', true, true)}
 </div></article>
 <section class="native"><h2>Pinned</h2><div class="pins">${pins}</div><h2>${telemetry.contributions.total.toLocaleString('en-US')} contributions in the last year</h2><div class="activity"><div class="activity-head"><span>52 complete measured weeks</span><span>${telemetry.activity.start} — ${telemetry.activity.end}</span></div><div class="weeks">${activity}</div></div></section>
 </section>

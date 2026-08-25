@@ -1,10 +1,16 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { CHANNELS, FEATURED_SYSTEMS, PROFILE_COPY } from '../src/config.js';
+import { FEATURED_SYSTEMS, PROFILE_COPY } from '../src/config.js';
 import { REPO_ROOT } from '../src/emit.js';
 import type { Telemetry } from '../src/telemetry.js';
 
 const telemetry = JSON.parse(readFileSync(resolve(REPO_ROOT, 'data/telemetry.json'), 'utf8')) as Telemetry;
+
+function escapeAttribute(value: string): string {
+  return value.replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  })[character] ?? character);
+}
 
 function picture(name: string, alt: string, animated = false, responsive = false): string {
   const sources: string[] = [];
@@ -27,50 +33,32 @@ function picture(name: string, alt: string, animated = false, responsive = false
     );
   }
   sources.push(`  <source media="(prefers-color-scheme: dark)" srcset="assets/generated/${name}-dark.svg">`);
-  return ['<picture>', ...sources, `  <img src="assets/generated/${name}-light.svg" alt="${alt}" width="960">`, '</picture>'].join('\n');
+  return ['<picture>', ...sources, `  <img src="assets/generated/${name}-light.svg" alt="${escapeAttribute(alt)}" width="960">`, '</picture>'].join('\n');
 }
 
-function month(value: string): string {
-  return new Intl.DateTimeFormat('en', { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(value));
-}
-
-const featuredLinks = FEATURED_SYSTEMS.map((system) => {
-  const data = telemetry.featured.find((entry) => entry.key === system.key);
-  if (!data) throw new Error(`Missing telemetry for ${system.repo}`);
-  return `- [${data.name}](${data.url}) — ${system.summary} _${system.stack.join(' · ')}_`;
-}).join('\n');
-
-const pushes = telemetry.recentPushes
-  .map((push) => `- [${push.repo}](${push.url}) — pushed ${month(push.at)}${push.description ? `; ${push.description}` : ''}`)
-  .join('\n');
-
-const channels = CHANNELS.map((channel) => `[${channel.label}](${channel.href})`).join(' · ');
 const measuredThrough = telemetry.activity.end;
+const systemsAlt = FEATURED_SYSTEMS
+  .map((system) => `${system.repo}: ${system.summary} Stack: ${system.stack.join(', ')}.`)
+  .join(' ');
+const languagesAlt = telemetry.languages
+  .slice(0, 4)
+  .map((language) => `${language.name} ${(language.share * 100).toFixed(1)} percent`)
+  .join(', ');
 
 const readme = `<!-- GENERATED FILE: edit src/ and scripts/, then run npm run build. -->
 
 ${picture(
   'hero',
-  'Hakan Duyar identity field: a circular signal nucleus transitions through Flight, Signal, and Spatial engineering modes.',
+  `Hakan Duyar. ${PROFILE_COPY.strapline} ${PROFILE_COPY.introduction} A circular signal nucleus transitions through Flight, Signal, and Spatial engineering modes.`,
   true,
 )}
-
-**${PROFILE_COPY.strapline}**
-
-${PROFILE_COPY.introduction}
-
-## Selected systems
 
 ${picture(
   'systems',
-  'Four selected systems arranged as a connected mission path: DropSpot, Spark, Stock Management System, and Hunnes Academy Motion System.',
+  `Four selected systems arranged as a connected mission path. ${systemsAlt}`,
   true,
   true,
 )}
-
-${featuredLinks}
-
-## Architecture
 
 ${picture(
   'architecture',
@@ -79,28 +67,12 @@ ${picture(
   true,
 )}
 
-${PROFILE_COPY.architecture}
-
-## Public signal
-
 ${picture(
   'signal',
-  `Measured public GitHub activity across 52 complete weeks ending ${measuredThrough}, plus the language distribution of public non-fork repositories.`,
+  `Measured public GitHub activity: ${telemetry.activity.total} contributions across 52 complete weeks ending ${measuredThrough}; ${telemetry.publicRepos} public non-fork repositories; ${telemetry.totalCommits} default-branch commits. Public source languages: ${languagesAlt}. Snapshot ${telemetry.capturedAt.slice(0, 10)}.`,
   true,
   true,
 )}
-
-The signal above is generated from GitHub's public GraphQL data: **${telemetry.activity.total.toLocaleString('en-US')} contributions across 52 complete weeks**, **${telemetry.publicRepos} public repositories**, and **${telemetry.totalCommits.toLocaleString('en-US')} default-branch commits**. Snapshot: ${telemetry.capturedAt.slice(0, 10)}.
-
-## Current public work
-
-${pushes}
-
-## Channels
-
-${channels}
-
-<sub>${PROFILE_COPY.provenance}</sub>
 `;
 
 writeFileSync(resolve(REPO_ROOT, 'README.md'), readme, 'utf8');

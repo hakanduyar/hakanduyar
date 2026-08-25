@@ -16,6 +16,12 @@ describe('preview asset selection smoke coverage', () => {
     }
   });
 
+  it('keeps the simulated README body image-only', () => {
+    const body = preview.match(/<div class="markdown">\s*([\s\S]*?)\s*<\/div><\/article>/)?.[1] ?? '';
+    expect(body.match(/<img\b[^>]*class="profile-visual"[^>]*>/g)).toHaveLength(4);
+    expect(body.replace(/<img\b[^>]*>/g, '').trim()).toBe('');
+  });
+
   it('selects reduced mobile before reduced desktop, then animated mobile and desktop', () => {
     const selector = preview.match(/function render\(\)\{.+?\}\n/s)?.[0] ?? '';
     const order = [

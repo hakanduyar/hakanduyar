@@ -29,6 +29,8 @@ interface PageSourceResult {
   innerWidth: number;
   scrollWidth: number;
   sources: string[];
+  nativeText: string;
+  readmeElements: string[];
 }
 
 interface PageSourceEvidence {
@@ -130,6 +132,9 @@ for (const [file, expected] of Object.entries(expectedSources)) {
   const actual = result.sources.map((source) => source.split('/').at(-1));
   if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error(`${file}: unexpected responsive/reduced source selection`);
   if (result.broken !== 0 || result.scrollWidth > result.innerWidth) throw new Error(`${file}: broken image or horizontal overflow`);
+  if (result.nativeText.trim() || JSON.stringify(result.readmeElements) !== JSON.stringify(['IMG', 'IMG', 'IMG', 'IMG'])) {
+    throw new Error(`${file}: simulated README body is not image-only`);
+  }
 }
 
 console.log(`[collision-evidence] ${evidence.results.length} rendered audits match ${files.length} SVGs; ${pageEvidence.results.length} preview source cases passed`);

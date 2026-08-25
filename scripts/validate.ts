@@ -82,6 +82,23 @@ for (const scene of ['systems', 'architecture', 'signal'] as const) {
 const readmePath = resolve(REPO_ROOT, 'README.md');
 const readme = readFileSync(readmePath, 'utf8');
 if (!readme.startsWith('<!-- GENERATED FILE:')) fail('README.md: generated-file marker is missing');
+const readmeWithoutComments = readme.replace(/<!--[\s\S]*?-->/g, '');
+const pictureBlocks = readmeWithoutComments.match(/<picture>[\s\S]*?<\/picture>/g) ?? [];
+if (pictureBlocks.length !== 4) fail(`README.md: expected exactly four picture blocks, found ${pictureBlocks.length}`);
+if (readmeWithoutComments.replace(/<picture>[\s\S]*?<\/picture>/g, '').trim()) {
+  fail('README.md: visible native text or markup exists outside the picture blocks');
+}
+for (const [index, block] of pictureBlocks.entries()) {
+  if ((block.match(/<img\b/g) ?? []).length !== 1) fail(`README.md: picture block ${index + 1} must contain exactly one image`);
+  const innerResidue = block
+    .replace(/^<picture>\s*/, '')
+    .replace(/\s*<\/picture>$/, '')
+    .replace(/<source\b[^>]*>/g, '')
+    .replace(/<img\b[^>]*>/g, '')
+    .trim();
+  if (innerResidue) fail(`README.md: picture block ${index + 1} contains visible native content`);
+  if (!/<img\b[^>]*\balt="[^"]+"/.test(block)) fail(`README.md: picture block ${index + 1} is missing non-empty alt text`);
+}
 if (/<(?:img|source)\b[^>]*(?:src|srcset)="https?:/i.test(readme) || /!\[[^\]]*\]\(https?:/i.test(readme)) {
   fail('README.md: remote image dependency detected');
 }
