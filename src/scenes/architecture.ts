@@ -34,7 +34,7 @@ function motionStyles(theme: Theme, compact: boolean): string {
   const signalTravel = compact
     ? '0%,8%,100%{opacity:0;transform:translateY(0)}12%{opacity:1;transform:translateY(0)}22%{opacity:1;transform:translateY(38px)}36%{opacity:1;transform:translateY(123px)}50%{opacity:1;transform:translateY(208px)}64%,72%{opacity:1;transform:translateY(293px)}82%,92%{opacity:0;transform:translateY(293px)}'
     : '0%,8%,100%{opacity:0;transform:translateY(0)}12%,22%{opacity:1;transform:translateY(0)}36%{opacity:1;transform:translateY(66px)}50%{opacity:1;transform:translateY(132px)}64%,72%{opacity:1;transform:translateY(198px)}82%,92%{opacity:0;transform:translateY(198px)}';
-  const phaseOpacity = theme.name === 'dark' ? .78 : .68;
+  const phaseOpacity = theme.name === 'dark' ? .78 : 1;
   return `
     .architecture-phase{opacity:${phaseOpacity};animation:architecture-phase 6s ease-in-out infinite}
     .architecture-dependency,.architecture-plane-resolve{fill:none;opacity:0;stroke-dasharray:1;stroke-dashoffset:1}

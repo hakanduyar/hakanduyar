@@ -1,7 +1,7 @@
 {
   "version": "4.2",
-  "capturedAt": "2026-08-25T06:38:43.108Z",
-  "sourceDigest": "e5c15b0b6f994f67308e28f9c1b33ee61a261fd3722e19f9d6ed2827a1b33dc9",
+  "capturedAt": "2026-08-25T11:30:31.302Z",
+  "sourceDigest": "8800d4dcb11a992d1c5686773d0e70d55f8b03264bc5fabdfc041ccd8a76dce9",
   "widths": {
     "desktop": 890,
     "intermediate": 1000,
@@ -202,7 +202,7 @@
       "outOfBounds": [],
       "overlaps": [],
       "renderedWidth": 890,
-      "visibleGeometry": 16,
+      "visibleGeometry": 18,
       "visibleText": 25
     },
     {
@@ -267,7 +267,7 @@
       "outOfBounds": [],
       "overlaps": [],
       "renderedWidth": 390,
-      "visibleGeometry": 14,
+      "visibleGeometry": 15,
       "visibleText": 23
     },
     {
@@ -787,8 +787,8 @@
       "outOfBounds": [],
       "overlaps": [],
       "renderedWidth": 530,
-      "visibleGeometry": 12,
-      "visibleText": 23
+      "visibleGeometry": 15,
+      "visibleText": 25
     },
     {
       "name": "systems-dark-intermediate-resolved",
@@ -800,8 +800,8 @@
       "outOfBounds": [],
       "overlaps": [],
       "renderedWidth": 530,
-      "visibleGeometry": 15,
-      "visibleText": 23
+      "visibleGeometry": 18,
+      "visibleText": 25
     },
     {
       "name": "systems-light-intermediate-mid",
@@ -813,8 +813,8 @@
       "outOfBounds": [],
       "overlaps": [],
       "renderedWidth": 530,
-      "visibleGeometry": 12,
-      "visibleText": 23
+      "visibleGeometry": 15,
+      "visibleText": 25
     },
     {
       "name": "systems-light-intermediate-resolved",
@@ -826,8 +826,8 @@
       "outOfBounds": [],
       "overlaps": [],
       "renderedWidth": 530,
-      "visibleGeometry": 15,
-      "visibleText": 23
+      "visibleGeometry": 18,
+      "visibleText": 25
     },
     {
       "name": "architecture-dark-intermediate-mid",
@@ -917,7 +917,7 @@
       "outOfBounds": [],
       "overlaps": [],
       "renderedWidth": 530,
-      "visibleGeometry": 8,
+      "visibleGeometry": 10,
       "visibleText": 17
     },
     {
@@ -932,6 +932,58 @@
       "renderedWidth": 530,
       "visibleGeometry": 14,
       "visibleText": 17
+    },
+    {
+      "name": "theme-control-dark-desktop-static",
+      "scene": "theme-control",
+      "theme": "dark",
+      "layout": "desktop",
+      "frame": "static",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": [],
+      "renderedWidth": 890,
+      "visibleGeometry": 0,
+      "visibleText": 4
+    },
+    {
+      "name": "theme-control-dark-mobile-static",
+      "scene": "theme-control",
+      "theme": "dark",
+      "layout": "mobile",
+      "frame": "static",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": [],
+      "renderedWidth": 390,
+      "visibleGeometry": 0,
+      "visibleText": 4
+    },
+    {
+      "name": "theme-control-light-desktop-static",
+      "scene": "theme-control",
+      "theme": "light",
+      "layout": "desktop",
+      "frame": "static",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": [],
+      "renderedWidth": 890,
+      "visibleGeometry": 0,
+      "visibleText": 4
+    },
+    {
+      "name": "theme-control-light-mobile-static",
+      "scene": "theme-control",
+      "theme": "light",
+      "layout": "mobile",
+      "frame": "static",
+      "geometryHits": [],
+      "outOfBounds": [],
+      "overlaps": [],
+      "renderedWidth": 390,
+      "visibleGeometry": 0,
+      "visibleText": 4
     }
   ]
 }

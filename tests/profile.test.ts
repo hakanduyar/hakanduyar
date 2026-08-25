@@ -11,10 +11,10 @@ describe('generated profile', () => {
 
   it('keeps the selected system order aligned with the live pins', () => {
     expect(FEATURED_SYSTEMS.map((system) => system.repo)).toEqual([
-      'dropspot-project',
+      'software-factory',
       'spark',
-      'stock-management-system',
-      'Hunnes-Academy-motion-system',
+      'built-in-layers',
+      'jointledger',
     ]);
   });
 
@@ -23,12 +23,23 @@ describe('generated profile', () => {
     expect(telemetry.activity.total).toBe(telemetry.activity.weekly.reduce((sum, value) => sum + value, 0));
   });
 
-  it('renders the visible README exclusively as four local picture blocks', () => {
+  it('renders the visible README as five local picture blocks with one official appearance link', () => {
     expect(readme).not.toMatch(/<(?:img|source)[^>]+(?:src|srcset)="https?:/i);
     const withoutComments = readme.replace(/<!--[\s\S]*?-->/g, '');
     const blocks = withoutComments.match(/<picture>[\s\S]*?<\/picture>/g) ?? [];
-    expect(blocks).toHaveLength(4);
-    expect(withoutComments.replace(/<picture>[\s\S]*?<\/picture>/g, '').trim()).toBe('');
+    expect(blocks).toHaveLength(5);
+    const appearanceOpen = '<a href="https://github.com/settings/appearance">';
+    expect(withoutComments.match(/<a\b/g)).toHaveLength(1);
+    expect(withoutComments).toContain(appearanceOpen);
+    const appearanceBlock = withoutComments.match(/<a\b[\s\S]*?<\/a>/)?.[0] ?? '';
+    expect(appearanceBlock.match(/<picture>/g)).toHaveLength(1);
+    expect(
+      withoutComments
+        .replace(appearanceOpen, '')
+        .replace('</a>', '')
+        .replace(/<picture>[\s\S]*?<\/picture>/g, '')
+        .trim(),
+    ).toBe('');
     for (const block of blocks) {
       expect(block.match(/<img\b/g)).toHaveLength(1);
       expect(
@@ -43,6 +54,10 @@ describe('generated profile', () => {
     }
     for (const system of FEATURED_SYSTEMS) expect(readme).toContain(system.summary);
     expect(readme).toContain(`${telemetry.totalCommits} default-branch commits`);
+    expect(readme).toContain('assets/generated/theme-control-light.svg');
+    expect(readme).toContain('assets/generated/theme-control-dark.svg');
+    expect(readme).toContain('assets/generated/theme-control-mobile-light.svg');
+    expect(readme).toContain('assets/generated/theme-control-mobile-dark.svg');
   });
 
   it('provides animated, responsive, and reduced-motion sources for every intelligence scene', () => {

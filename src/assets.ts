@@ -1,4 +1,8 @@
 export const GENERATED_ASSET_NAMES = [
+  'theme-control-light.svg',
+  'theme-control-dark.svg',
+  'theme-control-mobile-light.svg',
+  'theme-control-mobile-dark.svg',
   'hero-light.svg',
   'hero-dark.svg',
   'hero-static-light.svg',

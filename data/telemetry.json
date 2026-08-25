@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-08-24T20:13:00Z",
+  "capturedAt": "2026-08-25T11:18:00Z",
   "login": "hakanduyar",
   "name": "Hakan Duyar",
   "memberSince": "2021-02-20",
@@ -197,23 +197,23 @@
       "description": "Hunnes storefront — ikas Studio Code Mode theme"
     },
     {
-      "repo": "portfolio",
+      "repo": "built-in-layers",
       "at": "2026-08-16T21:47:21Z",
-      "url": "https://github.com/hakanduyar/portfolio",
+      "url": "https://github.com/hakanduyar/built-in-layers",
       "description": "Personal portfolio and engineering case studies — Built in Layers"
     }
   ],
   "featured": [
     {
-      "key": "dropspot",
-      "name": "dropspot-project",
-      "url": "https://github.com/hakanduyar/dropspot-project",
-      "description": "Limited-stock drop platform with priority-scored waitlists and idempotent, transactional claim handling",
-      "language": "JavaScript",
-      "commits": 31,
-      "stars": 0,
-      "pushedAt": "2025-11-07T16:25:10Z",
-      "createdAt": "2025-11-06T18:25:36Z"
+      "key": "factory",
+      "name": "software-factory",
+      "url": "https://github.com/hakanduyar/software-factory",
+      "description": null,
+      "language": "TypeScript",
+      "commits": 23,
+      "stars": 1,
+      "pushedAt": "2026-08-24T17:38:31Z",
+      "createdAt": "2026-08-18T12:24:08Z"
     },
     {
       "key": "spark",
@@ -227,26 +227,26 @@
       "createdAt": "2026-06-28T21:33:35Z"
     },
     {
-      "key": "stock",
-      "name": "stock-management-system",
-      "url": "https://github.com/hakanduyar/stock-management-system",
-      "description": "Role-aware inventory system - NestJS, Next.js, PostgreSQL/Prisma, JWT auth with three-role access control",
+      "key": "layers",
+      "name": "built-in-layers",
+      "url": "https://github.com/hakanduyar/built-in-layers",
+      "description": "Personal portfolio and engineering case studies — Built in Layers",
       "language": "TypeScript",
-      "commits": 10,
+      "commits": 17,
       "stars": 0,
-      "pushedAt": "2025-11-10T22:44:58Z",
-      "createdAt": "2025-11-10T12:45:09Z"
+      "pushedAt": "2026-08-16T21:47:21Z",
+      "createdAt": "2026-07-17T13:14:45Z"
     },
     {
-      "key": "motion",
-      "name": "Hunnes-Academy-motion-system",
-      "url": "https://github.com/hakanduyar/Hunnes-Academy-motion-system",
-      "description": "Composable GSAP motion system - nine motion modules over a shared base, behind one declarative config",
-      "language": "JavaScript",
-      "commits": 9,
+      "key": "ledger",
+      "name": "jointledger",
+      "url": "https://github.com/hakanduyar/jointledger",
+      "description": null,
+      "language": "Go",
+      "commits": 3295,
       "stars": 0,
-      "pushedAt": "2026-08-16T14:51:10Z",
-      "createdAt": "2026-08-16T13:05:05Z"
+      "pushedAt": "2026-07-07T20:48:19Z",
+      "createdAt": "2026-07-03T13:54:10Z"
     }
   ],
   "methods": {

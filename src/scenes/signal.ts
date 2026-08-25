@@ -58,7 +58,7 @@ function weeklyPath(values: readonly number[], x: number, width: number, baseY: 
 
 function motionStyles(theme: Theme, compact: boolean): string {
   const inspectorTravel = compact ? 342 : 550;
-  const phaseOpacity = theme.name === 'dark' ? .8 : .7;
+  const phaseOpacity = theme.name === 'dark' ? .8 : 1;
   return `
     .signal-phase{opacity:${phaseOpacity};animation:signal-phase 6s ease-in-out infinite}
     .signal-trace-inspection{fill:none;stroke-dasharray:1;stroke-dashoffset:1;animation:signal-trace-inspection 6s cubic-bezier(.42,0,.2,1) infinite}
@@ -121,13 +121,13 @@ function renderDesktop(theme: Theme, telemetry: Telemetry, animated: boolean): s
     text(54, 126, 'Fifty-two complete weeks from GitHub; no estimates and no third-party cards.', { class: 'copy muted' }),
   ]);
 
-  const grid = node('g', { opacity: .65 }, [
+  const grid = node('g', { opacity: theme.name === 'light' ? .82 : .65 }, [
     ...Array.from({ length: 5 }, (_, index) => line(54, 166 + index * 34, 604, 166 + index * 34, { stroke: theme.lineSoft })),
     ...Array.from({ length: 12 }, (_, index) => line(54 + index * 50, 152, 54 + index * 50, 304, { stroke: theme.lineSoft })),
   ]);
 
   const trace = node('g', { fill: 'none' }, [
-    el('path', { 'data-audit-geometry': 'trajectory', d: weeklyPath(telemetry.activity.weekly, 54, 550, 304, 138), stroke: theme.line, 'stroke-width': 7, opacity: .12, 'stroke-linejoin': 'round' }),
+    el('path', { 'data-audit-geometry': 'trajectory', d: weeklyPath(telemetry.activity.weekly, 54, 550, 304, 138), stroke: theme.line, 'stroke-width': 7, opacity: theme.name === 'light' ? .2 : .12, 'stroke-linejoin': 'round' }),
     el('path', { 'data-audit-geometry': 'trajectory', d: weeklyPath(telemetry.activity.weekly, 54, 550, 304, 138), stroke: 'url(#signal-trace)', 'stroke-width': 2.2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
     el('circle', { cx: 54, cy: 304 - (telemetry.activity.weekly[0] ?? 0) / Math.max(...telemetry.activity.weekly, 1) * 138, r: 3.5, fill: theme.bg, stroke: theme.blue }),
     el('circle', { cx: 54 + (telemetry.activity.maxIndex / 51) * 550, cy: 166, r: 5, fill: theme.red, filter: 'url(#signal-endpoint)' }),
@@ -238,11 +238,11 @@ function renderMobile(theme: Theme, telemetry: Telemetry, animated: boolean): st
       text(24, 110, 'Fifty-two complete weeks from GitHub.', { class: 'copy muted' }),
       text(24, 130, 'No estimates. No third-party statistic cards.', { class: 'copy muted' }),
     ]),
-    node('g', { opacity: .65 }, [
+    node('g', { opacity: theme.name === 'light' ? .82 : .65 }, [
       ...Array.from({ length: 5 }, (_, index) => line(24, 166 + index * 34, 366, 166 + index * 34, { stroke: theme.lineSoft })),
       ...Array.from({ length: 7 }, (_, index) => line(24 + index * 57, 152, 24 + index * 57, 304, { stroke: theme.lineSoft })),
     ]),
-    el('path', { 'data-audit-geometry': 'trajectory', d: weeklyPath(telemetry.activity.weekly, 24, 342, 304, 138), fill: 'none', stroke: theme.line, 'stroke-width': 7, opacity: .12, 'stroke-linejoin': 'round' }),
+    el('path', { 'data-audit-geometry': 'trajectory', d: weeklyPath(telemetry.activity.weekly, 24, 342, 304, 138), fill: 'none', stroke: theme.line, 'stroke-width': 7, opacity: theme.name === 'light' ? .2 : .12, 'stroke-linejoin': 'round' }),
     el('path', { 'data-audit-geometry': 'trajectory', d: weeklyPath(telemetry.activity.weekly, 24, 342, 304, 138), fill: 'none', stroke: 'url(#signal-trace)', 'stroke-width': 2.2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
     el('circle', { cx: 24 + telemetry.activity.maxIndex / 51 * 342, cy: 166, r: 5, fill: theme.red, filter: 'url(#signal-endpoint)' }),
     el('circle', { cx: 366, cy: 304 - (telemetry.activity.weekly[51] ?? 0) / max * 138, r: 5, fill: theme.bg, stroke: theme.violet, 'stroke-width': 2 }),

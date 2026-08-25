@@ -29,7 +29,7 @@ describe('selected systems motion assets', () => {
         const repo = telemetry.featured.find((candidate) => candidate.key === system.key);
         expect(repo).toBeDefined();
         expect(svg).toContain(`${system.code} / ${system.role}`);
-        expect(svg).toContain(repo?.name);
+        expect(svg).toContain(system.label);
         expect(svg).toContain(system.stack.join(' · '));
         expect(svg).toContain(repo?.pushedAt.slice(0, 7));
       }

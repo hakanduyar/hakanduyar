@@ -10,16 +10,16 @@ export const SYSTEMS_COLLISION_SPECS: Record<'desktop' | 'mobile', CollisionSpec
     textZones: [
       { id: 'heading', x: 54, y: 44, width: 510, height: 88 },
       { id: 'spark-label', x: 294, y: 150, width: 188, height: 80 },
-      { id: 'motion-label', x: 684, y: 150, width: 222, height: 80 },
-      { id: 'dropspot-label', x: 54, y: 346, width: 230, height: 82 },
-      { id: 'stock-label', x: 510, y: 362, width: 252, height: 82 },
+      { id: 'ledger-label', x: 684, y: 150, width: 222, height: 80 },
+      { id: 'factory-label', x: 54, y: 346, width: 230, height: 82 },
+      { id: 'layers-label', x: 510, y: 362, width: 252, height: 82 },
       { id: 'status', x: 54, y: 468, width: 852, height: 18 },
     ],
     nodeZones: [
-      { id: 'dropspot-node', cx: 130, cy: 274, radius: 17 },
+      { id: 'factory-node', cx: 130, cy: 274, radius: 17 },
       { id: 'spark-node', cx: 365, cy: 258, radius: 17 },
-      { id: 'stock-node', cx: 610, cy: 310, radius: 17 },
-      { id: 'motion-node', cx: 835, cy: 270, radius: 17 },
+      { id: 'layers-node', cx: 610, cy: 310, radius: 17 },
+      { id: 'ledger-node', cx: 835, cy: 270, radius: 17 },
     ],
     avoidBands: [{ id: 'mission-trajectory', x: 54, y: 238, width: 852, height: 92 }],
   },
@@ -27,17 +27,17 @@ export const SYSTEMS_COLLISION_SPECS: Record<'desktop' | 'mobile', CollisionSpec
     name: 'systems-mobile', width: 390, height: 650, margin: 16,
     textZones: [
       { id: 'heading', x: 24, y: 28, width: 342, height: 100 },
-      { id: 'dropspot-label', x: 78, y: 154, width: 282, height: 78 },
+      { id: 'factory-label', x: 78, y: 154, width: 282, height: 78 },
       { id: 'spark-label', x: 78, y: 264, width: 282, height: 78 },
-      { id: 'stock-label', x: 78, y: 374, width: 282, height: 78 },
-      { id: 'motion-label', x: 78, y: 484, width: 282, height: 78 },
+      { id: 'layers-label', x: 78, y: 374, width: 282, height: 78 },
+      { id: 'ledger-label', x: 78, y: 484, width: 282, height: 78 },
       { id: 'status', x: 24, y: 614, width: 342, height: 18 },
     ],
     nodeZones: [
-      { id: 'dropspot-node', cx: 46, cy: 184, radius: 14 },
+      { id: 'factory-node', cx: 46, cy: 184, radius: 14 },
       { id: 'spark-node', cx: 46, cy: 294, radius: 14 },
-      { id: 'stock-node', cx: 46, cy: 404, radius: 14 },
-      { id: 'motion-node', cx: 46, cy: 514, radius: 14 },
+      { id: 'layers-node', cx: 46, cy: 404, radius: 14 },
+      { id: 'ledger-node', cx: 46, cy: 514, radius: 14 },
     ],
   },
 };
@@ -143,7 +143,7 @@ function renderDesktop(theme: Theme, telemetry: Telemetry, animated: boolean): s
   ]);
 
   const route = node('g', { fill: 'none' }, [
-    el('path', { 'data-audit-geometry': 'trajectory', d: 'M68 294C91 283 111 275 130 274C218 266 285 300 365 258C454 211 527 276 610 310C696 345 761 248 835 270C861 278 885 281 910 275', stroke: theme.line, 'stroke-width': 8, 'stroke-linecap': 'round', opacity: .14 }),
+    el('path', { 'data-audit-geometry': 'trajectory', d: 'M68 294C91 283 111 275 130 274C218 266 285 300 365 258C454 211 527 276 610 310C696 345 761 248 835 270C861 278 885 281 910 275', stroke: theme.line, 'stroke-width': 8, 'stroke-linecap': 'round', opacity: theme.name === 'light' ? .24 : .14 }),
     el('path', { 'data-audit-geometry': 'trajectory', d: 'M68 294C91 283 111 275 130 274C218 266 285 300 365 258C454 211 527 276 610 310C696 345 761 248 835 270C861 278 885 281 910 275', stroke: 'url(#systems-route)', 'stroke-width': 1.7, 'stroke-linecap': 'round' }),
     el('path', { 'data-audit-geometry': 'trajectory', d: 'M130 274C252 334 470 334 610 310', stroke: theme.line, 'stroke-dasharray': '3 11', opacity: .82 }),
     el('path', { 'data-audit-geometry': 'trajectory', d: 'M365 258C508 232 690 231 835 270', stroke: theme.line, 'stroke-dasharray': '3 11', opacity: .82 }),
@@ -172,7 +172,7 @@ function renderDesktop(theme: Theme, telemetry: Telemetry, animated: boolean): s
       el('circle', { cx: position.x, cy: position.y, r: 5, fill: accent, filter: 'url(#systems-glow)' }),
       node('g', { 'data-audit-text': `system-${system.key}` }, [
         text(position.labelX, position.labelY, `${system.code} / ${system.role}`, { class: 'mono tiny', fill: accent, 'text-anchor': position.anchor }),
-        text(position.labelX, position.labelY + 24, repo.name, { class: 'name', 'text-anchor': position.anchor }),
+        text(position.labelX, position.labelY + 24, system.label, { class: 'name', 'text-anchor': position.anchor }),
         text(position.labelX, position.labelY + 46, stack, { class: 'mono tiny muted', 'text-anchor': position.anchor }),
         text(position.labelX, position.labelY + 65, `PUBLIC PUSH ${month}`, { class: 'mono tiny muted', 'text-anchor': position.anchor }),
       ]),
@@ -247,7 +247,7 @@ function renderMobile(theme: Theme, telemetry: Telemetry, animated: boolean): st
       text(24, 110, 'Four public systems across distinct engineering signals.', { class: 'copy muted' }),
     ]),
     animated ? phaseReadout(theme, 366, 128, 142, 'end') : '',
-    el('path', { 'data-audit-geometry': 'trajectory', d: mobileRoute, fill: 'none', stroke: theme.line, 'stroke-width': 7, opacity: .14, 'stroke-linecap': 'round' }),
+    el('path', { 'data-audit-geometry': 'trajectory', d: mobileRoute, fill: 'none', stroke: theme.line, 'stroke-width': 7, opacity: theme.name === 'light' ? .24 : .14, 'stroke-linecap': 'round' }),
     el('path', { 'data-audit-geometry': 'trajectory', d: mobileRoute, fill: 'none', stroke: theme.blue, 'stroke-width': 1.4, 'stroke-dasharray': '28 10 3 10' }),
     motionTrace,
     ...FEATURED_SYSTEMS.flatMap((system, index) => {
@@ -263,7 +263,7 @@ function renderMobile(theme: Theme, telemetry: Telemetry, animated: boolean): st
         el('circle', { cx: 46, cy: y, r: 4, fill: accent, filter: 'url(#systems-mobile-glow)' }),
         node('g', { 'data-audit-text': `system-${system.key}` }, [
           text(78, baseline, `${system.code} / ${system.role}`, { class: 'mono tiny', fill: accent }),
-          text(78, baseline + 25, repo.name, { class: 'name' }),
+          text(78, baseline + 25, system.label, { class: 'name' }),
           text(78, baseline + 47, system.stack.join(' · '), { class: 'mono tiny muted' }),
           text(78, baseline + 66, `PUBLIC PUSH ${repo.pushedAt.slice(0, 7)}`, { class: 'mono tiny muted' }),
         ]),
