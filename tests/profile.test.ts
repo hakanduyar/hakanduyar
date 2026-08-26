@@ -88,19 +88,16 @@ describe('generated profile', () => {
     expect(readme).toContain(`${telemetry.totalCommits} default-branch commits`);
     expect(readme).not.toMatch(/theme-control|prefers-color-scheme|-light\.svg/);
     expect(readme).toContain('assets/generated/hero-dark.svg');
-    expect(readme).toContain('assets/generated/hero-static-dark.svg');
+    expect(readme).not.toMatch(/prefers-reduced-motion|-static-dark\.svg/);
   });
 
-  it('provides animated, responsive, and reduced-motion sources for every intelligence scene', () => {
+  it('always publishes animated scenes while retaining responsive mobile compositions', () => {
     for (const scene of ['systems', 'architecture', 'signal']) {
-      for (const suffix of [
-        'dark.svg',
-        'static-dark.svg',
-        'mobile-dark.svg',
-        'mobile-static-dark.svg',
-      ]) {
+      for (const suffix of ['dark.svg', 'mobile-dark.svg']) {
         expect(readme).toContain(`assets/generated/${scene}-${suffix}`);
       }
     }
+    expect(readme).not.toContain('prefers-reduced-motion');
+    expect(readme).not.toMatch(/assets\/generated\/[^"']*-static-dark\.svg/);
   });
 });

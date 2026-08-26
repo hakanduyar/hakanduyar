@@ -189,26 +189,26 @@ for (const [index, block] of scenePictureBlocks.entries()) {
 if (/<(?:img|source)\b[^>]*(?:src|srcset)="https?:/i.test(readme) || /!\[[^\]]*\]\(https?:/i.test(readme)) {
   fail('README.md: remote image dependency detected');
 }
-for (const asset of assets) {
+const publishedAssets = assets.filter((asset) => !asset.includes('-static-'));
+for (const asset of publishedAssets) {
   if (!readme.includes(`assets/generated/${asset}`)) fail(`README.md: ${asset} is not referenced`);
 }
 if (/theme-control|prefers-color-scheme|-light\.svg/.test(readme)) {
   fail('README.md: light-theme or appearance-control residue detected');
 }
+if (/prefers-reduced-motion|assets\/generated\/[^"']*-static-dark\.svg/.test(readme)) {
+  fail('README.md: public profile must always select animated assets');
+}
 for (const mobileScene of ['systems', 'architecture', 'signal']) {
-  const mobileStaticDark = `<source media="(prefers-reduced-motion: reduce) and (max-width: 1080px)" srcset="assets/generated/${mobileScene}-mobile-static-dark.svg">`;
-  const staticDark = `<source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/${mobileScene}-static-dark.svg">`;
   const mobileDark = `<source media="(max-width: 1080px)" srcset="assets/generated/${mobileScene}-mobile-dark.svg">`;
-  const positions = [mobileStaticDark, staticDark, mobileDark].map((source) => readme.indexOf(source));
-  if (positions.some((position) => position < 0) || positions.some((position, index) => index > 0 && position <= positions[index - 1]!)) {
+  const desktopDark = `<img src="assets/generated/${mobileScene}-dark.svg"`;
+  const positions = [mobileDark, desktopDark].map((source) => readme.indexOf(source));
+  if (positions.some((position) => position < 0) || positions[1]! <= positions[0]!) {
     fail(`README.md: ${mobileScene} responsive source ordering is invalid`);
   }
 }
-const reducedDark = readme.indexOf('<source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/hero-static-dark.svg">');
 const normalDark = readme.indexOf('<img src="assets/generated/hero-dark.svg"');
-if (!(reducedDark >= 0 && normalDark > reducedDark)) {
-  fail('README.md: dark reduced-motion hero source ordering is invalid');
-}
+if (normalDark < 0) fail('README.md: animated dark hero is missing');
 if (/\b(?:merhaba|hakkında|iletişim|projeler|teknoloji|geliştirme)\b/i.test(readme)) {
   fail('README.md: public copy must remain English');
 }
