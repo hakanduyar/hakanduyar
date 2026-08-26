@@ -123,12 +123,12 @@ if (pageEvidence.version !== '4.2' || pageEvidence.previewDigest !== previewHash
   throw new Error('V4.2 preview source-selection evidence is stale');
 }
 const expectedSources: Record<string, string[]> = {
-  'page-dark-desktop-reduced-motion.png': ['hero-static-dark.svg', 'systems-static-dark.svg', 'expand-dark.svg', 'architecture-static-dark.svg', 'signal-static-dark.svg'],
-  'page-light-desktop.png': ['hero-dark.svg', 'systems-dark.svg', 'expand-dark.svg', 'architecture-dark.svg', 'signal-dark.svg'],
-  'page-dark-mobile.png': ['hero-dark.svg', 'systems-mobile-dark.svg', 'expand-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
-  'page-light-mobile.png': ['hero-dark.svg', 'systems-mobile-dark.svg', 'expand-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
-  'page-dark-mobile-reduced-motion.png': ['hero-static-dark.svg', 'systems-mobile-static-dark.svg', 'expand-mobile-dark.svg', 'architecture-mobile-static-dark.svg', 'signal-mobile-static-dark.svg'],
-  'page-intermediate-light.png': ['hero-dark.svg', 'systems-mobile-dark.svg', 'expand-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
+  'page-dark-desktop-reduced-motion.png': ['hero-static-dark.svg', 'expand-dark.svg', 'systems-static-dark.svg', 'architecture-static-dark.svg', 'signal-static-dark.svg'],
+  'page-light-desktop.png': ['hero-dark.svg', 'expand-dark.svg', 'systems-dark.svg', 'architecture-dark.svg', 'signal-dark.svg'],
+  'page-dark-mobile.png': ['hero-dark.svg', 'expand-mobile-dark.svg', 'systems-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
+  'page-light-mobile.png': ['hero-dark.svg', 'expand-mobile-dark.svg', 'systems-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
+  'page-dark-mobile-reduced-motion.png': ['hero-static-dark.svg', 'expand-mobile-dark.svg', 'systems-mobile-static-dark.svg', 'architecture-mobile-static-dark.svg', 'signal-mobile-static-dark.svg'],
+  'page-intermediate-light.png': ['hero-dark.svg', 'expand-mobile-dark.svg', 'systems-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
 };
 const expectedExpanded = new Set([
   'page-dark-desktop-reduced-motion.png',
@@ -142,10 +142,10 @@ for (const [file, expected] of Object.entries(expectedSources)) {
   const actual = result.sources.map((source) => source.split('/').at(-1));
   if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error(`${file}: unexpected responsive/reduced source selection`);
   if (result.broken !== 0 || result.scrollWidth > result.innerWidth) throw new Error(`${file}: broken image or horizontal overflow`);
-  if (result.nativeText.trim() || JSON.stringify(result.readmeElements) !== JSON.stringify(['IMG', 'IMG', 'DETAILS'])) {
+  if (result.nativeText.trim() || JSON.stringify(result.readmeElements) !== JSON.stringify(['IMG', 'DETAILS'])) {
     throw new Error(`${file}: simulated README body is not image-only`);
   }
-  if (result.summaryText.trim() || result.summaryImages !== 1 || result.detailsImages !== 3) {
+  if (result.summaryText.trim() || result.summaryImages !== 1 || result.detailsImages !== 4) {
     throw new Error(`${file}: disclosure summary/content hierarchy is invalid`);
   }
   if (result.summarySources !== 1 || result.summaryLinks !== 0 || result.summaryAlign !== 'middle') {

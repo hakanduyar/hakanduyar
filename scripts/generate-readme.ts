@@ -41,12 +41,12 @@ ${picture(
   'hero',
   `Hakan Duyar. ${PROFILE_COPY.strapline} ${PROFILE_COPY.introduction} A circular signal nucleus transitions through Flight, Signal, and Spatial engineering modes.`,
   true,
-)}${picture(
+)}<details><summary><picture><source media="(max-width: 1080px)" srcset="assets/generated/expand-mobile-dark.svg"><img src="assets/generated/expand-dark.svg" alt="Show systems, architecture, and public signal" width="95%" align="middle"></picture></summary>${picture(
   'systems',
   `Four selected systems arranged as a connected mission path. ${systemsAlt}`,
   true,
   true,
-)}<details><summary><picture><source media="(max-width: 1080px)" srcset="assets/generated/expand-mobile-dark.svg"><img src="assets/generated/expand-dark.svg" alt="Show architecture and public signal" width="95%" align="middle"></picture></summary>${picture(
+)}${picture(
   'architecture',
   'A layered architecture moving from interface through state and services into delivery, with an accountable engineering feedback loop.',
   true,

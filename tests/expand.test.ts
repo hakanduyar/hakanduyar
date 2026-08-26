@@ -13,7 +13,7 @@ describe('dark-only profile disclosure', () => {
 
       expect(source).toContain(`role="img" aria-labelledby="${variant.id}-title ${variant.id}-desc"`);
       expect(source).toContain(`<title id="${variant.id}-title">Show more</title>`);
-      expect(source).toContain(`<desc id="${variant.id}-desc">Show more profile content to view the architecture and signal visualizations.</desc>`);
+      expect(source).toContain(`<desc id="${variant.id}-desc">Show more profile content to view systems, architecture, and signal visualizations.</desc>`);
       expect(source).toContain(`viewBox="0 0 ${variant.width} 64"`);
       expect(source).toContain(`<rect width="${variant.width}" height="64" fill="${THEMES.dark.bg}"/>`);
       expect(source).toContain(`font-size:${variant.fontSize}px`);
