@@ -26,22 +26,39 @@ describe('generated profile', () => {
   it('renders two visible pictures followed by an image-only native disclosure', () => {
     expect(readme).not.toMatch(/<(?:img|source)[^>]+(?:src|srcset)="https?:/i);
     const withoutComments = readme.replace(/<!--[\s\S]*?-->/g, '');
+    const visible = withoutComments.trim();
+    expect(visible).not.toMatch(/\r?\n[\t ]*\r?\n/);
+    expect(visible).not.toMatch(/<(?:p|br)\b|&nbsp;|\u00a0|\u200b/i);
     const blocks = withoutComments.match(/<picture>[\s\S]*?<\/picture>/g) ?? [];
-    expect(blocks).toHaveLength(4);
+    const sceneBlocks = blocks.filter((block) => !block.includes('assets/generated/expand-dark.svg'));
+    expect(blocks).toHaveLength(5);
+    expect(sceneBlocks).toHaveLength(4);
     expect(withoutComments).not.toMatch(/<a\b/);
+    expect(withoutComments).not.toMatch(/<details\b[^>]*\bopen(?:\s|=|>)/i);
     const skeleton = withoutComments
       .replace(/<picture>[\s\S]*?<\/picture>/g, 'PICTURE')
       .replace(/<summary>[\s\S]*?<\/summary>/g, 'SUMMARY')
       .replace(/\s+/g, ' ')
       .trim();
-    expect(skeleton).toBe('PICTURE PICTURE <details> SUMMARY PICTURE PICTURE </details>');
+    expect(skeleton).toBe('PICTUREPICTURE<details>SUMMARYPICTUREPICTURE</details>');
+    expect(withoutComments.match(/<\/picture><picture>/g)).toHaveLength(2);
+    expect(withoutComments).toContain('</picture><details><summary><picture>');
+    expect(withoutComments).toContain('</picture></summary><picture>');
+    expect(withoutComments).toContain('</picture></details>');
 
     const details = withoutComments.match(/<details>\s*([\s\S]*?)\s*<\/details>/)?.[1] ?? '';
     const summary = details.match(/<summary>\s*([\s\S]*?)\s*<\/summary>/)?.[1] ?? '';
     expect(summary.match(/<img\b[^>]*>/g)).toHaveLength(1);
+    expect(summary.match(/<picture>[\s\S]*?<\/picture>/g)).toHaveLength(1);
+    expect(summary.match(/<source\b[^>]*>/g)).toHaveLength(1);
+    expect(summary).toMatch(/^<picture>\s*<source media="\(max-width: 1080px\)" srcset="assets\/generated\/expand-mobile-dark\.svg">\s*<img\b[^>]*>\s*<\/picture>$/);
+    expect(summary).toContain('srcset="assets/generated/expand-mobile-dark.svg"');
     expect(summary).toContain('src="assets/generated/expand-dark.svg"');
-    expect(summary).toContain('width="320"');
-    expect(summary.replace(/<img\b[^>]*>/g, '').trim()).toBe('');
+    expect(summary).toContain('alt="Show architecture and public signal"');
+    expect(summary).toContain('width="95%"');
+    expect(summary).toContain('align="middle"');
+    expect(summary).not.toMatch(/<a\b/);
+    expect(summary.replace(/<picture>[\s\S]*?<\/picture>/g, '').trim()).toBe('');
     const detailsContent = details.replace(/<summary>[\s\S]*?<\/summary>/, '');
     expect(detailsContent.match(/<picture>[\s\S]*?<\/picture>/g)).toHaveLength(2);
     expect(detailsContent).toContain('assets/generated/architecture-dark.svg');
@@ -53,7 +70,7 @@ describe('generated profile', () => {
         .replace(/<\/?details>/g, '')
         .trim(),
     ).toBe('');
-    for (const block of blocks) {
+    for (const block of sceneBlocks) {
       expect(block.match(/<img\b/g)).toHaveLength(1);
       expect(
         block
@@ -64,6 +81,7 @@ describe('generated profile', () => {
           .trim(),
       ).toBe('');
       expect(block).toMatch(/<img\b[^>]*\balt="[^"]+"/);
+      expect(block).toMatch(/<img\b[^>]*\balign="top"/);
     }
     for (const system of FEATURED_SYSTEMS) expect(readme).toContain(system.summary);
     expect(readme).toContain(`${telemetry.totalCommits} default-branch commits`);

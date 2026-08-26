@@ -1,14 +1,21 @@
 {
   "version": "4.2",
-  "capturedAt": "2026-08-25T16:35:10.711Z",
-  "previewDigest": "766770b56fd833be5f26e7154af968cf3d3a35d7d789425f2de9558fdf36100e",
+  "capturedAt": "2026-08-26T12:08:33.468Z",
+  "previewDigest": "d5dd2f70bb690119ac709b7e447a0d88ced5451539ccd250272197958d4a8394",
   "results": [
     {
       "file": "page-dark-desktop-reduced-motion.png",
+      "adjacentGaps": [
+        -0.0000152587890625,
+        0.00006103515625,
+        -0.000087738037109375,
+        0.000091552734375
+      ],
       "broken": 0,
       "detailsImages": 3,
       "detailsOpen": true,
       "innerWidth": 1440,
+      "interElementWhitespaceNodes": 0,
       "nativeText": "",
       "readmeElements": [
         "IMG",
@@ -23,15 +30,23 @@
         "http://127.0.0.1:4184/assets/generated/architecture-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-static-dark.svg"
       ],
+      "summaryAlign": "middle",
       "summaryImages": 1,
+      "summaryLinks": 0,
+      "summarySources": 1,
       "summaryText": ""
     },
     {
       "file": "page-light-desktop.png",
+      "adjacentGaps": [
+        -0.0000152587890625,
+        0.00006103515625
+      ],
       "broken": 0,
       "detailsImages": 3,
       "detailsOpen": false,
       "innerWidth": 1440,
+      "interElementWhitespaceNodes": 0,
       "nativeText": "",
       "readmeElements": [
         "IMG",
@@ -46,15 +61,25 @@
         "http://127.0.0.1:4184/assets/generated/architecture-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-dark.svg"
       ],
+      "summaryAlign": "middle",
       "summaryImages": 1,
+      "summaryLinks": 0,
+      "summarySources": 1,
       "summaryText": ""
     },
     {
       "file": "page-dark-mobile.png",
+      "adjacentGaps": [
+        0.0000152587890625,
+        -0.00006103515625,
+        0.000087738037109375,
+        -0.00006103515625
+      ],
       "broken": 0,
       "detailsImages": 3,
       "detailsOpen": true,
       "innerWidth": 390,
+      "interElementWhitespaceNodes": 0,
       "nativeText": "",
       "readmeElements": [
         "IMG",
@@ -65,19 +90,27 @@
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-dark.svg",
         "http://127.0.0.1:4184/assets/generated/systems-mobile-dark.svg",
-        "http://127.0.0.1:4184/assets/generated/expand-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/expand-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-mobile-dark.svg"
       ],
+      "summaryAlign": "middle",
       "summaryImages": 1,
+      "summaryLinks": 0,
+      "summarySources": 1,
       "summaryText": ""
     },
     {
       "file": "page-light-mobile.png",
+      "adjacentGaps": [
+        0.0000152587890625,
+        -0.00006103515625
+      ],
       "broken": 0,
       "detailsImages": 3,
       "detailsOpen": false,
       "innerWidth": 390,
+      "interElementWhitespaceNodes": 0,
       "nativeText": "",
       "readmeElements": [
         "IMG",
@@ -88,19 +121,29 @@
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-dark.svg",
         "http://127.0.0.1:4184/assets/generated/systems-mobile-dark.svg",
-        "http://127.0.0.1:4184/assets/generated/expand-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/expand-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-mobile-dark.svg"
       ],
+      "summaryAlign": "middle",
       "summaryImages": 1,
+      "summaryLinks": 0,
+      "summarySources": 1,
       "summaryText": ""
     },
     {
       "file": "page-dark-mobile-reduced-motion.png",
+      "adjacentGaps": [
+        0.0000152587890625,
+        -0.00006103515625,
+        0.000087738037109375,
+        -0.00006103515625
+      ],
       "broken": 0,
       "detailsImages": 3,
       "detailsOpen": true,
       "innerWidth": 390,
+      "interElementWhitespaceNodes": 0,
       "nativeText": "",
       "readmeElements": [
         "IMG",
@@ -111,19 +154,29 @@
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/systems-mobile-static-dark.svg",
-        "http://127.0.0.1:4184/assets/generated/expand-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/expand-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-mobile-static-dark.svg"
       ],
+      "summaryAlign": "middle",
       "summaryImages": 1,
+      "summaryLinks": 0,
+      "summarySources": 1,
       "summaryText": ""
     },
     {
       "file": "page-intermediate-light.png",
+      "adjacentGaps": [
+        0.0000152587890625,
+        0,
+        -0.00002288818359375,
+        0
+      ],
       "broken": 0,
       "detailsImages": 3,
       "detailsOpen": true,
       "innerWidth": 1000,
+      "interElementWhitespaceNodes": 0,
       "nativeText": "",
       "readmeElements": [
         "IMG",
@@ -134,11 +187,14 @@
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-dark.svg",
         "http://127.0.0.1:4184/assets/generated/systems-mobile-dark.svg",
-        "http://127.0.0.1:4184/assets/generated/expand-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/expand-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-mobile-dark.svg"
       ],
+      "summaryAlign": "middle",
       "summaryImages": 1,
+      "summaryLinks": 0,
+      "summarySources": 1,
       "summaryText": ""
     }
   ]

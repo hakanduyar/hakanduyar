@@ -15,6 +15,7 @@ const outputs: { path: string; bytes: number; changed: boolean }[] = [];
 const theme = THEMES.dark;
 
 outputs.push(emitSvg('assets/generated/expand-dark.svg', renderExpand()));
+outputs.push(emitSvg('assets/generated/expand-mobile-dark.svg', renderExpand(true)));
 outputs.push(emitSvg('assets/generated/hero-dark.svg', renderHero(theme, true)));
 outputs.push(emitSvg('assets/generated/hero-static-dark.svg', renderHero(theme, false)));
 outputs.push(emitSvg('assets/generated/systems-dark.svg', renderSystems(theme, telemetry, false, true)));
