@@ -154,7 +154,7 @@ const summaryResidue = summary
   .replace(/<img\b[^>]*>/g, '')
   .trim();
 if (summaryResidue) fail('README.md: summary contains visible native text or markup');
-if (!/^<summary><picture>\s*<source media="\(max-width: 1080px\)" srcset="assets\/generated\/expand-mobile-dark\.svg">\s*<img\b[^>]*>\s*<\/picture><\/summary>$/.test(summary)) {
+if (!/^<summary><picture><source media="\(max-width: 1080px\)" srcset="assets\/generated\/expand-mobile-dark\.svg"><img\b[^>]*><\/picture><\/summary>$/.test(summary)) {
   fail('README.md: summary mobile source and desktop fallback ordering is invalid');
 }
 if (!/<source media="\(max-width: 1080px\)" srcset="assets\/generated\/expand-mobile-dark\.svg">/.test(summary)) {

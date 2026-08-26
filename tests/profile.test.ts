@@ -51,7 +51,7 @@ describe('generated profile', () => {
     expect(summary.match(/<img\b[^>]*>/g)).toHaveLength(1);
     expect(summary.match(/<picture>[\s\S]*?<\/picture>/g)).toHaveLength(1);
     expect(summary.match(/<source\b[^>]*>/g)).toHaveLength(1);
-    expect(summary).toMatch(/^<picture>\s*<source media="\(max-width: 1080px\)" srcset="assets\/generated\/expand-mobile-dark\.svg">\s*<img\b[^>]*>\s*<\/picture>$/);
+    expect(summary).toMatch(/^<picture><source media="\(max-width: 1080px\)" srcset="assets\/generated\/expand-mobile-dark\.svg"><img\b[^>]*><\/picture>$/);
     expect(summary).toContain('srcset="assets/generated/expand-mobile-dark.svg"');
     expect(summary).toContain('src="assets/generated/expand-dark.svg"');
     expect(summary).toContain('alt="Show architecture and public signal"');

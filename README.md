@@ -8,10 +8,7 @@
   <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/systems-static-dark.svg">
   <source media="(max-width: 1080px)" srcset="assets/generated/systems-mobile-dark.svg">
   <img src="assets/generated/systems-dark.svg" alt="Four selected systems arranged as a connected mission path. Software Factory: Evidence-gated orchestration from planning through verified release. Stack: TypeScript, Node.js, SQLite. spark: Offline planning that runs without an account or backend. Stack: React, TypeScript, Dexie. Built in Layers: Engineering case studies reveal interface, flow, and system decisions. Stack: Next.js, TypeScript, MDX. jointledger: Self-hosted personal finance with private, portable financial records. Stack: Go, Vue, TypeScript." width="960" align="top">
-</picture><details><summary><picture>
-  <source media="(max-width: 1080px)" srcset="assets/generated/expand-mobile-dark.svg">
-  <img src="assets/generated/expand-dark.svg" alt="Show architecture and public signal" width="95%" align="middle">
-</picture></summary><picture>
+</picture><details><summary><picture><source media="(max-width: 1080px)" srcset="assets/generated/expand-mobile-dark.svg"><img src="assets/generated/expand-dark.svg" alt="Show architecture and public signal" width="95%" align="middle"></picture></summary><picture>
   <source media="(prefers-reduced-motion: reduce) and (max-width: 1080px)" srcset="assets/generated/architecture-mobile-static-dark.svg">
   <source media="(prefers-reduced-motion: reduce)" srcset="assets/generated/architecture-static-dark.svg">
   <source media="(max-width: 1080px)" srcset="assets/generated/architecture-mobile-dark.svg">

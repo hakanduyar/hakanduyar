@@ -46,10 +46,7 @@ ${picture(
   `Four selected systems arranged as a connected mission path. ${systemsAlt}`,
   true,
   true,
-)}<details><summary><picture>
-  <source media="(max-width: 1080px)" srcset="assets/generated/expand-mobile-dark.svg">
-  <img src="assets/generated/expand-dark.svg" alt="Show architecture and public signal" width="95%" align="middle">
-</picture></summary>${picture(
+)}<details><summary><picture><source media="(max-width: 1080px)" srcset="assets/generated/expand-mobile-dark.svg"><img src="assets/generated/expand-dark.svg" alt="Show architecture and public signal" width="95%" align="middle"></picture></summary>${picture(
   'architecture',
   'A layered architecture moving from interface through state and services into delivery, with an accountable engineering feedback loop.',
   true,
