@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { emitSvg, REPO_ROOT } from '../src/emit.js';
+import { renderExpand } from '../src/scenes/expand.js';
 import { renderArchitecture } from '../src/scenes/architecture.js';
 import { renderHero } from '../src/scenes/hero.js';
 import { renderSignal } from '../src/scenes/signal.js';
@@ -13,6 +14,8 @@ const telemetry = JSON.parse(readFileSync(resolve(REPO_ROOT, 'data/telemetry.jso
 const outputs: { path: string; bytes: number; changed: boolean }[] = [];
 const theme = THEMES.dark;
 
+outputs.push(emitSvg('assets/generated/expand-dark.svg', renderExpand()));
+outputs.push(emitSvg('assets/generated/expand-mobile-dark.svg', renderExpand(true)));
 outputs.push(emitSvg('assets/generated/hero-dark.svg', renderHero(theme, true)));
 outputs.push(emitSvg('assets/generated/hero-static-dark.svg', renderHero(theme, false)));
 outputs.push(emitSvg('assets/generated/systems-dark.svg', renderSystems(theme, telemetry, false, true)));

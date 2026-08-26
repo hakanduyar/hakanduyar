@@ -23,7 +23,7 @@ function picture(name: string, alt: string, animated = false, responsive = false
   if (responsive) {
     sources.push(`  <source media="(max-width: 1080px)" srcset="assets/generated/${name}-mobile-dark.svg">`);
   }
-  return ['<picture>', ...sources, `  <img src="assets/generated/${name}-dark.svg" alt="${escapeAttribute(alt)}" width="960">`, '</picture>'].join('\n');
+  return ['<picture>', ...sources, `  <img src="assets/generated/${name}-dark.svg" alt="${escapeAttribute(alt)}" width="960" align="top">`, '</picture>'].join('\n');
 }
 
 const measuredThrough = telemetry.activity.end;
@@ -41,28 +41,22 @@ ${picture(
   'hero',
   `Hakan Duyar. ${PROFILE_COPY.strapline} ${PROFILE_COPY.introduction} A circular signal nucleus transitions through Flight, Signal, and Spatial engineering modes.`,
   true,
-)}
-
-${picture(
+)}${picture(
   'systems',
   `Four selected systems arranged as a connected mission path. ${systemsAlt}`,
   true,
   true,
-)}
-
-${picture(
+)}<details><summary><picture><source media="(max-width: 1080px)" srcset="assets/generated/expand-mobile-dark.svg"><img src="assets/generated/expand-dark.svg" alt="Show architecture and public signal" width="95%" align="middle"></picture></summary>${picture(
   'architecture',
   'A layered architecture moving from interface through state and services into delivery, with an accountable engineering feedback loop.',
   true,
   true,
-)}
-
-${picture(
+)}${picture(
   'signal',
   `Measured public GitHub activity: ${telemetry.activity.total} contributions across 52 complete weeks ending ${measuredThrough}; ${telemetry.publicRepos} public non-fork repositories; ${telemetry.totalCommits} default-branch commits. Public source languages: ${languagesAlt}. Snapshot ${telemetry.capturedAt.slice(0, 10)}.`,
   true,
   true,
-)}
+)}</details>
 `;
 
 writeFileSync(resolve(REPO_ROOT, 'README.md'), readme, 'utf8');

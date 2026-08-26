@@ -26,9 +26,17 @@ interface CollisionEvidence {
 interface PageSourceResult {
   file: string;
   broken: number;
+  detailsImages: number;
+  detailsOpen: boolean;
   innerWidth: number;
   scrollWidth: number;
   sources: string[];
+  interElementWhitespaceNodes: number;
+  summaryAlign: string;
+  summaryImages: number;
+  summaryLinks: number;
+  summarySources: number;
+  summaryText: string;
   nativeText: string;
   readmeElements: string[];
 }
@@ -47,6 +55,7 @@ if (!existsSync(pageSourcePath)) throw new Error('V4.2 preview source-selection 
 const generatedDir = resolve(REPO_ROOT, 'assets/generated');
 const files = readdirSync(generatedDir).filter((name) => name.endsWith('.svg')).sort();
 const expectedFiles = [...GENERATED_ASSET_NAMES].sort();
+if (expectedFiles.length !== 16) throw new Error(`Expected a 16-asset dark-only manifest, found ${expectedFiles.length}`);
 if (JSON.stringify(files) !== JSON.stringify(expectedFiles)) throw new Error(`Generated SVG directory does not match the canonical ${expectedFiles.length}-asset manifest`);
 const hash = createHash('sha256');
 for (const file of files) {
@@ -114,21 +123,39 @@ if (pageEvidence.version !== '4.2' || pageEvidence.previewDigest !== previewHash
   throw new Error('V4.2 preview source-selection evidence is stale');
 }
 const expectedSources: Record<string, string[]> = {
-  'page-dark-desktop-reduced-motion.png': ['hero-static-dark.svg', 'systems-static-dark.svg', 'architecture-static-dark.svg', 'signal-static-dark.svg'],
-  'page-light-desktop.png': ['hero-dark.svg', 'systems-dark.svg', 'architecture-dark.svg', 'signal-dark.svg'],
-  'page-dark-mobile.png': ['hero-dark.svg', 'systems-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
-  'page-light-mobile.png': ['hero-dark.svg', 'systems-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
-  'page-dark-mobile-reduced-motion.png': ['hero-static-dark.svg', 'systems-mobile-static-dark.svg', 'architecture-mobile-static-dark.svg', 'signal-mobile-static-dark.svg'],
-  'page-intermediate-light.png': ['hero-dark.svg', 'systems-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
+  'page-dark-desktop-reduced-motion.png': ['hero-static-dark.svg', 'systems-static-dark.svg', 'expand-dark.svg', 'architecture-static-dark.svg', 'signal-static-dark.svg'],
+  'page-light-desktop.png': ['hero-dark.svg', 'systems-dark.svg', 'expand-dark.svg', 'architecture-dark.svg', 'signal-dark.svg'],
+  'page-dark-mobile.png': ['hero-dark.svg', 'systems-mobile-dark.svg', 'expand-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
+  'page-light-mobile.png': ['hero-dark.svg', 'systems-mobile-dark.svg', 'expand-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
+  'page-dark-mobile-reduced-motion.png': ['hero-static-dark.svg', 'systems-mobile-static-dark.svg', 'expand-mobile-dark.svg', 'architecture-mobile-static-dark.svg', 'signal-mobile-static-dark.svg'],
+  'page-intermediate-light.png': ['hero-dark.svg', 'systems-mobile-dark.svg', 'expand-mobile-dark.svg', 'architecture-mobile-dark.svg', 'signal-mobile-dark.svg'],
 };
+const expectedExpanded = new Set([
+  'page-dark-desktop-reduced-motion.png',
+  'page-dark-mobile.png',
+  'page-dark-mobile-reduced-motion.png',
+  'page-intermediate-light.png',
+]);
 for (const [file, expected] of Object.entries(expectedSources)) {
   const result = pageEvidence.results.find((candidate) => candidate.file === file);
   if (!result) throw new Error(`Preview source evidence is missing ${file}`);
   const actual = result.sources.map((source) => source.split('/').at(-1));
   if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error(`${file}: unexpected responsive/reduced source selection`);
   if (result.broken !== 0 || result.scrollWidth > result.innerWidth) throw new Error(`${file}: broken image or horizontal overflow`);
-  if (result.nativeText.trim() || JSON.stringify(result.readmeElements) !== JSON.stringify(['IMG', 'IMG', 'IMG', 'IMG'])) {
+  if (result.nativeText.trim() || JSON.stringify(result.readmeElements) !== JSON.stringify(['IMG', 'IMG', 'DETAILS'])) {
     throw new Error(`${file}: simulated README body is not image-only`);
+  }
+  if (result.summaryText.trim() || result.summaryImages !== 1 || result.detailsImages !== 3) {
+    throw new Error(`${file}: disclosure summary/content hierarchy is invalid`);
+  }
+  if (result.summarySources !== 1 || result.summaryLinks !== 0 || result.summaryAlign !== 'middle') {
+    throw new Error(`${file}: disclosure summary responsive source, alignment, or link contract is invalid`);
+  }
+  if (result.interElementWhitespaceNodes !== 0) {
+    throw new Error(`${file}: whitespace text node exists between adjacent profile elements`);
+  }
+  if (result.detailsOpen !== expectedExpanded.has(file)) {
+    throw new Error(`${file}: unexpected disclosure state`);
   }
 }
 
