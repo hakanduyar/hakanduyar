@@ -23,7 +23,7 @@ describe('generated profile', () => {
     expect(telemetry.activity.total).toBe(telemetry.activity.weekly.reduce((sum, value) => sum + value, 0));
   });
 
-  it('renders two visible pictures followed by an image-only native disclosure', () => {
+  it('renders one visible hero followed by an image-only native disclosure', () => {
     expect(readme).not.toMatch(/<(?:img|source)[^>]+(?:src|srcset)="https?:/i);
     const withoutComments = readme.replace(/<!--[\s\S]*?-->/g, '');
     const visible = withoutComments.trim();
@@ -40,7 +40,7 @@ describe('generated profile', () => {
       .replace(/<summary>[\s\S]*?<\/summary>/g, 'SUMMARY')
       .replace(/\s+/g, ' ')
       .trim();
-    expect(skeleton).toBe('PICTUREPICTURE<details>SUMMARYPICTUREPICTURE</details>');
+    expect(skeleton).toBe('PICTURE<details>SUMMARYPICTUREPICTUREPICTURE</details>');
     expect(withoutComments.match(/<\/picture><picture>/g)).toHaveLength(2);
     expect(withoutComments).toContain('</picture><details><summary><picture>');
     expect(withoutComments).toContain('</picture></summary><picture>');
@@ -54,13 +54,14 @@ describe('generated profile', () => {
     expect(summary).toMatch(/^<picture><source media="\(max-width: 1080px\)" srcset="assets\/generated\/expand-mobile-dark\.svg"><img\b[^>]*><\/picture>$/);
     expect(summary).toContain('srcset="assets/generated/expand-mobile-dark.svg"');
     expect(summary).toContain('src="assets/generated/expand-dark.svg"');
-    expect(summary).toContain('alt="Show architecture and public signal"');
+    expect(summary).toContain('alt="Show systems, architecture, and public signal"');
     expect(summary).toContain('width="95%"');
     expect(summary).toContain('align="middle"');
     expect(summary).not.toMatch(/<a\b/);
     expect(summary.replace(/<picture>[\s\S]*?<\/picture>/g, '').trim()).toBe('');
     const detailsContent = details.replace(/<summary>[\s\S]*?<\/summary>/, '');
-    expect(detailsContent.match(/<picture>[\s\S]*?<\/picture>/g)).toHaveLength(2);
+    expect(detailsContent.match(/<picture>[\s\S]*?<\/picture>/g)).toHaveLength(3);
+    expect(detailsContent).toContain('assets/generated/systems-dark.svg');
     expect(detailsContent).toContain('assets/generated/architecture-dark.svg');
     expect(detailsContent).toContain('assets/generated/signal-dark.svg');
     expect(

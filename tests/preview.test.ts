@@ -43,7 +43,7 @@ describe('preview asset selection smoke coverage', () => {
       .replace(/<\/details>/g, ' /DETAILS ')
       .replace(/\s+/g, ' ')
       .trim();
-    expect(hierarchy).toBe('IMG IMG DETAILS SUMMARY PICTURE SOURCE EXPAND /PICTURE /SUMMARY IMG IMG /DETAILS');
+    expect(hierarchy).toBe('IMG DETAILS SUMMARY PICTURE SOURCE EXPAND /PICTURE /SUMMARY IMG IMG IMG /DETAILS');
 
     const details = body.match(/<details\b[^>]*>\s*([\s\S]*?)\s*<\/details>/)?.[1] ?? '';
     const summary = details.match(/<summary>\s*([\s\S]*?)\s*<\/summary>/)?.[1] ?? '';
@@ -53,12 +53,13 @@ describe('preview asset selection smoke coverage', () => {
     expect(summary).toMatch(/^<picture><source media="\(max-width: 1080px\)" srcset="\.\.\/assets\/generated\/expand-mobile-dark\.svg"><img\b[^>]*><\/picture>$/);
     expect(summary).toContain('srcset="../assets/generated/expand-mobile-dark.svg"');
     expect(summary).toContain('src="../assets/generated/expand-dark.svg"');
-    expect(summary).toContain('alt="Show architecture and public signal"');
+    expect(summary).toContain('alt="Show systems, architecture, and public signal"');
     expect(summary).toContain('width="95%" align="middle"');
     expect(summary).not.toMatch(/<a\b/);
     expect(summary.replace(/<picture>[\s\S]*?<\/picture>/g, '').trim()).toBe('');
     const detailsContent = details.replace(/<summary>[\s\S]*?<\/summary>/, '');
-    expect(detailsContent.match(/<img\b[^>]*class="profile-visual"[^>]*>/g)).toHaveLength(2);
+    expect(detailsContent.match(/<img\b[^>]*class="profile-visual"[^>]*>/g)).toHaveLength(3);
+    expect(detailsContent).toContain('data-desktop="../assets/generated/systems-dark.svg"');
     expect(detailsContent).toContain('data-desktop="../assets/generated/architecture-dark.svg"');
     expect(detailsContent).toContain('data-desktop="../assets/generated/signal-dark.svg"');
     expect(body.replace(/<[^>]+>/g, '').trim()).toBe('');

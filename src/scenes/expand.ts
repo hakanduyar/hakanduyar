@@ -64,7 +64,7 @@ export function renderExpand(mobile = false): string {
     height: HEIGHT,
     id: mobile ? 'expand-profile-mobile' : 'expand-profile',
     title: 'Show more',
-    description: 'Show more profile content to view the architecture and signal visualizations.',
+    description: 'Show more profile content to view systems, architecture, and signal visualizations.',
     background: theme.bg,
     body,
   });

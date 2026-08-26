@@ -1,32 +1,31 @@
 {
   "version": "4.2",
-  "capturedAt": "2026-08-26T12:08:33.468Z",
-  "previewDigest": "d5dd2f70bb690119ac709b7e447a0d88ced5451539ccd250272197958d4a8394",
+  "capturedAt": "2026-08-26T17:34:49.738Z",
+  "previewDigest": "c50e9134a1319f58f538cef6eca148c9905217d654a4b26c8d65c7fac0cca2a1",
   "results": [
     {
       "file": "page-dark-desktop-reduced-motion.png",
       "adjacentGaps": [
         -0.0000152587890625,
-        0.00006103515625,
-        -0.000087738037109375,
+        0.000034332275390625,
+        -0.00006103515625,
         0.000091552734375
       ],
       "broken": 0,
-      "detailsImages": 3,
+      "detailsImages": 4,
       "detailsOpen": true,
       "innerWidth": 1440,
       "interElementWhitespaceNodes": 0,
       "nativeText": "",
       "readmeElements": [
         "IMG",
-        "IMG",
         "DETAILS"
       ],
       "scrollWidth": 1425,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-static-dark.svg",
-        "http://127.0.0.1:4184/assets/generated/systems-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/expand-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/systems-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-static-dark.svg"
       ],
@@ -39,25 +38,23 @@
     {
       "file": "page-light-desktop.png",
       "adjacentGaps": [
-        -0.0000152587890625,
-        0.00006103515625
+        -0.0000152587890625
       ],
       "broken": 0,
-      "detailsImages": 3,
+      "detailsImages": 4,
       "detailsOpen": false,
       "innerWidth": 1440,
       "interElementWhitespaceNodes": 0,
       "nativeText": "",
       "readmeElements": [
         "IMG",
-        "IMG",
         "DETAILS"
       ],
       "scrollWidth": 1425,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-dark.svg",
-        "http://127.0.0.1:4184/assets/generated/systems-dark.svg",
         "http://127.0.0.1:4184/assets/generated/expand-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/systems-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-dark.svg"
       ],
@@ -71,26 +68,25 @@
       "file": "page-dark-mobile.png",
       "adjacentGaps": [
         0.0000152587890625,
-        -0.00006103515625,
-        0.000087738037109375,
+        -0.000034332275390625,
+        0.00006103515625,
         -0.00006103515625
       ],
       "broken": 0,
-      "detailsImages": 3,
+      "detailsImages": 4,
       "detailsOpen": true,
       "innerWidth": 390,
       "interElementWhitespaceNodes": 0,
       "nativeText": "",
       "readmeElements": [
         "IMG",
-        "IMG",
         "DETAILS"
       ],
       "scrollWidth": 375,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-dark.svg",
-        "http://127.0.0.1:4184/assets/generated/systems-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/expand-mobile-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/systems-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-mobile-dark.svg"
       ],
@@ -103,25 +99,23 @@
     {
       "file": "page-light-mobile.png",
       "adjacentGaps": [
-        0.0000152587890625,
-        -0.00006103515625
+        0.0000152587890625
       ],
       "broken": 0,
-      "detailsImages": 3,
+      "detailsImages": 4,
       "detailsOpen": false,
       "innerWidth": 390,
       "interElementWhitespaceNodes": 0,
       "nativeText": "",
       "readmeElements": [
         "IMG",
-        "IMG",
         "DETAILS"
       ],
       "scrollWidth": 375,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-dark.svg",
-        "http://127.0.0.1:4184/assets/generated/systems-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/expand-mobile-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/systems-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-mobile-dark.svg"
       ],
@@ -135,26 +129,25 @@
       "file": "page-dark-mobile-reduced-motion.png",
       "adjacentGaps": [
         0.0000152587890625,
-        -0.00006103515625,
-        0.000087738037109375,
+        -0.000034332275390625,
+        0.00006103515625,
         -0.00006103515625
       ],
       "broken": 0,
-      "detailsImages": 3,
+      "detailsImages": 4,
       "detailsOpen": true,
       "innerWidth": 390,
       "interElementWhitespaceNodes": 0,
       "nativeText": "",
       "readmeElements": [
         "IMG",
-        "IMG",
         "DETAILS"
       ],
       "scrollWidth": 375,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-static-dark.svg",
-        "http://127.0.0.1:4184/assets/generated/systems-mobile-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/expand-mobile-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/systems-mobile-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-static-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-mobile-static-dark.svg"
       ],
@@ -168,26 +161,25 @@
       "file": "page-intermediate-light.png",
       "adjacentGaps": [
         0.0000152587890625,
-        0,
         -0.00002288818359375,
+        0,
         0
       ],
       "broken": 0,
-      "detailsImages": 3,
+      "detailsImages": 4,
       "detailsOpen": true,
       "innerWidth": 1000,
       "interElementWhitespaceNodes": 0,
       "nativeText": "",
       "readmeElements": [
         "IMG",
-        "IMG",
         "DETAILS"
       ],
       "scrollWidth": 985,
       "sources": [
         "http://127.0.0.1:4184/assets/generated/hero-dark.svg",
-        "http://127.0.0.1:4184/assets/generated/systems-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/expand-mobile-dark.svg",
+        "http://127.0.0.1:4184/assets/generated/systems-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/architecture-mobile-dark.svg",
         "http://127.0.0.1:4184/assets/generated/signal-mobile-dark.svg"
       ],

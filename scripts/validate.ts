@@ -116,10 +116,10 @@ const appearanceLinks = readmeWithoutComments.match(/<a\b/gi) ?? [];
 if (appearanceLinks.length !== 0) fail(`README.md: expected no visible links, found ${appearanceLinks.length}`);
 
 const topLevel = readmeWithoutComments.match(
-  /^\s*(<picture>[\s\S]*?<\/picture>)\s*(<picture>[\s\S]*?<\/picture>)\s*(<details>[\s\S]*<\/details>)\s*$/,
+  /^\s*(<picture>[\s\S]*?<\/picture>)\s*(<details>[\s\S]*<\/details>)\s*$/,
 );
 if (!topLevel) {
-  fail('README.md: top-level structure must be hero picture, systems picture, then one disclosure');
+  fail('README.md: top-level structure must be one hero picture followed by one disclosure');
 }
 if ((readmeWithoutComments.match(/<\/picture><picture>/g) ?? []).length !== 2
   || !readmeWithoutComments.includes('</picture><details>')
@@ -137,10 +137,10 @@ if (/<details\b[^>]*\bopen(?:\s|=|>)/i.test(readmeWithoutComments)) fail('README
 
 const details = detailsBlocks[0] ?? '';
 const detailsStructure = details.match(
-  /^<details>\s*(<summary>[\s\S]*?<\/summary>)\s*(<picture>[\s\S]*?<\/picture>)\s*(<picture>[\s\S]*?<\/picture>)\s*<\/details>$/,
+  /^<details>\s*(<summary>[\s\S]*?<\/summary>)\s*(<picture>[\s\S]*?<\/picture>)\s*(<picture>[\s\S]*?<\/picture>)\s*(<picture>[\s\S]*?<\/picture>)\s*<\/details>$/,
 );
 if (!detailsStructure) {
-  fail('README.md: disclosure must contain only its image summary, architecture picture, and signal picture');
+  fail('README.md: disclosure must contain only its image summary, systems, architecture, and signal pictures');
 }
 
 const summary = summaryBlocks[0] ?? '';
@@ -165,7 +165,7 @@ if (!/<img\b[^>]*\bsrc="assets\/generated\/expand-dark\.svg"/.test(summary)) {
 }
 if (!/<img\b[^>]*\bwidth="95%"/.test(summary)) fail('README.md: summary image must reserve space for the native disclosure marker');
 if (!/<img\b[^>]*\balign="middle"/.test(summary)) fail('README.md: summary image must align with the native disclosure marker');
-if (!/<img\b[^>]*\balt="Show architecture and public signal"/.test(summary)) {
+if (!/<img\b[^>]*\balt="Show systems, architecture, and public signal"/.test(summary)) {
   fail('README.md: summary image must keep the exact English accessible label');
 }
 
