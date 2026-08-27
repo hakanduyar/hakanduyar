@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1000" viewBox="0 0 1440 1000">
+  <style>
+    #dark,#light{display:none}#dark:target,#light:target{display:block}.sans{font-family:Inter,Segoe UI,Arial,sans-serif}.mono{font-family:Consolas,monospace}.ink{fill:var(--ink)}.muted{fill:var(--muted)}.accent{fill:var(--accent)}.signal{fill:var(--signal)}.line{stroke:var(--line)}.strong{stroke:var(--strong)}.paper{fill:var(--paper)}.wash{fill:var(--wash)}.t8{font-size:8px}.t10{font-size:10px}.t12{font-size:12px}.t14{font-size:14px}.caps{letter-spacing:1.5px;font-weight:700}.label{font-weight:700}.hair{shape-rendering:crispEdges}
+  </style>
+  <defs>
+    <symbol id="scene" viewBox="0 0 1440 1000">
+      <text x="110" y="60" class="sans ink label t14">Hakan Duyar</text><text x="1330" y="58" text-anchor="end" class="mono muted t10 caps">ENGINEERING PROFILE / ARCHITECTURE BRIEF / V5</text>
+      <line x1="110" y1="78" x2="1330" y2="78" class="strong hair" stroke-width="2"/>
+      <text x="110" y="132" class="mono accent t10 caps">FRONT-END &amp; SYSTEMS ENGINEERING</text>
+      <text x="110" y="210" class="sans ink" font-size="60" font-weight="650" letter-spacing="-2.5">Interfaces are the surface.</text><text x="110" y="274" class="sans ink" font-size="60" font-weight="650" letter-spacing="-2.5">Systems are the work.</text>
+      <text x="110" y="318" class="sans muted t14">React and TypeScript products with clear state, service, data, delivery,</text><text x="110" y="340" class="sans muted t14">and evidence boundaries.</text>
+      <line x1="840" y1="138" x2="1330" y2="138" class="strong hair"/><text x="840" y="166" class="mono accent t10 caps">PRIMARY</text><text x="960" y="166" class="sans muted t12">React · TypeScript · application architecture</text><line x1="840" y1="184" x2="1330" y2="184" class="line hair"/>
+      <text x="840" y="212" class="mono accent t10 caps">EXTENDS TO</text><text x="960" y="212" class="sans muted t12">Node · APIs · relational / local data · delivery</text><line x1="840" y1="230" x2="1330" y2="230" class="line hair"/>
+      <text x="840" y="258" class="mono accent t10 caps">AI PRACTICE</text><text x="960" y="258" class="sans muted t12">plan · implement · verify · review · repair</text><line x1="840" y1="276" x2="1330" y2="276" class="line hair"/>
+      <text x="840" y="304" class="mono signal t10 caps">PRINCIPLE</text><text x="960" y="304" class="sans muted t12">Model confidence never substitutes for evidence.</text>
+      <line x1="110" y1="382" x2="1330" y2="382" class="line hair"/>
+      <text x="110" y="420" class="mono muted t10 caps">01 / ENGINEERING SYSTEM</text><text x="110" y="466" class="sans ink" font-size="30" font-weight="650">One map. Five responsibilities. Two controls.</text><text x="1330" y="420" text-anchor="end" class="sans muted t12">Responsibility, flow, and platform context in one readable system.</text>
+      <rect x="110" y="500" width="1220" height="330" class="paper strong" stroke-width="1"/>
+      <rect x="110" y="500" width="1220" height="48" class="wash"/><line x1="110" y1="548" x2="1330" y2="548" class="strong hair"/>
+      <text x="132" y="530" class="mono signal t10 caps">CROSS-CUTTING</text><text x="420" y="530" class="mono ink t10 caps">AUTH / ACCESS</text><text x="650" y="530" class="mono ink t10 caps">TYPE / CONTRACT</text><text x="890" y="530" class="mono ink t10 caps">TEST / EVIDENCE</text><text x="1130" y="530" class="mono ink t10 caps">AI DELIVERY</text>
+      <line x1="290" y1="548" x2="290" y2="830" class="strong hair"/>
+      <g class="mono ink t10 caps"><text x="132" y="585">INTERFACE</text><text x="132" y="639">APPLICATION</text><text x="132" y="693">SERVICES</text><text x="132" y="747">DATA</text><text x="132" y="801">PLATFORM</text></g>
+      <g class="line hair"><line x1="110" y1="602" x2="1330" y2="602"/><line x1="110" y1="656" x2="1330" y2="656"/><line x1="110" y1="710" x2="1330" y2="710"/><line x1="110" y1="764" x2="1330" y2="764"/><line x1="550" y1="548" x2="550" y2="830"/><line x1="810" y1="548" x2="810" y2="830"/><line x1="1070" y1="548" x2="1070" y2="830"/></g>
+      <g class="sans t12"><text x="316" y="585" class="accent label">React / TypeScript</text><text x="576" y="585" class="ink">Next.js boundary</text><text x="836" y="585" class="ink">Accessible UI systems</text><text x="1096" y="585" class="muted">Forms / motion</text>
+      <text x="316" y="639" class="accent label">State ownership</text><text x="576" y="639" class="ink">TanStack Query</text><text x="836" y="639" class="ink">PWA / Dexie</text><text x="1096" y="639" class="muted">Routing / forms</text>
+      <text x="316" y="693" class="accent label">Node.js</text><text x="576" y="693" class="ink">Express / Nest</text><text x="836" y="693" class="ink">REST contracts</text><text x="1096" y="693" class="muted">JWT / RBAC</text>
+      <text x="316" y="747" class="accent label">PostgreSQL</text><text x="576" y="747" class="ink">Prisma</text><text x="836" y="747" class="ink">Supabase</text><text x="1096" y="747" class="muted">Redis / search</text>
+      <text x="316" y="801" class="accent label">Docker</text><text x="576" y="801" class="ink">CI / CD</text><text x="836" y="801" class="ink">Nginx / Linux</text><text x="1096" y="801" class="muted">Kubernetes / K9s · expansion</text></g>
+      <rect x="110" y="850" width="1220" height="52" class="wash"/><rect x="110" y="850" width="4" height="52" class="signal"/><text x="132" y="881" class="sans ink t12">Architecture decides where responsibility lives and how evidence travels.</text><text x="1308" y="881" text-anchor="end" class="mono signal t10 caps">REQUEST → STATE → RULE → PERSIST → DELIVER</text>
+      <text x="110" y="948" class="mono muted t10 caps">SOFTWARE FACTORY / DURABLE STATE · INDEPENDENT REVIEW · HUMAN RELEASE GATE</text><text x="1330" y="948" text-anchor="end" class="mono accent t10 caps">RECOMMENDED DIRECTION</text>
+    </symbol>
+  </defs>
+  <g id="dark" style="--bg:#0b0d10;--paper:#11151a;--wash:#111722;--ink:#f3f6fa;--muted:#96a0ad;--line:#29313b;--strong:#3a4653;--accent:#8eb4ff;--signal:#d7b85c"><rect width="1440" height="1000" fill="var(--bg)"/><use href="#scene"/></g>
+  <g id="light" style="--bg:#f3f1ec;--paper:#ffffff;--wash:#edf2f8;--ink:#15191e;--muted:#5b6672;--line:#d7dce1;--strong:#aeb7c1;--accent:#245fae;--signal:#8a6411"><rect width="1440" height="1000" fill="var(--bg)"/><use href="#scene"/></g>
+</svg>

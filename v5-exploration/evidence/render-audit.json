@@ -1,0 +1,506 @@
+[
+  {
+    "concept": "a",
+    "theme": "dark",
+    "mode": "desktop",
+    "bg": "rgb(11, 13, 16)",
+    "brokenImages": [],
+    "color": "rgb(255, 255, 255)",
+    "h1": "HakanDuyar",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      1417,
+      2697
+    ],
+    "sections": 4,
+    "title": "Concept A — Architecture Ledger",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "concept": "a",
+    "theme": "light",
+    "mode": "desktop",
+    "bg": "rgb(243, 241, 236)",
+    "brokenImages": [],
+    "color": "rgb(0, 0, 0)",
+    "h1": "HakanDuyar",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      1417,
+      2697
+    ],
+    "sections": 4,
+    "title": "Concept A — Architecture Ledger",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "concept": "b",
+    "theme": "dark",
+    "mode": "desktop",
+    "bg": "rgb(11, 13, 16)",
+    "brokenImages": [],
+    "color": "rgb(255, 255, 255)",
+    "h1": "Systemsbehind theinterface.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      1417,
+      2905
+    ],
+    "sections": 5,
+    "title": "Concept B — Control Plane",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "concept": "b",
+    "theme": "light",
+    "mode": "desktop",
+    "bg": "rgb(243, 241, 236)",
+    "brokenImages": [],
+    "color": "rgb(0, 0, 0)",
+    "h1": "Systemsbehind theinterface.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      1417,
+      2905
+    ],
+    "sections": 5,
+    "title": "Concept B — Control Plane",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "concept": "c",
+    "theme": "dark",
+    "mode": "desktop",
+    "bg": "rgb(11, 13, 16)",
+    "brokenImages": [],
+    "color": "rgb(255, 255, 255)",
+    "h1": "Hakan Duyar",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      1417,
+      2876
+    ],
+    "sections": 4,
+    "title": "Concept C — Capability Atlas",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "concept": "c",
+    "theme": "light",
+    "mode": "desktop",
+    "bg": "rgb(243, 241, 236)",
+    "brokenImages": [],
+    "color": "rgb(0, 0, 0)",
+    "h1": "Hakan Duyar",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      1417,
+      2876
+    ],
+    "sections": 4,
+    "title": "Concept C — Capability Atlas",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "concept": "d",
+    "theme": "dark",
+    "mode": "desktop",
+    "bg": "rgb(11, 13, 16)",
+    "brokenImages": [],
+    "color": "rgb(255, 255, 255)",
+    "h1": "Architecture is where product intent becomes accountable behavior.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      1417,
+      3701
+    ],
+    "sections": 4,
+    "title": "Concept D — Architecture Dossiers",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "concept": "d",
+    "theme": "light",
+    "mode": "desktop",
+    "bg": "rgb(243, 241, 236)",
+    "brokenImages": [],
+    "color": "rgb(0, 0, 0)",
+    "h1": "Architecture is where product intent becomes accountable behavior.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      1417,
+      3701
+    ],
+    "sections": 4,
+    "title": "Concept D — Architecture Dossiers",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "concept": "e",
+    "theme": "dark",
+    "mode": "desktop",
+    "bg": "rgb(11, 13, 16)",
+    "brokenImages": [],
+    "color": "rgb(255, 255, 255)",
+    "h1": "Engineeringwith AI.Under control.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      1417,
+      4496
+    ],
+    "sections": 5,
+    "title": "Concept E — Assurance Loop",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "concept": "e",
+    "theme": "light",
+    "mode": "desktop",
+    "bg": "rgb(243, 241, 236)",
+    "brokenImages": [],
+    "color": "rgb(0, 0, 0)",
+    "h1": "Engineeringwith AI.Under control.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      1417,
+      4496
+    ],
+    "sections": 5,
+    "title": "Concept E — Assurance Loop",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "concept": "f",
+    "theme": "dark",
+    "mode": "desktop",
+    "bg": "rgb(11, 13, 16)",
+    "brokenImages": [],
+    "color": "rgb(255, 255, 255)",
+    "h1": "Interfaces are the surface. Systems are the work.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      1417,
+      4032
+    ],
+    "sections": 4,
+    "title": "Concept F — System Brief",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "concept": "f",
+    "theme": "light",
+    "mode": "desktop",
+    "bg": "rgb(243, 241, 236)",
+    "brokenImages": [],
+    "color": "rgb(0, 0, 0)",
+    "h1": "Interfaces are the surface. Systems are the work.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      1417,
+      4032
+    ],
+    "sections": 4,
+    "title": "Concept F — System Brief",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "concept": "a",
+    "theme": "dark",
+    "mode": "mobile",
+    "bg": "rgb(11, 13, 16)",
+    "brokenImages": [],
+    "color": "rgb(255, 255, 255)",
+    "h1": "HakanDuyar",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      367,
+      4431
+    ],
+    "sections": 4,
+    "title": "Concept A — Architecture Ledger",
+    "viewport": [
+      390,
+      845
+    ]
+  },
+  {
+    "concept": "a",
+    "theme": "light",
+    "mode": "mobile",
+    "bg": "rgb(243, 241, 236)",
+    "brokenImages": [],
+    "color": "rgb(0, 0, 0)",
+    "h1": "HakanDuyar",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      367,
+      4431
+    ],
+    "sections": 4,
+    "title": "Concept A — Architecture Ledger",
+    "viewport": [
+      390,
+      845
+    ]
+  },
+  {
+    "concept": "b",
+    "theme": "dark",
+    "mode": "mobile",
+    "bg": "rgb(11, 13, 16)",
+    "brokenImages": [],
+    "color": "rgb(255, 255, 255)",
+    "h1": "Systemsbehind theinterface.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      367,
+      5241
+    ],
+    "sections": 5,
+    "title": "Concept B — Control Plane",
+    "viewport": [
+      390,
+      845
+    ]
+  },
+  {
+    "concept": "b",
+    "theme": "light",
+    "mode": "mobile",
+    "bg": "rgb(243, 241, 236)",
+    "brokenImages": [],
+    "color": "rgb(0, 0, 0)",
+    "h1": "Systemsbehind theinterface.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      367,
+      5241
+    ],
+    "sections": 5,
+    "title": "Concept B — Control Plane",
+    "viewport": [
+      390,
+      845
+    ]
+  },
+  {
+    "concept": "c",
+    "theme": "dark",
+    "mode": "mobile",
+    "bg": "rgb(11, 13, 16)",
+    "brokenImages": [],
+    "color": "rgb(255, 255, 255)",
+    "h1": "Hakan Duyar",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      367,
+      4745
+    ],
+    "sections": 4,
+    "title": "Concept C — Capability Atlas",
+    "viewport": [
+      390,
+      845
+    ]
+  },
+  {
+    "concept": "c",
+    "theme": "light",
+    "mode": "mobile",
+    "bg": "rgb(243, 241, 236)",
+    "brokenImages": [],
+    "color": "rgb(0, 0, 0)",
+    "h1": "Hakan Duyar",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      367,
+      4745
+    ],
+    "sections": 4,
+    "title": "Concept C — Capability Atlas",
+    "viewport": [
+      390,
+      845
+    ]
+  },
+  {
+    "concept": "d",
+    "theme": "dark",
+    "mode": "mobile",
+    "bg": "rgb(11, 13, 16)",
+    "brokenImages": [],
+    "color": "rgb(255, 255, 255)",
+    "h1": "Architecture is where product intent becomes accountable behavior.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      367,
+      5344
+    ],
+    "sections": 4,
+    "title": "Concept D — Architecture Dossiers",
+    "viewport": [
+      390,
+      845
+    ]
+  },
+  {
+    "concept": "d",
+    "theme": "light",
+    "mode": "mobile",
+    "bg": "rgb(243, 241, 236)",
+    "brokenImages": [],
+    "color": "rgb(0, 0, 0)",
+    "h1": "Architecture is where product intent becomes accountable behavior.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      367,
+      5344
+    ],
+    "sections": 4,
+    "title": "Concept D — Architecture Dossiers",
+    "viewport": [
+      390,
+      845
+    ]
+  },
+  {
+    "concept": "e",
+    "theme": "dark",
+    "mode": "mobile",
+    "bg": "rgb(11, 13, 16)",
+    "brokenImages": [],
+    "color": "rgb(255, 255, 255)",
+    "h1": "Engineeringwith AI.Under control.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      367,
+      5769
+    ],
+    "sections": 5,
+    "title": "Concept E — Assurance Loop",
+    "viewport": [
+      390,
+      845
+    ]
+  },
+  {
+    "concept": "e",
+    "theme": "light",
+    "mode": "mobile",
+    "bg": "rgb(243, 241, 236)",
+    "brokenImages": [],
+    "color": "rgb(0, 0, 0)",
+    "h1": "Engineeringwith AI.Under control.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      367,
+      5769
+    ],
+    "sections": 5,
+    "title": "Concept E — Assurance Loop",
+    "viewport": [
+      390,
+      845
+    ]
+  },
+  {
+    "concept": "f",
+    "theme": "dark",
+    "mode": "mobile",
+    "bg": "rgb(11, 13, 16)",
+    "brokenImages": [],
+    "color": "rgb(255, 255, 255)",
+    "h1": "Interfaces are the surface. Systems are the work.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      367,
+      5905
+    ],
+    "sections": 4,
+    "title": "Concept F — System Brief",
+    "viewport": [
+      390,
+      845
+    ]
+  },
+  {
+    "concept": "f",
+    "theme": "light",
+    "mode": "mobile",
+    "bg": "rgb(243, 241, 236)",
+    "brokenImages": [],
+    "color": "rgb(0, 0, 0)",
+    "h1": "Interfaces are the surface. Systems are the work.",
+    "motion": "reduce",
+    "overflowX": false,
+    "scroll": [
+      367,
+      5905
+    ],
+    "sections": 4,
+    "title": "Concept F — System Brief",
+    "viewport": [
+      390,
+      845
+    ]
+  }
+]
