@@ -30,14 +30,16 @@ describe('V5 production profile', () => {
     expect(positions).toEqual([...positions].sort((a, b) => a - b));
   });
 
-  it('uses GitHub-supported themed pictures and animated GIFs with reduced-motion SVGs', () => {
+  it('keeps GitHub theme sources separate from viewport and reduced-motion conditions', () => {
     expect(readme).toContain('prefers-color-scheme: dark');
     expect(readme).toContain('prefers-reduced-motion: reduce');
+    expect(readme).not.toMatch(/media="[^"]*prefers-color-scheme[^"]*\band\b|media="[^"]*\band\b[^"]*prefers-color-scheme/);
     for (const scene of ['architecture', 'ai']) {
       expect(readme).toContain(`assets/generated/${scene}-dark.gif`);
       expect(readme).toContain(`assets/generated/${scene}-light.gif`);
       expect(readme).toContain(`assets/generated/${scene}-static-dark.svg`);
-      expect(readme).toContain(`assets/generated/${scene}-static-light.svg`);
+      expect(readme).toContain(`assets/generated/${scene}-mobile-static-dark.svg`);
+      expect(readme).not.toContain(`assets/generated/${scene}-mobile-light.gif`);
     }
   });
 

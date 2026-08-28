@@ -68,17 +68,24 @@ if (!readme.includes('alt="Show more: architecture, selected applications, AI en
   fail('README.md: English Show more label is missing');
 }
 for (const scene of ['identity', 'project-factory', 'project-spark', 'project-layers', 'project-ledger', 'capability', 'expand']) {
-  for (const suffix of ['light.svg', 'dark.svg', 'mobile-light.svg', 'mobile-dark.svg']) {
+  for (const suffix of ['light.svg', 'dark.svg', 'mobile-dark.svg']) {
     if (!readme.includes(`assets/generated/${scene}-${suffix}`)) fail(`README.md: missing ${scene}-${suffix}`);
   }
+  if (readme.includes(`assets/generated/${scene}-mobile-light.svg`)) fail(`README.md: ${scene} uses an unsafe combined mobile/theme source`);
 }
 for (const scene of ['architecture', 'ai']) {
-  for (const suffix of ['light.gif', 'dark.gif', 'mobile-light.gif', 'mobile-dark.gif', 'static-light.svg', 'static-dark.svg', 'mobile-static-light.svg', 'mobile-static-dark.svg']) {
+  for (const suffix of ['light.gif', 'dark.gif', 'mobile-dark.gif', 'static-dark.svg', 'mobile-static-dark.svg']) {
     if (!readme.includes(`assets/generated/${scene}-${suffix}`)) fail(`README.md: missing ${scene}-${suffix}`);
+  }
+  for (const unsafe of ['mobile-light.gif', 'static-light.svg', 'mobile-static-light.svg']) {
+    if (readme.includes(`assets/generated/${scene}-${unsafe}`)) fail(`README.md: ${scene}-${unsafe} should remain an unreferenced build/preview asset`);
   }
 }
 if (!readme.includes('prefers-color-scheme: dark')) fail('README.md: automatic theme selection is missing');
 if (!readme.includes('prefers-reduced-motion: reduce')) fail('README.md: reduced-motion fallback is missing');
+if (/media="[^"]*prefers-color-scheme[^"]*\band\b|media="[^"]*\band\b[^"]*prefers-color-scheme/.test(readme)) {
+  fail('README.md: GitHub-incompatible combined color-scheme media condition detected');
+}
 
 let previousPosition = -1;
 for (const project of V5_PROJECTS) {
