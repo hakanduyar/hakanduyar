@@ -119,8 +119,7 @@ Do not call the system comprehensively RBAC-secure: caller-selected registration
 
 ## Explicit exclusions
 
-- `jointledger` must not be presented as Hakan-built application architecture; repository documentation says the upstream app is unmodified. Local Docker/PostgreSQL setup is the demonstrated contribution.
+- `jointledger` has two distinct, evidenced contributions: the default branch carries Hakan's local Docker Compose/PostgreSQL runtime setup, while the unmerged `feature/shared-family-book` branch carries four Hakan-authored backend commits covering book and membership models, services/APIs, owner/editor/viewer permission checks, book scoping, and an idempotent personal-book backfill. Present it as an unreleased backend extension plus runtime integration—not as a finished shared-finance product. The upstream accounting engine and Vue interface are not Hakan's work; there is no shared-book frontend or working invitation flow, and transaction reads/writes remain on the original owner-scoped path.
 - Vue and Go remain historical/public-language context and should not become identity technologies.
 - K9s never appears as a peer of Kubernetes, Docker, or React.
 - Technology presence in history is not sufficient for core-expertise positioning.
-

@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>System Brief — Refined · Hakan Duyar</title>
+<meta name="description" content="Hakan Duyar — Front-end &amp; Systems Engineering. An architecture brief: responsibility layers, four application case studies, and a governed AI engineering workflow.">
+<link rel="stylesheet" href="../shared/base.css">
+<style>
+/* ============================================================================
+   SYSTEM BRIEF — REFINED
+   Chassis: Concept F. Case-study method borrowed from Concept D.
+   Assurance/authority model borrowed from Concept E.
+
+   Palette rule: the page structure is neutral graphite so that the six real
+   technology marks are the only saturated colour on the page, and brass is
+   reserved exclusively for human authority.
+   ========================================================================= */
+
+:root{
+  --sans:"Segoe UI Variable Display","Segoe UI",Inter,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  --text:"Segoe UI Variable Text","Segoe UI",Inter,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  --mono:"Cascadia Mono","Cascadia Code",ui-monospace,"SF Mono","JetBrains Mono",Consolas,"Liberation Mono",monospace;
+  --b-react:#61DAFB; --b-ts:#3178C6; --b-node:#5FA04E; --b-pg:#4169E1; --b-docker:#2496ED;
+}
+
+:root[data-theme=dark]{
+  --bg:#0A0C10; --sheet:#12161C; --sheet-2:#171C23; --plate:#080A0E;
+  /* --faint is the annotation floor. #69737F measured 3.55:1 on --sheet-2. #7A8492 fixed the
+     plain tokens but failed the color-mix() tints under the smallest text; #7F8997 fixed two of
+     them and left the ≤880 mobile core layer (~4.17:1) and the human-authority step (~4.39:1)
+     short. #858F9D is the minimum tested candidate that clears 4.5 on every surface sampled:
+     Codex measured 4.51 on the 880px mobile core tint, 4.75 on the human-authority step, and
+     4.91 on the durable-domain surface. Same hue (215°), so the annotation register is unchanged
+     in kind; the --muted ↔ --faint gap narrows further, an accepted trade-off. */
+  --ink:#E9EDF2; --muted:#939DA9; --faint:#858F9D;
+  --rule:#242B34; --rule-2:#3A444F;
+  --flow:#88A7CD; --authority:#D3B36A;
+  --b-next:#FFFFFF;
+  --tint:14%; --edge:32%;
+  --lift:none;
+}
+:root[data-theme=light]{
+  --bg:#E5E7E2; --sheet:#FCFCFB; --sheet-2:#F1F2EE; --plate:#161A20;
+  /* Retuned from #79828A (3.32:1 on the light field), then #606870: Codex measured 4.40:1 on the
+     880px mobile-core color-mix() surface. #5E666E is the minimum tested same-direction
+     correction that clears it, at 4.54:1; the light human-authority step and durable-domain
+     surface compute at 5.00 and 5.03. */
+  --ink:#13171B; --muted:#525C65; --faint:#5E666E;
+  --rule:#D6D8D3; --rule-2:#A8ADA8;
+  --flow:#2B5581; --authority:#7C5A0F;
+  --b-next:#000000;
+  --tint:9%; --edge:26%;
+  /* Light mode is a document on a desk, not an inverted screen: sheets lift off the field. */
+  --lift:0 1px 0 rgba(255,255,255,.9) inset, 0 10px 26px -18px rgba(20,28,36,.55);
+}
+
+body{background:var(--bg);color:var(--ink);font-family:var(--text);font-size:15px;line-height:1.55;letter-spacing:-.005em}
+.page{width:min(1220px,calc(100% - 48px));padding-bottom:64px}
+.page>section{content-visibility:visible;contain-intrinsic-size:auto}
+::selection{background:color-mix(in srgb,var(--flow) 34%,transparent)}
+:focus-visible{outline:2px solid var(--flow);outline-offset:3px}
+
+/* --- shared type roles ----------------------------------------------------
+   Mono annotation floor is 10px. With the steps below it (8px / 9px / 9.5px) the mono
+   scale was five sizes inside a 3px band — unreadable as hierarchy and unreadable at
+   the ~880px README width. Only the floor moved: the 11px mono step and every display
+   size above are unchanged, so the hierarchy is not flattened.
+   -------------------------------------------------------------------------- */
+.sb-mono{font:650 10px/1.4 var(--mono);letter-spacing:.135em;text-transform:uppercase}
+.sb-key{font:650 10px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.sb-h{font-family:var(--sans);font-weight:640;letter-spacing:-.033em;line-height:1.04;margin:0}
+h1.sb-h{letter-spacing:-.046em;line-height:.97}
+
+/* --- title block ---------------------------------------------------------- */
+.sb-title{display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px;
+  padding:30px 0 16px;border-bottom:2px solid var(--ink)}
+.sb-title-name{font:640 23px/1 var(--sans);letter-spacing:-.03em}
+.sb-title-role{margin-top:9px;font:600 13px/1 var(--sans);letter-spacing:-.008em;color:var(--muted)}
+.sb-title-meta{text-align:right;color:var(--faint);font:650 10px/1.9 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.sb-title-meta b{color:var(--muted);font-weight:650}
+
+/* --- hero ----------------------------------------------------------------- */
+.sb-hero{display:grid;grid-template-columns:1.12fr .88fr;gap:72px;
+  padding:56px 0 58px;border-bottom:1px solid var(--rule)}
+.sb-hero h1{font-size:clamp(44px,5.9vw,76px);margin:18px 0 24px;max-width:14ch}
+.sb-eyebrow{color:var(--flow);font:650 10px/1 var(--mono);letter-spacing:.17em;text-transform:uppercase}
+.sb-lede{margin:0;color:var(--muted);font-size:17px;line-height:1.6;max-width:52ch}
+.sb-lede b{color:var(--ink);font-weight:600}
+.sb-brief{align-self:end;border-top:1px solid var(--rule-2)}
+/* Key column widened 104 -> 120px so APPLIED BREADTH still holds one line at 10px. */
+.sb-brief-row{display:grid;grid-template-columns:120px 1fr;gap:18px;padding:15px 0;border-bottom:1px solid var(--rule)}
+.sb-brief-row dt{color:var(--muted);font:650 10px/1.5 var(--mono);letter-spacing:.13em;text-transform:uppercase}
+.sb-brief-row dd{margin:0;font-size:12.5px;line-height:1.6;color:var(--muted)}
+.sb-brief-row dd b{color:var(--ink);font-weight:600}
+.sb-brief-row.is-principle dt{color:var(--authority)}
+.sb-brief-row.is-principle dd{color:var(--ink);font-weight:500}
+
+/* --- section scaffolding -------------------------------------------------- */
+.sb-section{padding:60px 0;border-bottom:1px solid var(--rule)}
+.sb-head{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:end;margin-bottom:32px}
+.sb-head h2{font-size:clamp(27px,3.1vw,38px);max-width:19ch}
+.sb-head p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.65;max-width:46ch;justify-self:end}
+.sb-num{display:block;margin-bottom:14px;color:var(--faint);font:650 10px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase}
+.sb-num b{color:var(--ink);font-weight:650}
+
+/* --- 01a: legend of marks ------------------------------------------------- */
+.sb-legend{border:1px solid var(--rule-2);background:var(--sheet);box-shadow:var(--lift)}
+/* Wraps rather than overflows: the two keys measure ~302px together at the 10px mono
+   floor, against 322px of content box at a 390px viewport. Under 20px of slack was the
+   page's only credible horizontal-overflow risk. */
+.sb-legend-bar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;padding:13px 20px;
+  border-bottom:1px solid var(--rule);background:var(--sheet-2);color:var(--faint)}
+.sb-anchors{display:grid;grid-template-columns:auto auto 1fr}
+/* Groups stretch so the dividers run full height; content is bottom-aligned so the
+   four mark sizes read as one descending scale across the whole legend. */
+.sb-group{display:flex;flex-wrap:wrap;align-items:flex-end;align-content:flex-end;
+  column-gap:26px;row-gap:20px;padding:34px 30px;border-right:1px solid var(--rule)}
+.sb-group:last-child{border-right:0}
+.sb-group-cap{width:100%;padding-top:12px;border-top:1px solid var(--rule);color:var(--faint);
+  font:650 10px/1.5 var(--mono);letter-spacing:.13em;text-transform:uppercase}
+/* Cap the text block so a long caption can never out-measure its plate — the plate
+   size is what encodes hierarchy, and a wide caption would flatten the read. */
+.sb-anchor{--brand:var(--rule-2);text-align:left;max-width:calc(var(--sz) + 44px)}
+.sb-plate{display:grid;place-items:center;width:var(--sz);height:var(--sz);
+  border:1px solid color-mix(in srgb,var(--brand) var(--edge),var(--rule));
+  background:color-mix(in srgb,var(--brand) var(--tint),var(--sheet))}
+.sb-plate svg{width:calc(var(--sz) * .56);height:calc(var(--sz) * .56);fill:var(--brand);display:block}
+.sb-anchor b{display:block;margin-top:13px;font-family:var(--sans);font-weight:600;
+  font-size:var(--nm);line-height:1.2;letter-spacing:-.02em}
+.sb-anchor span{display:block;margin-top:5px;color:var(--muted);font:500 11px/1.4 var(--mono);letter-spacing:.04em}
+.sb-anchor[data-brand=react]{--brand:var(--b-react)}
+.sb-anchor[data-brand=ts]{--brand:var(--b-ts)}
+.sb-anchor[data-brand=next]{--brand:var(--b-next)}
+.sb-anchor[data-brand=node]{--brand:var(--b-node)}
+.sb-anchor[data-brand=pg]{--brand:var(--b-pg)}
+.sb-anchor[data-brand=docker]{--brand:var(--b-docker)}
+.sb-t1{--sz:164px;--nm:16px}
+.sb-t2{--sz:118px;--nm:14px}
+.sb-t3{--sz:96px;--nm:13px}
+.sb-t4{--sz:76px;--nm:12px}
+.sb-legend-note{margin:0;padding:14px 20px;border-top:1px solid var(--rule);background:var(--sheet-2);
+  color:var(--muted);font-size:12px}
+.sb-legend-note b{color:var(--ink);font-weight:600}
+
+/* --- 01b: responsibility plan -------------------------------------------- */
+.sb-plan{margin-top:14px;border:1px solid var(--rule-2);background:var(--sheet);box-shadow:var(--lift)}
+/* The grid lives on the head and body, not on .sb-row: the rows are display:contents
+   so their cells become items of .sb-plan-body's grid. Mobile reverses both. */
+.sb-plan-head,.sb-plan-body{display:grid;grid-template-columns:46px 206px repeat(4,1fr)}
+.sb-plan-head{border-bottom:1px solid var(--rule-2);background:var(--sheet-2)}
+.sb-plan-head>*{padding:13px 14px;border-right:1px solid var(--rule);color:var(--faint);
+  font:650 10px/1.4 var(--mono);letter-spacing:.13em;text-transform:uppercase}
+.sb-plan-head>*:last-child{border-right:0}
+.sb-plan-head>*:first-child{padding-left:16px}
+.sb-plan-body{position:relative}
+.sb-row{display:contents}
+.sb-idx,.sb-layer,.sb-cell{border-bottom:1px solid var(--rule);border-right:1px solid var(--rule);padding:17px 14px}
+.sb-cell:nth-child(6){border-right:0}
+.sb-row:last-child>*{border-bottom:0}
+.sb-idx{position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:center;
+  background:var(--sheet);padding-left:0;padding-right:0}
+.sb-idx i{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;
+  border:1px solid var(--rule-2);background:var(--sheet);
+  font:650 10px/1 var(--mono);font-style:normal;color:var(--muted)}
+.sb-layer b{display:block;font:650 11px/1.3 var(--mono);letter-spacing:.13em;text-transform:uppercase}
+.sb-layer span{display:block;margin-top:7px;color:var(--faint);font-size:11.5px;line-height:1.5}
+.sb-cell{font-size:12px;line-height:1.55;color:var(--muted)}
+.sb-cell strong{display:block;color:var(--ink);font-weight:600;font-size:12.5px;margin-bottom:5px}
+.sb-cell .sb-k{display:none}
+.sb-row[data-emphasis=core] .sb-layer{background:color-mix(in srgb,var(--flow) 7%,var(--sheet))}
+.sb-row[data-emphasis=core] .sb-layer b{color:var(--flow)}
+
+/* the riser: request descends the layers, evidence returns to the decision */
+.sb-riser{position:absolute;left:23px;top:18px;bottom:18px;width:2px;background:var(--rule-2);z-index:0}
+.sb-token{position:absolute;left:-4px;width:10px;height:10px;border-radius:50%;opacity:0}
+.sb-token.is-down{background:var(--flow);box-shadow:0 0 0 4px color-mix(in srgb,var(--flow) 20%,transparent);
+  animation:sbDown 11s cubic-bezier(.62,0,.38,1) infinite}
+.sb-token.is-up{background:var(--authority);box-shadow:0 0 0 4px color-mix(in srgb,var(--authority) 20%,transparent);
+  animation:sbUp 11s cubic-bezier(.62,0,.38,1) infinite}
+@keyframes sbDown{0%,3%{top:0;opacity:0}10%{opacity:1}40%{opacity:1}47%,100%{top:calc(100% - 10px);opacity:0}}
+@keyframes sbUp{0%,50%{top:calc(100% - 10px);opacity:0}57%{opacity:1}90%{opacity:1}96%,100%{top:0;opacity:0}}
+
+.sb-plan-foot{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;
+  margin-top:12px;padding:15px 18px;border-left:3px solid var(--authority);background:var(--sheet-2)}
+.sb-plan-foot p{margin:0;font-size:12.5px;color:var(--ink)}
+.sb-flowkey{display:flex;gap:20px;color:var(--muted);font:650 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.sb-flowkey span{display:flex;align-items:center;gap:8px}
+.sb-flowkey i{width:9px;height:9px;border-radius:50%}
+.sb-flowkey .d{background:var(--flow)}
+.sb-flowkey .u{background:var(--authority)}
+
+/* --- 02: applications ----------------------------------------------------- */
+.sb-index{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--rule);
+  background:var(--sheet);margin-bottom:14px}
+.sb-index div{padding:15px 16px;border-right:1px solid var(--rule)}
+.sb-index div:last-child{border-right:0}
+.sb-index b{display:block;color:var(--faint);font:650 10px/1 var(--mono);letter-spacing:.14em}
+.sb-index span{display:block;margin-top:7px;font-size:13px;font-weight:600;letter-spacing:-.015em}
+.sb-index em{display:block;margin-top:3px;font-style:normal;color:var(--faint);font-size:11.5px}
+
+.sb-case{border:1px solid var(--rule-2);background:var(--sheet);padding:28px 30px;box-shadow:var(--lift)}
+.sb-case-head{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:baseline;
+  padding-bottom:16px;border-bottom:1px solid var(--rule)}
+.sb-case-id{display:flex;align-items:baseline;gap:16px}
+.sb-case-id i{font:650 11px/1 var(--mono);font-style:normal;color:var(--faint);letter-spacing:.1em}
+.sb-case-id h3{margin:0;font:640 24px/1 var(--sans);letter-spacing:-.035em}
+.sb-case-kind{color:var(--flow);font:650 10px/1.5 var(--mono);letter-spacing:.13em;text-transform:uppercase;text-align:right}
+.sb-claim{margin:20px 0 10px;font:600 clamp(17px,1.7vw,21px)/1.32 var(--sans);letter-spacing:-.025em;max-width:44ch}
+.sb-desc{margin:0;color:var(--muted);font-size:12.5px;line-height:1.65;max-width:62ch}
+
+/* Software Factory is the flagship. Dominance was previously carried only by width,
+   position and the bespoke diagram — its title matched Spark's. Three peers now share
+   one title size (24px) and the flagship sits clearly above them. */
+.sb-case--flagship{padding:32px 34px}
+.sb-case--flagship .sb-case-id h3{font-size:31px}
+.sb-case--flagship .sb-claim{font-size:clamp(19px,2vw,24px);max-width:40ch}
+
+/* layer span — which layers the application actually occupies */
+.sb-spine{display:flex;align-items:center;gap:14px;margin-top:18px}
+.sb-spine-bar{display:flex;gap:3px}
+.sb-spine-bar i{display:grid;place-items:center;width:28px;height:22px;
+  border:1px solid var(--rule-2);font:650 10px/1 var(--mono);font-style:normal;color:var(--faint)}
+.sb-spine-bar i[data-on]{background:var(--flow);border-color:var(--flow);color:var(--bg)}
+.sb-spine-text{color:var(--muted);font:650 10px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+
+/* path chain */
+.sb-path{display:grid;gap:8px;margin:22px 0 0;padding:0;list-style:none}
+.sb-path-3{grid-template-columns:repeat(3,1fr)}
+.sb-path li{position:relative;padding:14px;border:1px solid var(--rule);background:var(--sheet-2)}
+.sb-path li b{display:block;font-size:12.5px;font-weight:640;letter-spacing:-.015em}
+.sb-path li span{display:block;margin-top:6px;color:var(--muted);font-size:11.5px;line-height:1.5}
+.sb-path li+li::before{content:"";position:absolute;left:-7px;top:50%;width:5px;height:5px;
+  border-top:1px solid var(--rule-2);border-right:1px solid var(--rule-2);
+  transform:translateY(-50%) rotate(45deg)}
+.sb-path.sb-path-3 li:nth-child(3n+1)::before{display:none}
+
+.sb-notes{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:22px 0 0;
+  border-top:1px solid var(--rule)}
+.sb-notes>div{padding:15px 20px 0 0}
+.sb-notes dt{color:var(--muted);font:650 10px/1.4 var(--mono);letter-spacing:.13em;text-transform:uppercase}
+.sb-notes dd{margin:7px 0 0;font-size:12px;line-height:1.6;color:var(--muted)}
+.sb-notes dd b{color:var(--ink);font-weight:600}
+.sb-bound{display:grid;grid-template-columns:132px 1fr;gap:18px;align-items:start;
+  margin:22px 0 0;padding:13px 16px;border:1px dashed var(--rule-2);background:var(--sheet-2)}
+.sb-bound b{color:var(--faint);font:650 10px/1.6 var(--mono);letter-spacing:.13em;text-transform:uppercase}
+.sb-bound span{color:var(--muted);font-size:12px;line-height:1.6}
+/* Enumerated boundaries. Four separate factual limits read as four lines, not as one
+   run-on paragraph; no limit is dropped, only the prose packaging. */
+.sb-bound-list{margin:0;padding:0;list-style:none;display:grid;gap:9px;
+  color:var(--muted);font-size:12px;line-height:1.55}
+.sb-bound-list li{position:relative;padding-left:16px}
+.sb-bound-list li::before{content:"";position:absolute;left:0;top:.6em;
+  width:8px;height:1px;background:var(--authority)}
+
+/* Software Factory: durable domain over disposable workers */
+.sb-domain{margin-top:22px;border:1px solid var(--rule-2)}
+.sb-domain-band{padding:16px 18px}
+.sb-domain-band+.sb-domain-band{border-top:1px solid var(--rule-2)}
+.sb-domain-band>b{display:block;font:650 10px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase}
+.sb-domain-durable{background:color-mix(in srgb,var(--flow) 8%,var(--sheet))}
+.sb-domain-durable>b{color:var(--flow)}
+.sb-domain-items{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.sb-domain-items span{padding:6px 10px;border:1px solid var(--rule-2);background:var(--sheet);
+  font:600 11px/1 var(--mono);letter-spacing:.03em}
+.sb-domain-port{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;
+  background:var(--sheet-2);color:var(--muted);font:650 10px/1.5 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.sb-domain-workers>b{color:var(--faint)}
+.sb-domain-workers .sb-domain-items span{border-style:dashed;color:var(--muted)}
+.sb-domain-note{margin:10px 0 0;color:var(--faint);font-size:11.5px;line-height:1.55}
+
+.sb-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.sb-pair .sb-case{display:flex;flex-direction:column}
+.sb-pair .sb-notes{grid-template-columns:1fr;margin-top:auto}
+.sb-pair .sb-notes>div{padding-right:0;border-bottom:1px solid var(--rule)}
+.sb-pair .sb-notes>div:last-child{border-bottom:0;padding-bottom:15px}
+
+/* JointLedger — full case weight, because the contribution is real backend work.
+   What distinguishes it is not suppression but the brass inheritance boundary:
+   the scope limit is part of the claim, so it is promoted rather than buried. */
+.sb-case--bounded{margin-top:14px}
+.sb-case--bounded .sb-claim{max-width:52ch}
+/* Left: description + path chain. Right: the inheritance boundary. The three notes
+   sit in a full-width band below, matching the flagship — which is what closes the
+   dead right column the 1440px evidence showed. */
+.sb-ledger{display:grid;grid-template-columns:1.15fr .85fr;gap:26px;margin-top:20px}
+.sb-case--bounded .sb-bound{grid-template-columns:1fr;gap:12px;
+  border-style:solid;border-color:var(--authority);background:transparent;margin-top:0;align-self:start}
+.sb-case--bounded .sb-bound b{color:var(--authority)}
+.sb-case--bounded .sb-bound-list{color:var(--ink)}
+
+/* --- 03: governed AI workflow --------------------------------------------- */
+.sb-ai{display:grid;grid-template-columns:.62fr 1.38fr;gap:14px}
+/* This panel stays dark in both themes — one printed black tab in the document.
+   It therefore pins the dark-theme brass locally; light mode's darker brass would
+   drop to roughly 2.5:1 against this surface. */
+.sb-position{--authority:#D3B36A;
+  padding:30px;background:var(--plate);color:#EDF1F6;border:1px solid var(--plate);
+  display:flex;flex-direction:column}
+.sb-position .sb-key{color:#8E98A5}
+.sb-position h3{margin:20px 0 16px;font:640 27px/1.1 var(--sans);letter-spacing:-.035em}
+.sb-position p{margin:0;color:#A8B2BE;font-size:12.5px;line-height:1.7}
+.sb-position .sb-seal{margin-top:auto;padding-top:20px;border-top:1px solid #2C343F;
+  color:var(--authority);font:650 10px/1.5 var(--mono);letter-spacing:.13em;text-transform:uppercase}
+
+.sb-loop{border:1px solid var(--rule-2);background:var(--sheet);padding:24px;box-shadow:var(--lift)}
+.sb-steps{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:18px 0 0;padding:0;list-style:none}
+.sb-steps li{padding:14px 11px;border:1px solid var(--rule);background:var(--sheet-2)}
+.sb-steps i{display:block;font:650 10px/1 var(--mono);font-style:normal;color:var(--faint);letter-spacing:.1em}
+.sb-steps b{display:block;margin-top:11px;font:650 10px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.sb-steps span{display:block;margin-top:8px;color:var(--muted);font-size:11.5px;line-height:1.45}
+.sb-steps li[data-actor=human]{border-color:var(--authority);
+  background:color-mix(in srgb,var(--authority) 9%,var(--sheet))}
+.sb-steps li[data-actor=human] b{color:var(--authority)}
+.sb-steps li[data-actor=agent] b{color:var(--flow)}
+.sb-steps li[data-actor=fixed]{border-color:var(--rule-2)}
+.sb-steps li[data-actor=fixed] b{color:var(--ink)}
+.sb-actorkey{display:flex;flex-wrap:wrap;gap:18px;margin-top:14px;color:var(--muted);
+  font:650 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.sb-actorkey span{display:flex;align-items:center;gap:7px}
+.sb-actorkey i{width:16px;height:9px;border:1px solid var(--rule-2)}
+.sb-actorkey .h{border-color:var(--authority);background:color-mix(in srgb,var(--authority) 22%,transparent)}
+.sb-actorkey .a{border-color:var(--flow);background:color-mix(in srgb,var(--flow) 16%,transparent)}
+.sb-repair{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;
+  margin-top:14px;padding:13px 16px;border:1px dashed var(--rule-2);background:var(--sheet-2)}
+.sb-repair b{color:var(--flow);font:650 10px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.sb-repair p{margin:0;font-size:12px;color:var(--muted)}
+.sb-repair em{font-style:normal;color:var(--ink);font-weight:600}
+.sb-rails{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.sb-rails div{padding:14px;border:1px solid var(--rule);background:var(--sheet-2)}
+.sb-rails b{display:block;font:650 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.sb-rails span{display:block;margin-top:8px;color:var(--faint);font-size:11.5px;line-height:1.5}
+.sb-gate{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;
+  margin-top:8px;padding:15px 16px;border:1px solid var(--authority)}
+.sb-gate p{margin:0;font-size:12.5px}
+.sb-gate b{color:var(--authority);font:650 10px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase}
+
+/* --- 04: capability tiers ------------------------------------------------- */
+.sb-tiers{display:grid;gap:10px}
+/* First column widened 236 -> 268px for the 10px mono floor. The platform key was
+   PLATFORM CONTEXT · WORKING AWARENESS — 36ch, ~266px: one line at 268px, but two lines in the
+   220px ≤1080 column, which Codex confirmed in the render. Shortened to
+   PLATFORM · WORKING AWARENESS (27ch, ~200px), which holds one line at both widths. */
+.sb-tier{display:grid;grid-template-columns:268px 1fr auto;gap:30px;align-items:start;
+  padding:22px 24px;border:1px solid var(--rule);border-left:4px solid var(--rule-2);background:var(--sheet)}
+.sb-tier .sb-key{display:block}
+.sb-tier h3{margin:9px 0 0;font-family:var(--sans);font-weight:640;font-size:19px;
+  line-height:1.2;letter-spacing:-.028em}
+.sb-tier-list{margin:0;color:var(--muted);font-size:12.5px;line-height:1.75}
+.sb-mark{margin:0;color:var(--faint);font:650 10px/1.5 var(--mono);letter-spacing:.12em;
+  text-transform:uppercase;text-align:right;max-width:20ch}
+.sb-tier[data-tier=core]{border-left-color:var(--flow);background:color-mix(in srgb,var(--flow) 6%,var(--sheet));box-shadow:var(--lift)}
+.sb-tier[data-tier=core] .sb-key{color:var(--flow)}
+.sb-tier[data-tier=core] h3{font-size:23px}
+.sb-tier[data-tier=core] .sb-tier-list{color:var(--ink);font-size:13.5px}
+.sb-tier[data-tier=applied]{border-left-color:var(--rule-2)}
+.sb-tier[data-tier=platform]{background:transparent}
+.sb-tier[data-tier=platform] h3{font-size:17px}
+.sb-tier[data-tier=platform] .sb-tier-list{font-size:12px}
+.sb-tier[data-tier=expansion]{background:transparent;border-style:dashed;border-left-style:dashed}
+.sb-tier[data-tier=expansion] h3{font-size:16px;color:var(--muted)}
+.sb-tier[data-tier=expansion] .sb-tier-list{font-size:12px;color:var(--faint)}
+.sb-tier[data-tier=expansion] .sb-mark{color:var(--authority)}
+.sb-familiar{margin:14px 0 0;padding:14px 18px;border-top:1px solid var(--rule);
+  color:var(--faint);font-size:11.5px;line-height:1.7}
+.sb-familiar b{color:var(--muted);font:650 10px/1.6 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+
+/* --- close ---------------------------------------------------------------- */
+.sb-close{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end;padding:58px 0 24px}
+.sb-close h2{font-size:clamp(26px,3.4vw,40px);max-width:22ch}
+.sb-close-contact{text-align:right;font:650 10px/2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.sb-close-contact b{color:var(--ink)}
+.footer{border-top:1px solid var(--rule);color:var(--faint);font:650 10px/1.6 var(--mono);
+  letter-spacing:.12em;text-transform:uppercase;margin-top:0;padding-top:18px}
+
+.sb-sprite{position:absolute;width:0;height:0;overflow:hidden}
+
+/* ============================ RESPONSIVE ==================================
+   Mobile is recomposed, not scaled: the plan matrix becomes per-layer cards
+   with their column keys restored, the workflow track becomes a vertical
+   rail, and the mark hierarchy is preserved at reduced absolute sizes.
+   ========================================================================= */
+@media(max-width:1080px){
+  .sb-hero{gap:44px}
+  .sb-anchors{grid-template-columns:1fr}
+  .sb-group{border-right:0;border-bottom:1px solid var(--rule)}
+  .sb-group:last-child{border-bottom:0}
+  .sb-t1{--sz:140px}.sb-t2{--sz:106px}.sb-t3{--sz:88px}.sb-t4{--sz:72px}
+  .sb-plan-head,.sb-plan-body{grid-template-columns:42px 168px repeat(4,1fr)}
+  .sb-steps{grid-template-columns:repeat(4,1fr)}
+  .sb-ai{grid-template-columns:1fr}
+  .sb-tier{grid-template-columns:220px 1fr;gap:22px}
+  .sb-tier .sb-mark{grid-column:1/-1;text-align:left;max-width:none;
+    padding-top:12px;border-top:1px solid var(--rule)}
+}
+
+@media(max-width:880px){
+  /* 720px, not 560px. This band is the production source for the ~880px GitHub column,
+     and `max-width:880px` matches *at* 880 — so the old clamp served a 560px measure
+     inside an 880px field and left 36% of the panel empty. 720px reads as a document
+     margin (~9% a side) instead of a broken layout, and min() still collapses to the
+     full 362px measure at 390px. The reading measure is protected by the ch caps
+     below, not by starving the column. */
+  .page{width:min(100% - 28px,720px)}
+  /* Measure caps for the wider column: every unbounded body run gets a reading measure.
+     Bordered or filled containers (.sb-cell, .sb-legend-note, .sb-familiar) are
+     deliberately excluded — capping those would shorten their own rules and edges, and
+     their longest content already lands under 95 characters. .sb-lede, .sb-desc and
+     .sb-close h2 keep the ch caps they declare on desktop. */
+  .sb-notes dd,.sb-bound span,.sb-bound-list,.sb-plan-foot p,.sb-rails span,
+  .sb-gate p,.sb-repair p,.sb-position p,.sb-tier-list,.sb-domain-note,
+  .sb-path li span,.sb-steps span{max-width:62ch}
+  .sb-title{grid-template-columns:1fr;align-items:start;gap:16px;padding-top:22px}
+  .sb-title-meta{text-align:left}
+  .sb-hero{grid-template-columns:1fr;gap:32px;padding:38px 0 40px}
+  .sb-hero h1{font-size:clamp(38px,10vw,50px);max-width:none;margin:14px 0 20px}
+  .sb-lede{font-size:15.5px}
+  .sb-section{padding:42px 0}
+  .sb-head{grid-template-columns:1fr;gap:18px}
+  /* 56ch, not none: the desktop 46ch cap is too tight for a 720px column and no cap
+     at all is ~96 characters. Inert at 390px, where the column is only ~44ch. */
+  .sb-head p{justify-self:start;max-width:56ch}
+
+  /* legend: hierarchy preserved, composition rebuilt */
+  .sb-group{column-gap:20px;row-gap:16px;padding:24px 20px}
+  .sb-t1{--sz:118px;--nm:15px}.sb-t2{--sz:92px}.sb-t3{--sz:78px}.sb-t4{--sz:66px}
+
+  /* plan: matrix -> per-layer cards, column keys restored inside each cell */
+  .sb-plan{border:0;background:transparent;box-shadow:none}
+  .sb-plan-head{display:none}
+  .sb-plan-body{display:block}
+  .sb-riser{display:none}
+  .sb-row{display:grid;grid-template-columns:auto 1fr;
+    border:1px solid var(--rule-2);background:var(--sheet);margin-bottom:10px;box-shadow:var(--lift)}
+  .sb-row:last-child>*{border-bottom:1px solid var(--rule)}
+  .sb-row>*:last-child{border-bottom:0!important}
+  .sb-idx{grid-column:1;align-items:center;padding:14px 0 14px 14px;border-right:0;
+    background:var(--sheet-2);border-bottom:1px solid var(--rule)}
+  .sb-layer{grid-column:2;border-right:0;background:var(--sheet-2);padding:14px 16px}
+  .sb-row[data-emphasis=core] .sb-layer{background:color-mix(in srgb,var(--flow) 9%,var(--sheet-2))}
+  .sb-cell{grid-column:1/-1;border-right:0;padding:14px 16px}
+  .sb-cell .sb-k{display:block;margin-bottom:7px;color:var(--faint)}
+  .sb-plan-foot{grid-template-columns:1fr;gap:14px}
+  .sb-flowkey{flex-direction:column;gap:9px}
+
+  /* applications */
+  .sb-index{grid-template-columns:1fr 1fr}
+  .sb-index div:nth-child(2n){border-right:0}
+  .sb-index div:nth-child(-n+2){border-bottom:1px solid var(--rule)}
+  .sb-case{padding:22px 20px}
+  .sb-case-head{grid-template-columns:1fr;gap:12px}
+  .sb-case-kind{text-align:left}
+  .sb-case-id{gap:12px}
+  .sb-case-id h3{font-size:23px}
+  .sb-case--flagship{padding:22px 20px}
+  .sb-case--flagship .sb-case-id h3{font-size:27px}
+  .sb-claim{font-size:18px;max-width:none}
+  .sb-case--flagship .sb-claim{font-size:20px;max-width:none}
+  /* Matches the flagship override: without it the desktop 52ch rule out-specifies
+     .sb-claim{max-width:none} and JointLedger's claim alone stops short of the column. */
+  .sb-case--bounded .sb-claim{max-width:none}
+  .sb-path,.sb-path-3{grid-template-columns:1fr;gap:22px}
+  .sb-path li+li::before{left:50%;top:-14px;
+    transform:translateX(-50%) rotate(135deg)}
+  .sb-path.sb-path-3 li:nth-child(3n+1)::before{display:block}
+  .sb-path li:first-child::before{display:none!important}
+  .sb-notes{grid-template-columns:1fr}
+  .sb-notes>div{padding:15px 0 0;border-bottom:1px solid var(--rule)}
+  .sb-notes>div:last-child{border-bottom:0;padding-bottom:14px}
+  .sb-bound{grid-template-columns:1fr;gap:8px}
+  .sb-pair{grid-template-columns:1fr}
+  .sb-ledger{grid-template-columns:1fr;gap:18px}
+  .sb-domain-port{grid-template-columns:1fr;gap:8px}
+
+  /* workflow: horizontal track -> vertical authority rail */
+  .sb-loop{padding:18px}
+  .sb-steps{grid-template-columns:1fr;gap:0}
+  .sb-steps li{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:baseline;
+    border-bottom:0;padding:13px 14px}
+  .sb-steps li:last-child{border-bottom:1px solid var(--rule)}
+  .sb-steps i{margin-top:2px}
+  .sb-steps b{margin-top:0}
+  .sb-steps span{grid-column:2}
+  .sb-actorkey{flex-direction:column;gap:9px}
+  .sb-repair{grid-template-columns:1fr;gap:9px;text-align:left}
+  .sb-rails{grid-template-columns:1fr}
+  .sb-gate{grid-template-columns:1fr;gap:12px}
+  .sb-position{padding:24px}
+  .sb-position h3{font-size:23px}
+
+  /* tiers */
+  .sb-tier{grid-template-columns:1fr;gap:14px;padding:18px 18px}
+  .sb-tier[data-tier=core] h3{font-size:21px}
+
+  .sb-close{grid-template-columns:1fr;gap:26px;padding:40px 0 20px}
+  .sb-close-contact{text-align:left}
+  .footer{display:block}
+  .footer>*+*{margin-top:9px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .sb-token{animation:none!important;opacity:1}
+  .sb-token.is-down{top:0}
+  .sb-token.is-up{top:calc(100% - 10px)}
+  html{scroll-behavior:auto}
+}
+:root[data-motion=reduce] .sb-token{animation:none!important;opacity:1}
+:root[data-motion=reduce] .sb-token.is-down{top:0}
+:root[data-motion=reduce] .sb-token.is-up{top:calc(100% - 10px)}
+</style>
+</head>
+<body>
+
+<!-- Technology marks. Geometry is identical to the vendored files in ./assets/.
+     Source: Simple Icons (CC0-1.0). Names and marks remain the property of their owners.
+     Inlined as a sprite so a single CSS property can drive the Next.js light/dark inversion. -->
+<svg class="sb-sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><defs>
+<symbol id="m-react" viewBox="0 0 24 24"><path d="M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588.988 6.38.32.187.69.275 1.102.275 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.263.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-.988-6.38-.318-.184-.688-.277-1.092-.278zm-.005 1.09v.006c.225 0 .406.044.558.127.666.382.955 1.835.73 3.704-.054.46-.142.945-.25 1.44-.96-.236-2.006-.417-3.107-.534-.66-.905-1.345-1.727-2.035-2.447 1.592-1.48 3.087-2.292 4.105-2.295zm-9.77.02c1.012 0 2.514.808 4.11 2.28-.686.72-1.37 1.537-2.02 2.442-1.107.117-2.154.298-3.113.538-.112-.49-.195-.964-.254-1.42-.23-1.868.054-3.32.714-3.707.19-.09.4-.127.563-.132zm4.882 3.05c.455.468.91.992 1.36 1.564-.44-.02-.89-.034-1.345-.034-.46 0-.915.01-1.36.034.44-.572.895-1.096 1.345-1.565zM12 8.1c.74 0 1.477.034 2.202.093.406.582.802 1.203 1.183 1.86.372.64.71 1.29 1.018 1.946-.308.655-.646 1.31-1.013 1.95-.38.66-.773 1.288-1.18 1.87-.728.063-1.466.098-2.21.098-.74 0-1.477-.035-2.202-.093-.406-.582-.802-1.204-1.183-1.86-.372-.64-.71-1.29-1.018-1.946.303-.657.646-1.313 1.013-1.954.38-.66.773-1.286 1.18-1.868.728-.064 1.466-.098 2.21-.098zm-3.635.254c-.24.377-.48.763-.704 1.16-.225.39-.435.782-.635 1.174-.265-.656-.49-1.31-.676-1.947.64-.15 1.315-.283 2.015-.386zm7.26 0c.695.103 1.365.23 2.006.387-.18.632-.405 1.282-.66 1.933-.2-.39-.41-.783-.64-1.174-.225-.392-.465-.774-.705-1.146zm3.063.675c.484.15.944.317 1.375.498 1.732.74 2.852 1.708 2.852 2.476-.005.768-1.125 1.74-2.857 2.475-.42.18-.88.342-1.355.493-.28-.958-.646-1.956-1.1-2.98.45-1.017.81-2.01 1.085-2.964zm-13.395.004c.278.96.645 1.957 1.1 2.98-.45 1.017-.812 2.01-1.086 2.964-.484-.15-.944-.318-1.37-.5-1.732-.737-2.852-1.706-2.852-2.474 0-.768 1.12-1.742 2.852-2.476.42-.18.88-.342 1.356-.494zm11.678 4.28c.265.657.49 1.312.676 1.948-.64.157-1.316.29-2.016.39.24-.375.48-.762.705-1.158.225-.39.435-.788.636-1.18zm-9.945.02c.2.392.41.783.64 1.175.23.39.465.772.705 1.143-.695-.102-1.365-.23-2.006-.386.18-.63.406-1.282.66-1.933zM17.92 16.32c.112.493.2.968.254 1.423.23 1.868-.054 3.32-.714 3.708-.147.09-.338.128-.563.128-1.012 0-2.514-.807-4.11-2.28.686-.72 1.37-1.536 2.02-2.44 1.107-.118 2.154-.3 3.113-.54zm-11.83.01c.96.234 2.006.415 3.107.532.66.905 1.345 1.727 2.035 2.446-1.595 1.483-3.092 2.295-4.11 2.295-.22-.005-.406-.05-.553-.132-.666-.38-.955-1.834-.73-3.703.054-.46.142-.944.25-1.438zm4.56.64c.44.02.89.034 1.345.034.46 0 .915-.01 1.36-.034-.44.572-.895 1.095-1.345 1.565-.455-.47-.91-.993-1.36-1.565z"/></symbol>
+<symbol id="m-ts" viewBox="0 0 24 24"><path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.41c.273.135.582.274.926.416.47.197.892.407 1.266.628.374.222.695.473.963.753.268.279.472.598.614.957.142.359.214.776.214 1.253 0 .657-.125 1.21-.373 1.656a3.033 3.033 0 0 1-1.012 1.085 4.38 4.38 0 0 1-1.487.596c-.566.12-1.163.18-1.79.18a9.916 9.916 0 0 1-1.84-.164 5.544 5.544 0 0 1-1.512-.493v-2.63a5.033 5.033 0 0 0 3.237 1.2c.333 0 .624-.03.872-.09.249-.06.456-.144.623-.25.166-.108.29-.234.373-.38a1.023 1.023 0 0 0-.074-1.089 2.12 2.12 0 0 0-.537-.5 5.597 5.597 0 0 0-.807-.444 27.72 27.72 0 0 0-1.007-.436c-.918-.383-1.602-.852-2.053-1.405-.45-.553-.676-1.222-.676-2.005 0-.614.123-1.141.369-1.582.246-.441.58-.804 1.004-1.089a4.494 4.494 0 0 1 1.47-.629 7.536 7.536 0 0 1 1.77-.201zm-15.113.188h9.563v2.166H9.506v9.646H6.789v-9.646H3.375z"/></symbol>
+<symbol id="m-next" viewBox="0 0 24 24"><path d="M18.665 21.978C16.758 23.255 14.465 24 12 24 5.377 24 0 18.623 0 12S5.377 0 12 0s12 5.377 12 12c0 3.583-1.574 6.801-4.067 9.001L9.219 7.2H7.2v9.596h1.615V9.251l9.85 12.727Zm-3.332-8.533 1.6 2.061V7.2h-1.6v6.245Z"/></symbol>
+<symbol id="m-node" viewBox="0 0 24 24"><path d="M11.998,24c-0.321,0-0.641-0.084-0.922-0.247l-2.936-1.737c-0.438-0.245-0.224-0.332-0.08-0.383 c0.585-0.203,0.703-0.25,1.328-0.604c0.065-0.037,0.151-0.023,0.218,0.017l2.256,1.339c0.082,0.045,0.197,0.045,0.272,0l8.795-5.076 c0.082-0.047,0.134-0.141,0.134-0.238V6.921c0-0.099-0.053-0.192-0.137-0.242l-8.791-5.072c-0.081-0.047-0.189-0.047-0.271,0 L3.075,6.68C2.99,6.729,2.936,6.825,2.936,6.921v10.15c0,0.097,0.054,0.189,0.139,0.235l2.409,1.392 c1.307,0.654,2.108-0.116,2.108-0.89V7.787c0-0.142,0.114-0.253,0.256-0.253h1.115c0.139,0,0.255,0.112,0.255,0.253v10.021 c0,1.745-0.95,2.745-2.604,2.745c-0.508,0-0.909,0-2.026-0.551L2.28,18.675c-0.57-0.329-0.922-0.945-0.922-1.604V6.921 c0-0.659,0.353-1.275,0.922-1.603l8.795-5.082c0.557-0.315,1.296-0.315,1.848,0l8.794,5.082c0.57,0.329,0.924,0.944,0.924,1.603 v10.15c0,0.659-0.354,1.273-0.924,1.604l-8.794,5.078C12.643,23.916,12.324,24,11.998,24z M19.099,13.993 c0-1.9-1.284-2.406-3.987-2.763c-2.731-0.361-3.009-0.548-3.009-1.187c0-0.528,0.235-1.233,2.258-1.233 c1.807,0,2.473,0.389,2.747,1.607c0.024,0.115,0.129,0.199,0.247,0.199h1.141c0.071,0,0.138-0.031,0.186-0.081 c0.048-0.054,0.074-0.123,0.067-0.196c-0.177-2.098-1.571-3.076-4.388-3.076c-2.508,0-4.004,1.058-4.004,2.833 c0,1.925,1.488,2.457,3.895,2.695c2.88,0.282,3.103,0.703,3.103,1.269c0,0.983-0.789,1.402-2.642,1.402 c-2.327,0-2.839-0.584-3.011-1.742c-0.02-0.124-0.126-0.215-0.253-0.215h-1.137c-0.141,0-0.254,0.112-0.254,0.253 c0,1.482,0.806,3.248,4.655,3.248C17.501,17.007,19.099,15.91,19.099,13.993z"/></symbol>
+<symbol id="m-pg" viewBox="0 0 24 24"><path d="M23.5594 14.7228a.5269.5269 0 0 0-.0563-.1191c-.139-.2632-.4768-.3418-1.0074-.2321-1.6533.3411-2.2935.1312-2.5256-.0191 1.342-2.0482 2.445-4.522 3.0411-6.8297.2714-1.0507.7982-3.5237.1222-4.7316a1.5641 1.5641 0 0 0-.1509-.235C21.6931.9086 19.8007.0248 17.5099.0005c-1.4947-.0158-2.7705.3461-3.1161.4794a9.449 9.449 0 0 0-.5159-.0816 8.044 8.044 0 0 0-1.3114-.1278c-1.1822-.0184-2.2038.2642-3.0498.8406-.8573-.3211-4.7888-1.645-7.2219.0788C.9359 2.1526.3086 3.8733.4302 6.3043c.0409.818.5069 3.334 1.2423 5.7436.4598 1.5065.9387 2.7019 1.4334 3.582.553.9942 1.1259 1.5933 1.7143 1.7895.4474.1491 1.1327.1441 1.8581-.7279.8012-.9635 1.5903-1.8258 1.9446-2.2069.4351.2355.9064.3625 1.39.3772a.0569.0569 0 0 0 .0004.0041 11.0312 11.0312 0 0 0-.2472.3054c-.3389.4302-.4094.5197-1.5002.7443-.3102.064-1.1344.2339-1.1464.8115-.0025.1224.0329.2309.0919.3268.2269.4231.9216.6097 1.015.6331 1.3345.3335 2.5044.092 3.3714-.6787-.017 2.231.0775 4.4174.3454 5.0874.2212.5529.7618 1.9045 2.4692 1.9043.2505 0 .5263-.0291.8296-.0941 1.7819-.3821 2.5557-1.1696 2.855-2.9059.1503-.8707.4016-2.8753.5388-4.1012.0169-.0703.0357-.1207.057-.1362.0007-.0005.0697-.0471.4272.0307a.3673.3673 0 0 0 .0443.0068l.2539.0223.0149.001c.8468.0384 1.9114-.1426 2.5312-.4308.6438-.2988 1.8057-1.0323 1.5951-1.6698zM2.371 11.8765c-.7435-2.4358-1.1779-4.8851-1.2123-5.5719-.1086-2.1714.4171-3.6829 1.5623-4.4927 1.8367-1.2986 4.8398-.5408 6.108-.13-.0032.0032-.0066.0061-.0098.0094-2.0238 2.044-1.9758 5.536-1.9708 5.7495-.0002.0823.0066.1989.0162.3593.0348.5873.0996 1.6804-.0735 2.9184-.1609 1.1504.1937 2.2764.9728 3.0892.0806.0841.1648.1631.2518.2374-.3468.3714-1.1004 1.1926-1.9025 2.1576-.5677.6825-.9597.5517-1.0886.5087-.3919-.1307-.813-.5871-1.2381-1.3223-.4796-.839-.9635-2.0317-1.4155-3.5126zm6.0072 5.0871c-.1711-.0428-.3271-.1132-.4322-.1772.0889-.0394.2374-.0902.4833-.1409 1.2833-.2641 1.4815-.4506 1.9143-1.0002.0992-.126.2116-.2687.3673-.4426a.3549.3549 0 0 0 .0737-.1298c.1708-.1513.2724-.1099.4369-.0417.156.0646.3078.26.3695.4752.0291.1016.0619.2945-.0452.4444-.9043 1.2658-2.2216 1.2494-3.1676 1.0128zm2.094-3.988-.0525.141c-.133.3566-.2567.6881-.3334 1.003-.6674-.0021-1.3168-.2872-1.8105-.8024-.6279-.6551-.9131-1.5664-.7825-2.5004.1828-1.3079.1153-2.4468.079-3.0586-.005-.0857-.0095-.1607-.0122-.2199.2957-.2621 1.6659-.9962 2.6429-.7724.4459.1022.7176.4057.8305.928.5846 2.7038.0774 3.8307-.3302 4.7363-.084.1866-.1633.3629-.2311.5454zm7.3637 4.5725c-.0169.1768-.0358.376-.0618.5959l-.146.4383a.3547.3547 0 0 0-.0182.1077c-.0059.4747-.054.6489-.115.8693-.0634.2292-.1353.4891-.1794 1.0575-.11 1.4143-.8782 2.2267-2.4172 2.5565-1.5155.3251-1.7843-.4968-2.0212-1.2217a6.5824 6.5824 0 0 0-.0769-.2266c-.2154-.5858-.1911-1.4119-.1574-2.5551.0165-.5612-.0249-1.9013-.3302-2.6462.0044-.2932.0106-.5909.019-.8918a.3529.3529 0 0 0-.0153-.1126 1.4927 1.4927 0 0 0-.0439-.208c-.1226-.4283-.4213-.7866-.7797-.9351-.1424-.059-.4038-.1672-.7178-.0869.067-.276.1831-.5875.309-.9249l.0529-.142c.0595-.16.134-.3257.213-.5012.4265-.9476 1.0106-2.2453.3766-5.1772-.2374-1.0981-1.0304-1.6343-2.2324-1.5098-.7207.0746-1.3799.3654-1.7088.5321a5.6716 5.6716 0 0 0-.1958.1041c.0918-1.1064.4386-3.1741 1.7357-4.4823a4.0306 4.0306 0 0 1 .3033-.276.3532.3532 0 0 0 .1447-.0644c.7524-.5706 1.6945-.8506 2.802-.8325.4091.0067.8017.0339 1.1742.081 1.939.3544 3.2439 1.4468 4.0359 2.3827.8143.9623 1.2552 1.9315 1.4312 2.4543-1.3232-.1346-2.2234.1268-2.6797.779-.9926 1.4189.543 4.1729 1.2811 5.4964.1353.2426.2522.4522.2889.5413.2403.5825.5515.9713.7787 1.2552.0696.087.1372.1714.1885.245-.4008.1155-1.1208.3825-1.0552 1.717-.0123.1563-.0423.4469-.0834.8148-.0461.2077-.0702.4603-.0994.7662zm.8905-1.6211c-.0405-.8316.2691-.9185.5967-1.0105a2.8566 2.8566 0 0 0 .135-.0406 1.202 1.202 0 0 0 .1342.103c.5703.3765 1.5823.4213 3.0068.1344-.2016.1769-.5189.3994-.9533.6011-.4098.1903-1.0957.333-1.7473.3636-.7197.0336-1.0859-.0807-1.1721-.151zm.5695-9.2712c-.0059.3508-.0542.6692-.1054 1.0017-.055.3576-.112.7274-.1264 1.1762-.0142.4368.0404.8909.0932 1.3301.1066.887.216 1.8003-.2075 2.7014a3.5272 3.5272 0 0 1-.1876-.3856c-.0527-.1276-.1669-.3326-.3251-.6162-.6156-1.1041-2.0574-3.6896-1.3193-4.7446.3795-.5427 1.3408-.5661 2.1781-.463zm.2284 7.0137a12.3762 12.3762 0 0 0-.0853-.1074l-.0355-.0444c.7262-1.1995.5842-2.3862.4578-3.4385-.0519-.4318-.1009-.8396-.0885-1.2226.0129-.4061.0666-.7543.1185-1.0911.0639-.415.1288-.8443.1109-1.3505.0134-.0531.0188-.1158.0118-.1902-.0457-.4855-.5999-1.938-1.7294-3.253-.6076-.7073-1.4896-1.4972-2.6889-2.0395.5251-.1066 1.2328-.2035 2.0244-.1859 2.0515.0456 3.6746.8135 4.8242 2.2824a.908.908 0 0 1 .0667.1002c.7231 1.3556-.2762 6.2751-2.9867 10.5405zm-8.8166-6.1162c-.025.1794-.3089.4225-.6211.4225a.5821.5821 0 0 1-.0809-.0056c-.1873-.026-.3765-.144-.5059-.3156-.0458-.0605-.1203-.178-.1055-.2844.0055-.0401.0261-.0985.0925-.1488.1182-.0894.3518-.1226.6096-.0867.3163.0441.6426.1938.6113.4186zm7.9305-.4114c.0111.0792-.049.201-.1531.3102-.0683.0717-.212.1961-.4079.2232a.5456.5456 0 0 1-.075.0052c-.2935 0-.5414-.2344-.5607-.3717-.024-.1765.2641-.3106.5611-.352.297-.0414.6111.0088.6356.1851z"/></symbol>
+<symbol id="m-docker" viewBox="0 0 24 24"><path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.184-.186h-2.12a.186.186 0 00-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 00-.75.748 11.376 11.376 0 00.692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 003.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288Z"/></symbol>
+</defs></svg>
+
+<main class="page">
+
+<!-- PREVIEW HARNESS ONLY — not part of the design.
+     ALL / DARK / LIGHT are anchors into ../shared/prototype.js, which reads ?theme= and
+     ?motion= and sets data-theme / data-motion on <html>. This must NOT be carried into
+     the production README: GitHub strips <script> and does not run JS inside SVG. The
+     README build ships two pre-rendered variants per panel behind
+     <picture><source media="(prefers-color-scheme: …)">, plus a -static twin behind
+     media="(prefers-reduced-motion: reduce)". No custom JS at all.
+     See research/claude-independent-review.md §5. -->
+<div class="prototype-bar">
+  <span>System Brief / refined · preview harness</span>
+  <nav><a href="../">All</a><a data-theme-link="dark">Dark</a><a data-theme-link="light">Light</a></nav>
+</div>
+
+<!-- ===================== TITLE BLOCK ===================== -->
+<header class="sb-title">
+  <div>
+    <div class="sb-title-name">Hakan Duyar</div>
+    <div class="sb-title-role">Front-end &amp; Systems Engineering</div>
+  </div>
+  <div class="sb-title-meta">
+    Engineering profile · architecture brief<br>
+    <b>System Brief</b> · refined · V5
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section class="sb-hero">
+  <div>
+    <span class="sb-eyebrow">Engineering identity</span>
+    <h1 class="sb-h">Interfaces are the surface. Systems are the work.</h1>
+    <p class="sb-lede">I build <b>React and TypeScript</b> products, then stay responsible for what sits behind them — state, service boundaries, persistence, and delivery. AI agents work inside that system under verification I control.</p>
+  </div>
+  <dl class="sb-brief">
+    <div class="sb-brief-row">
+      <dt>Core depth</dt>
+      <dd><b>React · TypeScript · JavaScript · Next.js</b><br>frontend and application architecture</dd>
+    </div>
+    <div class="sb-brief-row">
+      <dt>Applied breadth</dt>
+      <dd>Node.js · REST APIs · PostgreSQL · Prisma · local-first data · Docker · delivery and runtime context</dd>
+    </div>
+    <div class="sb-brief-row">
+      <dt>AI position</dt>
+      <dd>Agents plan, implement, verify, review, and repair. Release stays human.</dd>
+    </div>
+    <div class="sb-brief-row is-principle">
+      <dt>Principle</dt>
+      <dd>Model confidence is not system evidence.</dd>
+    </div>
+  </dl>
+</section>
+
+<!-- ===================== 01 — ENGINEERING SYSTEM ===================== -->
+<section class="sb-section">
+  <div class="sb-head">
+    <div>
+      <span class="sb-num">01 / <b>Engineering system</b></span>
+      <h2 class="sb-h">Five layers, and the four questions asked of every one of them.</h2>
+    </div>
+    <p>The legend names the six technologies that carry the system. The plan below is the coordinate system every case study is measured in.</p>
+  </div>
+
+  <!-- legend of marks: size encodes depth, not enthusiasm -->
+  <div class="sb-legend">
+    <div class="sb-legend-bar">
+      <span class="sb-key">Legend / stack anchors</span>
+      <span class="sb-key">Scale encodes depth</span>
+    </div>
+    <div class="sb-anchors">
+      <div class="sb-group">
+        <div class="sb-anchor sb-t1" data-brand="react">
+          <span class="sb-plate"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#m-react"/></svg></span>
+          <b>React</b><span>interaction systems</span>
+        </div>
+        <div class="sb-anchor sb-t1" data-brand="ts">
+          <span class="sb-plate"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#m-ts"/></svg></span>
+          <b>TypeScript</b><span>contracts, end to end</span>
+        </div>
+        <div class="sb-group-cap">Core · established depth</div>
+      </div>
+      <div class="sb-group">
+        <div class="sb-anchor sb-t2" data-brand="next">
+          <span class="sb-plate"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#m-next"/></svg></span>
+          <b>Next.js</b><span>application boundary</span>
+        </div>
+        <div class="sb-group-cap">Application</div>
+      </div>
+      <div class="sb-group">
+        <div class="sb-anchor sb-t3" data-brand="node">
+          <span class="sb-plate"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#m-node"/></svg></span>
+          <b>Node.js</b><span>domain rules</span>
+        </div>
+        <div class="sb-anchor sb-t3" data-brand="pg">
+          <span class="sb-plate"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#m-pg"/></svg></span>
+          <b>PostgreSQL</b><span>relational truth</span>
+        </div>
+        <div class="sb-anchor sb-t4" data-brand="docker">
+          <span class="sb-plate"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#m-docker"/></svg></span>
+          <b>Docker</b><span>runtime packaging</span>
+        </div>
+        <div class="sb-group-cap">Applied services and data · platform</div>
+      </div>
+    </div>
+    <p class="sb-legend-note"><b>Six marks, four sizes.</b> Each anchors a layer of the plan; every other technology stays textual.</p>
+  </div>
+
+  <!-- responsibility plan -->
+  <div class="sb-plan">
+    <div class="sb-plan-head">
+      <span aria-hidden="true"></span>
+      <span>Layer</span>
+      <span>Owns</span>
+      <span>Contract</span>
+      <span>Evidence</span>
+      <span>Where AI participates</span>
+    </div>
+    <div class="sb-plan-body">
+      <div class="sb-riser" aria-hidden="true">
+        <i class="sb-token is-down"></i>
+        <i class="sb-token is-up"></i>
+      </div>
+
+      <div class="sb-row" data-emphasis="core">
+        <div class="sb-idx"><i>1</i></div>
+        <div class="sb-layer"><b>Interface</b><span>What the user touches</span></div>
+        <div class="sb-cell"><i class="sb-k">Owns</i><strong>React</strong>Component and interaction systems; accessible surfaces</div>
+        <div class="sb-cell"><i class="sb-k">Contract</i><strong>Typed component APIs</strong>Props, states, and semantics declared in TypeScript</div>
+        <div class="sb-cell"><i class="sb-k">Evidence</i><strong>Browser and a11y checks</strong>Playwright and axe run against the rendered result</div>
+        <div class="sb-cell"><i class="sb-k">Where AI participates</i>Drafts components. Every diff is read before it lands.</div>
+      </div>
+
+      <div class="sb-row" data-emphasis="core">
+        <div class="sb-idx"><i>2</i></div>
+        <div class="sb-layer"><b>Application</b><span>Where product decisions live</span></div>
+        <div class="sb-cell"><i class="sb-k">Owns</i><strong>Next.js · state ownership</strong>Redux Toolkit and Zustand; routing and form boundaries</div>
+        <div class="sb-cell"><i class="sb-k">Contract</i><strong>Server and client split</strong>TanStack Query for server state; React Hook Form for input</div>
+        <div class="sb-cell"><i class="sb-k">Evidence</i><strong>Reproducible state</strong>Export and import restore a known state</div>
+        <div class="sb-cell"><i class="sb-k">Where AI participates</i>Plans the work before any code is written.</div>
+      </div>
+
+      <div class="sb-row">
+        <div class="sb-idx"><i>3</i></div>
+        <div class="sb-layer"><b>Services</b><span>Where rules are enforced</span></div>
+        <div class="sb-cell"><i class="sb-k">Owns</i><strong>Node.js</strong>Express and NestJS domain rules behind explicit boundaries</div>
+        <div class="sb-cell"><i class="sb-k">Contract</i><strong>REST · JWT</strong>Role-aware access checks at the route boundary</div>
+        <div class="sb-cell"><i class="sb-k">Evidence</i><strong>Integration tests</strong>Tests exercise the API path, not the implementation</div>
+        <div class="sb-cell"><i class="sb-k">Where AI participates</i>Runs fixed verification commands. Output is fact, not claim.</div>
+      </div>
+
+      <div class="sb-row">
+        <div class="sb-idx"><i>4</i></div>
+        <div class="sb-layer"><b>Data</b><span>Where truth is kept</span></div>
+        <div class="sb-cell"><i class="sb-k">Owns</i><strong>PostgreSQL</strong>Transactional writes commit together or not at all</div>
+        <div class="sb-cell"><i class="sb-k">Contract</i><strong>Prisma · Dexie · Supabase</strong>Typed on the server; versioned schema on the client</div>
+        <div class="sb-cell"><i class="sb-k">Evidence</i><strong>Migrations are history</strong>Client schema versioned v1 → v8 with recoverable upgrades</div>
+        <div class="sb-cell"><i class="sb-k">Where AI participates</i>An independent reviewer reads every schema change.</div>
+      </div>
+
+      <div class="sb-row">
+        <div class="sb-idx"><i>5</i></div>
+        <div class="sb-layer"><b>Platform</b><span>Where it becomes reproducible</span></div>
+        <div class="sb-cell"><i class="sb-k">Owns</i><strong>Docker · Compose</strong>Runtime packaging and repeatable local environments</div>
+        <div class="sb-cell"><i class="sb-k">Contract</i><strong>CI gates · Nginx · Linux</strong>The pipeline decides what is allowed through</div>
+        <div class="sb-cell"><i class="sb-k">Evidence</i><strong>It runs the same twice</strong>A new machine reproduces it from the manifest</div>
+        <div class="sb-cell"><i class="sb-k">Where AI participates</i>Repair is bounded. Release is not delegated.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sb-plan-foot">
+    <p>A request descends the layers. Evidence climbs back to the person who decides the release — the return path most stacks leave undesigned.</p>
+    <div class="sb-flowkey">
+      <span><i class="d"></i>Request</span>
+      <span><i class="u"></i>Evidence</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 02 — APPLICATIONS ===================== -->
+<section class="sb-section">
+  <div class="sb-head">
+    <div>
+      <span class="sb-num">02 / <b>Applications</b></span>
+      <h2 class="sb-h">Four systems, read by the failure each one is built to prevent.</h2>
+    </div>
+    <p>Each case states a constraint, the architecture that answers it, and what is deliberately not claimed. The bar under each title shows which plan layers the work occupies.</p>
+  </div>
+
+  <div class="sb-index">
+    <div><b>01</b><span>Software Factory</span><em>Governed agentic control plane</em></div>
+    <div><b>02</b><span>Spark</span><em>Local-first React PWA</em></div>
+    <div><b>03</b><span>Built in Layers</span><em>Architecture-led content system</em></div>
+    <div><b>04</b><span>JointLedger</span><em>Upstream backend extension</em></div>
+  </div>
+
+  <!-- 01 — Software Factory (flagship) -->
+  <article class="sb-case sb-case--flagship">
+    <header class="sb-case-head">
+      <div class="sb-case-id"><i>01</i><h3>Software Factory</h3></div>
+      <div class="sb-case-kind">Governed agentic engineering · control plane</div>
+    </header>
+
+    <div class="sb-spine">
+      <span class="sb-spine-bar" role="img" aria-label="Occupies the application, services, data and platform layers">
+        <i>I</i><i data-on>A</i><i data-on>S</i><i data-on>D</i><i data-on>P</i>
+      </span>
+      <span class="sb-spine-text">Application → platform · no product interface claimed</span>
+    </div>
+
+    <p class="sb-claim">Agents can produce work. They cannot grant it authority.</p>
+    <p class="sb-desc">The flagship. A control plane holding planning, execution, verification, review, and release as separate domain responsibilities — a model that fails, stalls, or overstates cannot become an approval.</p>
+
+    <div class="sb-domain">
+      <div class="sb-domain-band sb-domain-durable">
+        <b>Durable domain · SQLite</b>
+        <div class="sb-domain-items">
+          <span>plans</span><span>revisions</span><span>work items</span><span>runs</span>
+          <span>verification evidence</span><span>reviews</span><span>approvals</span><span>release lineage</span>
+        </div>
+        <p class="sb-domain-note">Written in TypeScript.</p>
+      </div>
+      <div class="sb-domain-band sb-domain-port">
+        <span>Provider-neutral worker ports</span>
+        <span>↓ the domain does not know which vendor answers</span>
+      </div>
+      <div class="sb-domain-band sb-domain-workers">
+        <b>Disposable workers · process adapters</b>
+        <div class="sb-domain-items"><span>Codex CLI</span><span>Claude Code CLI</span></div>
+        <p class="sb-domain-note">Workspace-scoped, default-deny environment. Replaceable.</p>
+      </div>
+    </div>
+
+    <dl class="sb-notes">
+      <div>
+        <dt>Durability</dt>
+        <dd><b>Workers, processes, and sessions are disposable.</b> The domain above them is not.</dd>
+      </div>
+      <div>
+        <dt>Fail-closed parsing</dt>
+        <dd><b>Reviewer verdicts are parsed strictly.</b> Ambiguous output never defaults to pass.</dd>
+      </div>
+      <div>
+        <dt>Supervision</dt>
+        <dd><b>Zero autonomous spend</b>, with persisted resource and backoff policy.</dd>
+      </div>
+    </dl>
+
+    <p class="sb-bound"><b>Not claimed</b><span>GitHub issue or PR automation · n8n orchestration · server deployment · publishing · a completed control-room UI. The proof is the engine, not a product.</span></p>
+  </article>
+
+  <div class="sb-pair">
+    <!-- 02 — Spark -->
+    <article class="sb-case">
+      <header class="sb-case-head">
+        <div class="sb-case-id"><i>02</i><h3>Spark</h3></div>
+        <div class="sb-case-kind">Local-first PWA · client persistence</div>
+      </header>
+
+      <div class="sb-spine">
+        <span class="sb-spine-bar" role="img" aria-label="Occupies the interface, application and data layers">
+          <i data-on>I</i><i data-on>A</i><i>S</i><i data-on>D</i><i>P</i>
+        </span>
+        <span class="sb-spine-text">Interface → data · no server</span>
+      </div>
+
+      <p class="sb-claim">It has to keep working with no account, no server, and no network.</p>
+      <p class="sb-desc">A React and TypeScript planning application where the browser is the database.</p>
+
+      <ol class="sb-path sb-path-3">
+        <li><b>React surfaces</b><span>Feature views, transactional actions</span></li>
+        <li><b>Dexie live queries</b><span>Reactive reads over compound indexes</span></li>
+        <li><b>IndexedDB</b><span>Versioned persistence, schema v1 → v8</span></li>
+      </ol>
+
+      <dl class="sb-notes">
+        <div>
+          <dt>Persistence</dt>
+          <dd><b>IndexedDB is product state, not a cache.</b> Compound indexes serve real queries.</dd>
+        </div>
+        <div>
+          <dt>Recovery</dt>
+          <dd>Service worker caches the shell; <b>JSON export and import restore local state transactionally.</b></dd>
+        </div>
+        <div>
+          <dt>AI boundary</dt>
+          <dd><b>Drafts are proposals.</b> A person accepts one before anything reaches the database.</dd>
+        </div>
+        <div>
+          <dt>Not claimed</dt>
+          <dd>No backend, login, cloud sync, or automated test suite.</dd>
+        </div>
+      </dl>
+    </article>
+
+    <!-- 03 — Built in Layers -->
+    <article class="sb-case">
+      <header class="sb-case-head">
+        <div class="sb-case-id"><i>03</i><h3>Built in Layers</h3></div>
+        <div class="sb-case-kind">Architecture-led frontend / content system</div>
+      </header>
+
+      <div class="sb-spine">
+        <span class="sb-spine-bar" role="img" aria-label="Occupies the interface, application, data and platform layers">
+          <i data-on>I</i><i data-on>A</i><i>S</i><i data-on>D</i><i data-on>P</i>
+        </span>
+        <span class="sb-spine-text">Interface → platform · content as the data layer</span>
+      </div>
+
+      <p class="sb-claim">Content should not be able to publish itself past its own contract.</p>
+      <p class="sb-desc">A typed content pipeline where accessibility is checked as delivery evidence rather than asserted.</p>
+
+      <ol class="sb-path sb-path-3">
+        <li><b>Typed MDX</b><span>Gray Matter and Zod validate frontmatter</span></li>
+        <li><b>Publication gates</b><span>Invalid content fails the build</span></li>
+        <li><b>Server-first render</b><span>Server Components and SSG, then enhancement</span></li>
+      </ol>
+
+      <dl class="sb-notes">
+        <div>
+          <dt>Contract</dt>
+          <dd><b>Frontmatter is a schema, not a convention.</b> A broken document stops the build, not a reader.</dd>
+        </div>
+        <div>
+          <dt>Boundary</dt>
+          <dd><b>Server-first by default.</b> Interactivity is added where it earns its cost.</dd>
+        </div>
+        <div>
+          <dt>Verification</dt>
+          <dd><b>Playwright and axe run as delivery evidence</b> — which is what makes an accessibility claim checkable.</dd>
+        </div>
+        <div>
+          <dt>Scope</dt>
+          <dd>Included as architecture proof, not as the subject of the profile.</dd>
+        </div>
+      </dl>
+    </article>
+  </div>
+
+  <!-- 04 — JointLedger -->
+  <article class="sb-case sb-case--bounded">
+    <header class="sb-case-head">
+      <div class="sb-case-id"><i>04</i><h3>JointLedger</h3></div>
+      <div class="sb-case-kind">Upstream backend extension · runtime integration</div>
+    </header>
+
+    <div class="sb-spine">
+      <span class="sb-spine-bar" role="img" aria-label="Occupies the services, data and platform layers">
+        <i>I</i><i>A</i><i data-on>S</i><i data-on>D</i><i data-on>P</i>
+      </span>
+      <span class="sb-spine-text">Services → platform · no frontend</span>
+    </div>
+
+    <p class="sb-claim">A shared ledger is a permissions problem before it is a screen.</p>
+
+    <div class="sb-ledger">
+      <div>
+        <p class="sb-desc">Two evidenced contributions to a self-hosted accounting application written by someone else: the local Docker Compose and PostgreSQL runtime on the default branch, and on a feature branch a backend extension turning a single-owner ledger into a shared one — against a schema and invariants that were inherited, not chosen.</p>
+        <ol class="sb-path sb-path-3">
+          <li><b>Book · BookMember · BookInvitation</b><span>New models over the upstream schema</span></li>
+          <li><b>Book services and APIs</b><span>Owner, editor, and viewer checks, with role tests</span></li>
+          <li><b>Book scoping</b><span>Accounts, categories, and tags resolved per book</span></li>
+        </ol>
+      </div>
+      <div class="sb-bound">
+        <b>Inherited, not authored</b>
+        <ul class="sb-bound-list">
+          <li>Upstream accounting engine and Vue interface — not Hakan's work.</li>
+          <li>No shared-book frontend, no book selector.</li>
+          <li>Invitations are schema and status infrastructure only.</li>
+          <li>Transactions carry a bookId, but reads and writes stay on the original owner-scoped path.</li>
+        </ul>
+      </div>
+    </div>
+
+    <dl class="sb-notes">
+      <div>
+        <dt>Migration safety</dt>
+        <dd><b>Personal-book creation is deterministic and the backfill idempotent.</b> Every record lands in exactly one book; a second run creates no duplicate.</dd>
+      </div>
+      <div>
+        <dt>Runtime</dt>
+        <dd>Compose service definitions and a PostgreSQL container with a persistent volume — the environment the extension is verified against.</dd>
+      </div>
+      <div>
+        <dt>Status</dt>
+        <dd><b>Four commits ahead on a feature branch.</b> Unmerged and unreleased.</dd>
+      </div>
+    </dl>
+  </article>
+</section>
+
+<!-- ===================== 03 — AI ENGINEERING ===================== -->
+<section class="sb-section">
+  <div class="sb-head">
+    <div>
+      <span class="sb-num">03 / <b>AI engineering</b></span>
+      <h2 class="sb-h">Agents participate. The system keeps authority.</h2>
+    </div>
+    <p>The workflow matters more than the tool brands. Providers are adapters and can be swapped; the plan, the evidence, and the release decision cannot.</p>
+  </div>
+
+  <div class="sb-ai">
+    <aside class="sb-position">
+      <span class="sb-key">Position</span>
+      <h3>Model confidence is not system evidence.</h3>
+      <p>Agents work inside a system whose durable state and release authority never depend on them. Model text is recorded as evidence, never read as acceptance.</p>
+      <div class="sb-seal">Zero autonomous release authority</div>
+    </aside>
+
+    <div class="sb-loop">
+      <span class="sb-key">Objective → accountable release</span>
+      <ol class="sb-steps">
+        <li data-actor="human"><i>01</i><b>Specify</b><span>Objective, constraints, acceptance criteria</span></li>
+        <li data-actor="agent"><i>02</i><b>Plan</b><span>Dependency graph, deterministically validated</span></li>
+        <li data-actor="human"><i>03</i><b>Approve</b><span>Approval binds to one plan revision</span></li>
+        <li data-actor="agent"><i>04</i><b>Implement</b><span>Workspace-scoped worker, default-deny environment</span></li>
+        <li data-actor="fixed"><i>05</i><b>Verify</b><span>Fixed executable and argv; process facts, not prose</span></li>
+        <li data-actor="agent"><i>06</i><b>Review</b><span>Independent principal, strict fail-closed verdict</span></li>
+        <li data-actor="human"><i>07</i><b>Release</b><span>Content-addressed evidence snapshot</span></li>
+      </ol>
+
+      <div class="sb-actorkey">
+        <span><i class="h"></i>Human decision</span>
+        <span><i class="a"></i>Agent work</span>
+        <span><i></i>Deterministic process</span>
+      </div>
+
+      <div class="sb-repair">
+        <b>Repair ↺</b>
+        <p>A review that returns <em>changes required</em> sends the work back to implementation for a bounded number of cycles.</p>
+        <b>Bounded</b>
+      </div>
+
+      <div class="sb-rails">
+        <div><b>Durable state</b><span>Every plan, run, verdict, and approval is persisted before its process exits.</span></div>
+        <div><b>Deterministic evidence</b><span>Verification runs a fixed command. Its result is stored apart from anything a model wrote about it.</span></div>
+        <div><b>Supervisor</b><span>Zero-spend policy and persisted backoff, so resource limits outlive a restart.</span></div>
+      </div>
+
+      <div class="sb-gate">
+        <p>A newer implementation invalidates prior verification, review, and approval. Nothing carries forward on reputation.</p>
+        <b>Human release gate</b>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 04 — CAPABILITY ===================== -->
+<section class="sb-section">
+  <div class="sb-head">
+    <div>
+      <span class="sb-num">04 / <b>Capability</b></span>
+      <h2 class="sb-h">Breadth is only useful while the depth stays obvious.</h2>
+    </div>
+    <p>Four tiers, weighted deliberately. Platform exposure and in-progress learning are not equal to established front-end and architecture work.</p>
+  </div>
+
+  <div class="sb-tiers">
+    <div class="sb-tier" data-tier="core">
+      <div><span class="sb-key">Core · established</span><h3>Front-end &amp; application architecture</h3></div>
+      <p class="sb-tier-list">React · TypeScript · JavaScript · Next.js · component and application architecture · state and data integration · accessible product interfaces</p>
+      <p class="sb-mark">Primary identity</p>
+    </div>
+    <div class="sb-tier" data-tier="applied">
+      <div><span class="sb-key">Applied · public evidence</span><h3>Services, persistence &amp; local-first data</h3></div>
+      <p class="sb-tier-list">Node.js · Express · NestJS · REST · JWT and role-aware access · PostgreSQL · Prisma · Supabase · PWA · IndexedDB / Dexie · Redux Toolkit · Zustand · TanStack Query · React Hook Form · React Router · Sass · Tailwind · Material UI · GSAP</p>
+      <p class="sb-mark">Shown in the cases above</p>
+    </div>
+    <div class="sb-tier" data-tier="platform">
+      <div><span class="sb-key">Platform · working awareness</span><h3>Delivery &amp; runtime</h3></div>
+      <p class="sb-tier-list">Git · GitHub · GitHub Actions · GitLab CI/CD · Docker · Docker Compose · Nginx · Linux (Ubuntu / Debian) · Vercel · Netlify</p>
+      <p class="sb-mark">Not a production platform ownership claim</p>
+    </div>
+    <div class="sb-tier" data-tier="expansion">
+      <div><span class="sb-key">Expansion · in progress</span><h3>Orchestration &amp; observability</h3></div>
+      <p class="sb-tier-list">Kubernetes · Ansible · Grafana · n8n · model routing and local-model experimentation</p>
+      <p class="sb-mark">K9s appears only as Kubernetes operational tooling</p>
+    </div>
+  </div>
+
+  <p class="sb-familiar"><b>Working familiarity, not claimed depth</b><br>GraphQL · WebSocket integration · MongoDB · Firebase · Redis · Elasticsearch · Kafka · Ant Design · Chakra UI · shadcn/ui · Apache · DigitalOcean.</p>
+</section>
+
+<!-- ===================== CLOSE ===================== -->
+<div class="sb-close">
+  <h2 class="sb-h">Build the interface. Understand the system. Govern the automation.</h2>
+  <div class="sb-close-contact">
+    GitHub / <b>hakanduyar</b><br>
+    LinkedIn / <b>in/hakanduyar</b>
+  </div>
+</div>
+
+<footer class="footer">
+  <span>Hakan Duyar · Front-end &amp; Systems Engineering</span>
+  <span>System Brief · refined · <span data-year></span></span>
+</footer>
+
+</main>
+<script src="../shared/prototype.js"></script>
+</body>
+</html>

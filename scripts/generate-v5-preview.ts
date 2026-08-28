@@ -1,0 +1,36 @@
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { REPO_ROOT } from '../src/emit.js';
+import { profileFragment } from '../src/v5/markup.js';
+
+const html = `<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hakan Duyar — V5 production profile preview</title>
+<style>
+*{box-sizing:border-box}html{--bg:#fff;--surface:#f6f8fa;--text:#1f2328;--muted:#656d76;--line:#d0d7de;--link:#0969da;--header:#f6f8fa}html[data-theme=dark]{--bg:#0d1117;--surface:#161b22;--text:#f0f6fc;--muted:#8b949e;--line:#30363d;--link:#58a6ff;--header:#010409}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.top{height:64px;background:var(--header);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 28px;gap:18px}.mark{width:32px;height:32px;border:2px solid var(--text);border-radius:50%;display:grid;place-items:center;font-weight:700}.search{height:34px;width:320px;border:1px solid var(--line);border-radius:6px;color:var(--muted);padding:6px 12px}.top nav{margin-left:auto;display:flex;gap:16px;font-weight:600}.tabs{height:50px;border-bottom:1px solid var(--line);display:flex;justify-content:center;align-items:end;gap:28px}.tabs span{padding:14px 10px 11px}.tabs .active{font-weight:600;border-bottom:2px solid #fd8c73}.controls{position:fixed;z-index:20;right:18px;bottom:18px;display:flex;gap:6px;padding:7px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 28px #0004}.controls button{border:1px solid var(--line);background:var(--bg);color:var(--text);padding:7px 10px;border-radius:6px;cursor:pointer}.shell{max-width:1280px;margin:0 auto;padding:28px 32px;display:grid;grid-template-columns:296px minmax(0,896px);gap:30px}.sidebar{margin-top:-52px}.avatar{width:260px;aspect-ratio:1;border-radius:50%;border:1px solid var(--line);background:linear-gradient(145deg,#dfe4e8,#adb7c2);overflow:hidden;display:grid;place-items:center;color:#26313c;font-size:42px;font-weight:700}.sidebar h1{margin:14px 0 0;font-size:26px;line-height:1.15}.sidebar h2{margin:0;color:var(--muted);font-size:20px;font-weight:300}.bio{font-size:16px}.follow{width:100%;height:32px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-weight:600;border-radius:6px}.meta{list-style:none;padding:0;line-height:1.9;color:var(--muted)}.readme{border:1px solid var(--line);border-radius:6px;overflow:hidden}.readme-head{height:42px;background:var(--surface);border-bottom:1px solid var(--line);padding:10px 16px;font-weight:600}.markdown{padding:32px}.markdown picture,.markdown img,.markdown a{display:block;width:100%;height:auto;margin:0}.markdown summary picture{display:inline-block;width:95%;vertical-align:middle}.markdown summary img{width:100%}.markdown details,.markdown summary{margin:0}.markdown summary{cursor:pointer}.native{margin-top:24px}.native h2{font-size:16px}.pins{display:grid;grid-template-columns:1fr 1fr;gap:16px}.pin{border:1px solid var(--line);border-radius:6px;padding:16px;min-height:105px}.pin b{color:var(--link)}.pin p{font-size:12px;color:var(--muted)}html.mobile .top{height:56px;padding:0 14px}.mobile .search,.mobile .top nav{display:none}.mobile .tabs{justify-content:flex-start;overflow:hidden;padding-left:10px;gap:14px;white-space:nowrap}.mobile .shell{display:block;padding:16px;max-width:430px}.mobile .sidebar{margin:0 0 20px}.mobile .avatar{width:78px;float:left;margin-right:16px}.mobile .sidebar h1{padding-top:10px;font-size:22px}.mobile .sidebar h2{font-size:17px}.mobile .bio{clear:both;padding-top:14px}.mobile .readme{border-left:0;border-right:0;border-radius:0}.mobile .readme-head{display:none}.mobile .markdown{padding:20px 0}.mobile .pins{grid-template-columns:1fr}.clean .controls{display:none}
+</style>
+</head>
+<body>
+<header class="top"><div class="mark">HD</div><div class="search">Type / to search</div><nav><span>Pull requests</span><span>Issues</span><span>Marketplace</span><span>Explore</span></nav></header>
+<div class="tabs"><span class="active">Overview</span><span>Repositories 59</span><span>Projects</span><span>Packages</span><span>Stars</span></div>
+<div class="controls"><button data-action="theme">Light / Dark</button><button data-action="viewport">Desktop / Mobile</button><button data-action="motion">Motion / Reduced</button><button data-action="expand">Show / Hide</button></div>
+<main class="shell">
+<aside class="sidebar"><div class="avatar">HD</div><h1>Hakan Duyar</h1><h2>hakanduyar</h2><p class="bio">Front-end &amp; Systems Engineering</p><button class="follow">Follow</button><ul class="meta"><li>◉ 27 followers</li><li>⌖ Türkiye</li><li>◫ 59 public repositories</li></ul></aside>
+<section><article class="readme"><div class="readme-head">hakanduyar / README.md</div><div class="markdown">${profileFragment('../assets/generated/')}</div></article>
+<section class="native"><h2>Pinned</h2><div class="pins"><article class="pin"><b>software-factory</b><p>Governed agentic engineering control plane.</p></article><article class="pin"><b>spark</b><p>Local-first React planning application.</p></article><article class="pin"><b>built-in-layers</b><p>Architecture-led frontend and content system.</p></article><article class="pin"><b>jointledger</b><p>Backend extension and runtime integration.</p></article></div></section></section>
+</main>
+<script>
+const params=new URLSearchParams(location.search);const root=document.documentElement;const details=document.querySelector('.markdown>details');
+let theme=params.get('theme')==='light'?'light':'dark';let mobile=params.get('mobile')==='1';let reduced=params.get('motion')==='reduce';let clean=params.get('clean')==='1';details.open=params.get('expanded')!=='0';
+function asset(base,motion){const prefix='../assets/generated/';const vp=mobile?'-mobile':'';if(motion&&reduced)return prefix+base+vp+'-static-'+theme+'.svg';return prefix+base+vp+'-'+theme+(motion?'.gif':'.svg')}
+function render(){root.dataset.theme=theme;root.classList.toggle('mobile',mobile);document.body.classList.toggle('clean',clean);document.querySelectorAll('.markdown picture').forEach((picture)=>{const image=picture.querySelector('img');if(!image.dataset.base){const filename=image.getAttribute('src').split('/').pop();image.dataset.motion=filename.endsWith('.gif')?'1':'0';image.dataset.base=filename.replace(/-light\.(?:svg|gif)$/,'')}image.src=asset(image.dataset.base,image.dataset.motion==='1');picture.querySelectorAll('source').forEach((source)=>source.remove())})}
+document.querySelector('[data-action=theme]').onclick=()=>{theme=theme==='light'?'dark':'light';render()};document.querySelector('[data-action=viewport]').onclick=()=>{mobile=!mobile;render()};document.querySelector('[data-action=motion]').onclick=()=>{reduced=!reduced;render()};document.querySelector('[data-action=expand]').onclick=()=>{details.open=!details.open};render();
+</script>
+</body></html>`;
+
+mkdirSync(resolve(REPO_ROOT, 'preview'), { recursive: true });
+writeFileSync(resolve(REPO_ROOT, 'preview/index.html'), html, 'utf8');
+console.log('[preview] wrote preview/index.html');

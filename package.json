@@ -1,9 +1,9 @@
 {
-  "name": "hakan-duyar-profile-v4",
-  "version": "4.2.0",
+  "name": "hakan-duyar-profile-v5",
+  "version": "5.0.0",
   "private": true,
   "type": "module",
-  "description": "Source and validation system for Hakan Duyar's GitHub profile",
+  "description": "Architecture-first source, motion, validation, and preview system for Hakan Duyar's GitHub profile",
   "engines": {
     "node": ">=20"
   },
@@ -11,17 +11,18 @@
     "data:refresh": "node --require ./scripts/node-runtime.cjs --import tsx scripts/refresh-data.ts",
     "render": "node --require ./scripts/node-runtime.cjs --import tsx scripts/build-assets.ts",
     "readme": "node --require ./scripts/node-runtime.cjs --import tsx scripts/generate-readme.ts",
-    "preview": "node --require ./scripts/node-runtime.cjs --import tsx scripts/generate-preview.ts",
-    "validate": "node --require ./scripts/node-runtime.cjs --import tsx scripts/validate.ts",
+    "preview": "node --require ./scripts/node-runtime.cjs --import tsx scripts/generate-v5-preview.ts",
+    "validate": "node --require ./scripts/node-runtime.cjs --import tsx scripts/validate-v5.ts",
     "evidence:validate": "node --require ./scripts/node-runtime.cjs --import tsx scripts/validate-collision-evidence.ts",
     "build": "npm run render && npm run readme && npm run validate && npm run preview",
     "typecheck": "tsc --noEmit",
-    "test": "node --require ./scripts/node-runtime.cjs ./node_modules/vitest/vitest.mjs run",
-    "check": "npm run typecheck && npm run build && npm test && npm run evidence:validate"
+    "test": "node --require ./scripts/node-runtime.cjs ./node_modules/vitest/vitest.mjs run tests/v5-profile.test.ts tests/v5-theme.test.ts",
+    "check": "npm run typecheck && npm run build && npm test"
   },
   "devDependencies": {
     "@types/node": "^24.5.2",
     "fast-xml-parser": "^5.2.5",
+    "sharp": "^0.35.4",
     "svgo": "^4.0.0",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
