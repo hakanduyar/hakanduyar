@@ -5,6 +5,7 @@ import { XMLValidator } from 'fast-xml-parser';
 import { GENERATED_ASSET_NAMES } from '../src/assets.js';
 import { REPO_ROOT } from '../src/emit.js';
 import { V5_PROJECTS } from '../src/v5/content.js';
+import { V5_SCENE_DIMENSIONS } from '../src/v5/scenes-compact.js';
 
 const errors: string[] = [];
 const fail = (message: string): void => { errors.push(message); };
@@ -38,7 +39,12 @@ for (const asset of GENERATED_ASSET_NAMES) {
     if (bytes > 220_000) fail(`${asset}: ${bytes.toLocaleString()} bytes exceeds the 220 KB motion budget`);
     const metadata = await sharp(absolute, { animated: true }).metadata();
     if ((metadata.pages ?? 0) < 6) fail(`${asset}: expected at least six animation frames`);
-    if (!metadata.pageHeight || metadata.pageHeight < 700) fail(`${asset}: invalid animation page height`);
+    const scene = asset.startsWith('architecture-') ? 'architecture' : 'ai';
+    const viewport = asset.includes('-mobile-') ? 'mobile' : 'desktop';
+    const [expectedWidth, expectedHeight] = V5_SCENE_DIMENSIONS[scene][viewport];
+    if (metadata.width !== expectedWidth || metadata.pageHeight !== expectedHeight) {
+      fail(`${asset}: expected ${expectedWidth}x${expectedHeight} frames, found ${metadata.width ?? 0}x${metadata.pageHeight ?? 0}`);
+    }
     if (metadata.loop !== 0) fail(`${asset}: animation must loop continuously`);
     if (!metadata.delay?.every((delay) => delay > 0)) fail(`${asset}: invalid frame delay`);
   } else {

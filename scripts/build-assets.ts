@@ -11,7 +11,7 @@ import {
   renderIdentity,
   renderProject,
   V5_SCENE_DIMENSIONS,
-} from '../src/v5/scenes.js';
+} from '../src/v5/scenes-compact.js';
 import { V5_THEMES } from '../src/v5/theme.js';
 
 interface Output {

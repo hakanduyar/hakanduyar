@@ -20,16 +20,17 @@
 ## Verification result
 
 - Generated assets: 44.
-- Total generated V5 payload: 910,712 bytes.
+- Total generated V5 payload: 520,444 bytes.
 - TypeScript: passed.
-- Unit tests: 7 passed.
+- Unit tests: 9 passed.
 - XML, asset budget, README structure, accessibility, project order, theme and motion validation: passed.
 - GitHub official Markdown render API and live-profile DOM are both checked. Theme-only sources remain theme-aware; viewport and reduced-motion sources keep their original conditions.
 - Browser QA: desktop dark, desktop light, mobile dark, mobile light, animated motion, reduced motion, closed disclosure, and expanded disclosure passed.
 - Mobile preview measured no horizontal overflow: document 1265/1265, shell 430/430, README composition 398/398.
+- Expanded visual narrative is approximately 56% shorter on desktop and 57% shorter on mobile than the first V5 production pass.
 
 ## Motion semantics
 
-- Architecture: a request descends interface → application → services → data → platform; evidence returns to release authority.
-- AI workflow: active responsibility advances through specify → plan → approve → implement → verify → review → release.
+- Architecture: a request travels interface → application → services → data → platform; evidence returns to release authority.
+- AI workflow: active responsibility advances through specify → plan → approve → implement → verify → independent review → bounded repair → human release.
 - Reduced motion: both scenes render as stable, complete SVG documents.
