@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 342 446" role="img" aria-label="Built in Layers — typed pipeline stacked vertically: typed content, deterministic transform and build, rendered delivery, accessibility evidence.">
+<rect x="24" y="26" width="262" height="58" stroke="#356D8C" fill="#FBF9F5" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="155" y="50" text-anchor="middle" font-size="10" font-weight="500" fill="#171A1E">TYPED CONTENT</text>
+<text font-family="Consolas, 'Courier New', monospace" x="155" y="66" text-anchor="middle" font-size="9.5" fill="#5E656D">schema-typed source</text>
+<path d="M155 84 V106 H187 V132" stroke="#356D8C" fill="none" stroke-width="1.25" />
+<path d="M182 127 L187 133 L192 127" stroke="#356D8C" fill="none" stroke-width="1.25" />
+<rect x="56" y="136" width="262" height="58" stroke="#356D8C" fill="#FBF9F5" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="187" y="160" text-anchor="middle" font-size="10" font-weight="500" fill="#171A1E">TRANSFORM / BUILD</text>
+<text font-family="Consolas, 'Courier New', monospace" x="187" y="176" text-anchor="middle" font-size="9.5" fill="#5E656D">deterministic</text>
+<path d="M187 194 V216 H155 V242" stroke="#356D8C" fill="none" stroke-width="1.25" />
+<path d="M150 237 L155 243 L160 237" stroke="#356D8C" fill="none" stroke-width="1.25" />
+<rect x="24" y="246" width="262" height="58" stroke="#356D8C" fill="#FBF9F5" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="155" y="270" text-anchor="middle" font-size="10" font-weight="500" fill="#171A1E">RENDERED DELIVERY</text>
+<text font-family="Consolas, 'Courier New', monospace" x="155" y="286" text-anchor="middle" font-size="9.5" fill="#5E656D">static output</text>
+<path d="M155 304 V326 H187 V352" stroke="#356D8C" fill="none" stroke-width="1.25" />
+<path d="M182 347 L187 353 L192 347" stroke="#356D8C" fill="none" stroke-width="1.25" />
+<rect x="56" y="356" width="262" height="66" stroke="#356D8C" fill="#FBF9F5" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="187" y="382" text-anchor="middle" font-size="10" font-weight="500" fill="#171A1E">ACCESSIBILITY EVIDENCE</text>
+<text font-family="Consolas, 'Courier New', monospace" x="187" y="400" text-anchor="middle" font-size="8.5" fill="#5E656D">semantics &#183; contrast &#183; focus</text>
+</svg>

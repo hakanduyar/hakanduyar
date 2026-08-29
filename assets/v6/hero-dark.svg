@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 560" role="img" aria-label="Exploded architectural section: four planes — Interface, Application, Data, Delivery — joined by a vertical axis. React anchors the interface plane and TypeScript the application plane. Supporting technologies annotate each plane.">
+<line x1="330" y1="8" x2="330" y2="544" stroke="#454B50" fill="none" stroke-width="1" />
+<path d="M324 546 L330 552 L336 546" opacity=".8" stroke="#ECE8DF" fill="none" stroke-width="1" />
+<line x1="180" y1="96"  x2="180" y2="450" stroke="#454B50" fill="none" stroke-width="1" />
+<line x1="480" y1="96"  x2="480" y2="450" stroke="#454B50" fill="none" stroke-width="1" />
+<polygon points="330,24 480,96 330,168 180,96" stroke="#ECE8DF" fill="#1E2226" stroke-width="1.25" />
+<g stroke="#ECE8DF" fill="none" stroke-width="1" opacity=".38">
+  <polygon points="298,58 330,74 314,82 282,66"/>
+  <polygon points="338,78 370,94 354,102 322,86"/>
+  <polygon points="258,84 290,100 274,108 242,92"/>
+</g>
+<text font-family="Consolas, 'Courier New', monospace" x="330" y="124" text-anchor="middle" font-size="11" font-weight="600" letter-spacing=".14em" fill="#ECE8DF">INTERFACE</text>
+<polygon points="330,142 480,214 330,286 180,214" stroke="#ECE8DF" fill="#1E2226" stroke-width="1.25" />
+<g stroke="#ECE8DF" fill="none" stroke-width="1" opacity=".38">
+  <polygon points="294,180 330,198 312,207 276,189"/>
+  <polygon points="344,196 380,214 362,223 326,205"/>
+  <line x1="380" y1="214" x2="404" y2="202"/>
+  <line x1="386" y1="220" x2="410" y2="208"/>
+</g>
+<text font-family="Consolas, 'Courier New', monospace" x="330" y="242" text-anchor="middle" font-size="11" font-weight="600" letter-spacing=".14em" fill="#ECE8DF">APPLICATION</text>
+<polygon points="330,260 480,332 330,404 180,332" stroke="#ECE8DF" fill="#1E2226" stroke-width="1.25" />
+<g stroke="#ECE8DF" fill="none" stroke-width="1" opacity=".38">
+  <line x1="272" y1="310" x2="352" y2="310"/>
+  <line x1="286" y1="322" x2="366" y2="322"/>
+  <line x1="300" y1="334" x2="380" y2="334"/>
+</g>
+<text font-family="Consolas, 'Courier New', monospace" x="330" y="366" text-anchor="middle" font-size="11" font-weight="600" letter-spacing=".14em" fill="#ECE8DF">DATA</text>
+<polygon points="330,378 480,450 330,522 180,450" stroke="#ECE8DF" fill="#1E2226" stroke-width="1.25" />
+<g stroke="#ECE8DF" fill="none" stroke-width="1" opacity=".38">
+  <polygon points="288,424 320,440 304,448 272,432"/>
+  <polygon points="330,430 362,446 346,454 314,438"/>
+  <line x1="380" y1="452" x2="408" y2="438"/>
+  <path d="M401 434 L409 437 L406 445"/>
+</g>
+<text font-family="Consolas, 'Courier New', monospace" x="330" y="482" text-anchor="middle" font-size="11" font-weight="600" letter-spacing=".14em" fill="#ECE8DF">DELIVERY</text>
+<line x1="480" y1="96" x2="508" y2="96" stroke="#454B50" fill="none" stroke-width="1" />
+<text font-family="Consolas, 'Courier New', monospace" x="514" y="99.5" font-size="10.5" fill="#A9ADB1">Next.js</text>
+<line x1="480" y1="214" x2="508" y2="214" stroke="#454B50" fill="none" stroke-width="1" />
+<text font-family="Consolas, 'Courier New', monospace" x="514" y="217.5" font-size="10.5" fill="#A9ADB1">Node.js &#183; APIs</text>
+<line x1="480" y1="332" x2="508" y2="332" stroke="#454B50" fill="none" stroke-width="1" />
+<text font-family="Consolas, 'Courier New', monospace" x="514" y="328.5" font-size="10.5" fill="#A9ADB1">PostgreSQL &#183;</text>
+<text font-family="Consolas, 'Courier New', monospace" x="514" y="343.5" font-size="10.5" fill="#A9ADB1">local-first persistence</text>
+<line x1="480" y1="450" x2="508" y2="450" stroke="#454B50" fill="none" stroke-width="1" />
+<text font-family="Consolas, 'Courier New', monospace" x="514" y="453.5" font-size="10.5" fill="#A9ADB1">Docker &#183; CI/CD &#183; Linux</text>
+<g stroke="#6995AD" fill="none" stroke-width="6">
+  <ellipse cx="86" cy="96" rx="42" ry="16"/>
+  <ellipse cx="86" cy="96" rx="42" ry="16" transform="rotate(60 86 96)"/>
+  <ellipse cx="86" cy="96" rx="42" ry="16" transform="rotate(120 86 96)"/>
+</g>
+<circle cx="86" cy="96" r="7.5" fill="#6995AD"/>
+<line x1="134" y1="96" x2="180" y2="96" stroke="#454B50" fill="none" stroke-width="1" />
+<text font-family="Consolas, 'Courier New', monospace" x="86" y="158" text-anchor="middle" font-size="9.5" fill="#A9ADB1">React</text>
+<rect x="48" y="176" width="76" height="76" rx="6" fill="#6995AD"/>
+<text x="86" y="228" text-anchor="middle" font-family="system-ui, 'Segoe UI', Arial, sans-serif" font-size="34" font-weight="700" fill="#171A1D">TS</text>
+<line x1="124" y1="214" x2="180" y2="214" stroke="#454B50" fill="none" stroke-width="1" />
+<text font-family="Consolas, 'Courier New', monospace" x="86" y="272" text-anchor="middle" font-size="9.5" fill="#A9ADB1">TypeScript</text>
+</svg>
