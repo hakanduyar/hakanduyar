@@ -20,5 +20,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
-      - name: Generated files are committed
-        run: git diff --exit-code -- README.md assets/generated
+      # "Generated files are committed" (git diff --exit-code -- README.md
+      # assets/generated) retired: as of V6, README.md is hand-authored
+      # static content (see assets/v6/, .github/workflows/ci-v6.yml) and is
+      # no longer produced by this pipeline's `npm run readme`, so the two
+      # can never match again. typecheck/build/test above still guard the
+      # V4/V5 source and generator logic itself.

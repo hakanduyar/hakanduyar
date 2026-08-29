@@ -1,0 +1,25 @@
+name: Profile V6 static asset integrity
+
+on:
+  pull_request:
+  push:
+    branches:
+      - 'feat/**'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-v6:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run v6:validate
+      - run: npm run v6:qa:github
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

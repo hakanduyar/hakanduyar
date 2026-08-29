@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 342 628" role="img" aria-label="Delivery route stacked vertically: specify, plan, approve (human), implement, verify, independent review, human release gate, with a conditional repair return from independent review to implement.">
+<rect x="24" y="8" width="200" height="48" stroke="#356D8C" fill="#FBF9F5" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="124" y="36" text-anchor="middle" font-size="9.5" font-weight="500" fill="#171A1E">SPECIFY</text>
+<line x1="124" y1="56" x2="124" y2="94" stroke="#356D8C" fill="none" stroke-width="1.25" /><path d="M119 89 L124 95 L129 89" stroke="#356D8C" fill="none" stroke-width="1.25" />
+<rect x="24" y="98" width="200" height="48" stroke="#356D8C" fill="#FBF9F5" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="124" y="126" text-anchor="middle" font-size="9.5" font-weight="500" fill="#171A1E">PLAN</text>
+<line x1="124" y1="146" x2="124" y2="184" stroke="#356D8C" fill="none" stroke-width="1.25" /><path d="M119 179 L124 185 L129 179" stroke="#356D8C" fill="none" stroke-width="1.25" />
+<rect x="24" y="188" width="200" height="48" stroke="#A76432" fill="#FBF9F5" stroke-width="1.5" />
+<rect x="28.5" y="192.5" width="191" height="39" stroke-width="1" stroke="#A76432" fill="none" />
+<text font-family="Consolas, 'Courier New', monospace" x="124" y="216" text-anchor="middle" font-size="9.5" font-weight="640" letter-spacing=".1em" fill="#8F5527">APPROVE</text>
+<line x1="124" y1="236" x2="124" y2="274" stroke="#356D8C" fill="none" stroke-width="1.25" /><path d="M119 269 L124 275 L129 269" stroke="#356D8C" fill="none" stroke-width="1.25" />
+<rect x="24" y="278" width="200" height="48" stroke="#356D8C" fill="#FBF9F5" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="124" y="306" text-anchor="middle" font-size="9.5" font-weight="500" fill="#171A1E">IMPLEMENT</text>
+<line x1="124" y1="326" x2="124" y2="364" stroke="#356D8C" fill="none" stroke-width="1.25" /><path d="M119 359 L124 365 L129 359" stroke="#356D8C" fill="none" stroke-width="1.25" />
+<rect x="24" y="368" width="200" height="48" stroke="#356D8C" fill="#FBF9F5" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="124" y="396" text-anchor="middle" font-size="9.5" font-weight="500" fill="#171A1E">VERIFY</text>
+<line x1="124" y1="416" x2="124" y2="454" stroke="#356D8C" fill="none" stroke-width="1.25" /><path d="M119 449 L124 455 L129 449" stroke="#356D8C" fill="none" stroke-width="1.25" />
+<rect x="24" y="458" width="200" height="48" stroke="#356D8C" fill="#FBF9F5" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="124" y="479" text-anchor="middle" font-size="9.5" font-weight="500" fill="#171A1E">INDEPENDENT</text>
+<text font-family="Consolas, 'Courier New', monospace" x="124" y="492" text-anchor="middle" font-size="9.5" font-weight="500" fill="#171A1E">REVIEW</text>
+<line x1="124" y1="506" x2="124" y2="544" stroke="#356D8C" fill="none" stroke-width="1.25" /><path d="M119 539 L124 545 L129 539" stroke="#356D8C" fill="none" stroke-width="1.25" />
+<rect x="24" y="548" width="200" height="56" stroke="#A76432" fill="#FBF9F5" stroke-width="1.5" />
+<rect x="28.5" y="552.5" width="191" height="47" stroke-width="1" stroke="#A76432" fill="none" />
+<text font-family="Consolas, 'Courier New', monospace" x="124" y="573" text-anchor="middle" font-size="9.5" font-weight="640" letter-spacing=".1em" fill="#8F5527">HUMAN</text>
+<text font-family="Consolas, 'Courier New', monospace" x="124" y="588" text-anchor="middle" font-size="9.5" font-weight="640" letter-spacing=".1em" fill="#8F5527">RELEASE GATE</text>
+<path d="M224 482 H288 V302 H228" stroke-dasharray="6 5" stroke="#356D8C" fill="none" stroke-width="1.25" />
+<path d="M233 297 L227 302 L233 307" stroke="#356D8C" fill="none" stroke-width="1.25" />
+<path d="M283 397 L288 391 L293 397" stroke="#356D8C" fill="none" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="300" y="392" font-size="9" transform="rotate(90 300 392)" fill="#5E656D">REPAIR &#8212; CONDITIONAL RETURN</text>
+</svg>

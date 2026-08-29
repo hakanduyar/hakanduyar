@@ -17,7 +17,9 @@
     "build": "npm run render && npm run readme && npm run validate && npm run preview",
     "typecheck": "tsc --noEmit",
     "test": "node --require ./scripts/node-runtime.cjs ./node_modules/vitest/vitest.mjs run tests/v5-profile.test.ts tests/v5-theme.test.ts",
-    "check": "npm run typecheck && npm run build && npm test"
+    "check": "npm run typecheck && npm run build && npm test",
+    "v6:validate": "node scripts/validate-v6.mjs",
+    "v6:qa:github": "node scripts/qa-github-render.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.5.2",

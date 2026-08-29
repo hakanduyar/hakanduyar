@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 342 506" role="img" aria-label="Software Factory — dashed conceptual control plane, not implemented: specification, planning, approval, implementation, verification, independent review, repair, human release authority.">
+<text font-family="Consolas, 'Courier New', monospace" x="336" y="12" text-anchor="end" font-size="9" font-weight="600" letter-spacing=".16em" fill="#5E656D">CONCEPT &#8212; NOT IMPLEMENTED</text>
+<rect x="6" y="24" width="330" height="466" stroke="#171A1E" fill="none" stroke-width="1.25" stroke-dasharray="11 7" />
+<rect x="22" y="40" width="298" height="44" stroke-dasharray="7 5" stroke="#171A1E" fill="#FBF9F5" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="171" y="66" text-anchor="middle" font-size="9.5" font-weight="500" fill="#171A1E">SPECIFICATION</text>
+<rect x="22" y="94" width="298" height="44" stroke-dasharray="7 5" stroke="#171A1E" fill="#FBF9F5" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="171" y="120" text-anchor="middle" font-size="9.5" font-weight="500" fill="#171A1E">PLANNING</text>
+<rect x="22" y="148" width="298" height="44" stroke-dasharray="7 5" stroke="#A76432" fill="#FBF9F5" stroke-width="1.5" />
+<rect x="26.5" y="152.5" width="289" height="35" stroke-width="1" stroke-dasharray="7 5" stroke="#A76432" fill="none" />
+<text font-family="Consolas, 'Courier New', monospace" x="171" y="174" text-anchor="middle" font-size="9.5" font-weight="640" letter-spacing=".1em" fill="#8F5527">APPROVAL</text>
+<rect x="22" y="202" width="298" height="44" stroke-dasharray="7 5" stroke="#171A1E" fill="#FBF9F5" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="171" y="228" text-anchor="middle" font-size="9.5" font-weight="500" fill="#171A1E">IMPLEMENTATION</text>
+<rect x="22" y="256" width="298" height="44" stroke-dasharray="7 5" stroke="#171A1E" fill="#FBF9F5" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="171" y="282" text-anchor="middle" font-size="9.5" font-weight="500" fill="#171A1E">VERIFICATION</text>
+<rect x="22" y="310" width="298" height="44" stroke-dasharray="7 5" stroke="#171A1E" fill="#FBF9F5" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="171" y="336" text-anchor="middle" font-size="9.5" font-weight="500" fill="#171A1E">INDEPENDENT REVIEW</text>
+<rect x="22" y="364" width="298" height="44" stroke-dasharray="7 5" stroke="#171A1E" fill="#FBF9F5" stroke-width="1.25" />
+<text font-family="Consolas, 'Courier New', monospace" x="171" y="390" text-anchor="middle" font-size="9.5" font-weight="500" fill="#171A1E">REPAIR</text>
+<rect x="22" y="418" width="298" height="52" stroke-dasharray="7 5" stroke="#A76432" fill="#FBF9F5" stroke-width="1.5" />
+<rect x="26.5" y="422.5" width="289" height="43" stroke-width="1" stroke-dasharray="7 5" stroke="#A76432" fill="none" />
+<text font-family="Consolas, 'Courier New', monospace" x="171" y="448" text-anchor="middle" font-size="9.5" font-weight="640" letter-spacing=".1em" fill="#8F5527">HUMAN RELEASE AUTHORITY</text>
+</svg>
