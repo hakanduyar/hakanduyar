@@ -113,12 +113,12 @@ function logo(ctx: Ctx, slug: LogoSlug, cx: number, cy: number, px: number) {
 function kicker(ctx: Ctx, label: string, opts?: { rule?: boolean }) {
   const small = ctx.device === 'mobile';
   mono(ctx, ctx.pad, ctx.y, label, {
-    size: small ? 9 : 11,
+    size: small ? 13.5 : 13,
     weight: 700,
     fill: ctx.theme.muted,
-    ls: small ? '0.12em' : '0.16em',
+    ls: small ? '0.13em' : '0.16em',
   });
-  ctx.y += small ? 10 : 12;
+  ctx.y += small ? 14 : 14;
   if (opts?.rule !== false) {
     line(ctx, ctx.pad, ctx.y, ctx.width - ctx.pad, ctx.y, ctx.theme.hair, 1);
   }
@@ -131,24 +131,24 @@ function kicker(ctx: Ctx, label: string, opts?: { rule?: boolean }) {
 function renderMasthead(ctx: Ctx) {
   const { theme } = ctx;
   const d = ctx.device === 'desktop';
-  ctx.y = d ? 70 : 46;
+  ctx.y = d ? 70 : 56;
   mono(ctx, ctx.pad, ctx.y, identity.kicker, {
-    size: d ? 11 : 8.5,
+    size: d ? 12.5 : 13,
     weight: 700,
     fill: theme.muted,
-    ls: d ? '0.18em' : '0.12em',
+    ls: d ? '0.18em' : '0.13em',
   });
-  ctx.y += d ? 54 : 38;
-  serif(ctx, ctx.pad, ctx.y, identity.name, { size: d ? 52 : 33, weight: 700, fill: theme.ink });
-  ctx.y += d ? 34 : 26;
-  const roleLines = wrap(identity.role, ctx.width - ctx.pad * 2 - (d ? 120 : 0), d ? 16.5 : 12.5, 'serif');
+  ctx.y += d ? 54 : 48;
+  serif(ctx, ctx.pad, ctx.y, identity.name, { size: d ? 52 : 44, weight: 700, fill: theme.ink });
+  ctx.y += d ? 34 : 34;
+  const roleLines = wrap(identity.role, ctx.width - ctx.pad * 2 - (d ? 120 : 0), d ? 17 : 16.5, 'serif');
   for (const l of roleLines) {
-    serif(ctx, ctx.pad, ctx.y, l, { size: d ? 16.5 : 12.5, fill: theme.muted });
-    ctx.y += d ? 24 : 18;
+    serif(ctx, ctx.pad, ctx.y, l, { size: d ? 17 : 16.5, fill: theme.muted });
+    ctx.y += d ? 25 : 24;
   }
-  ctx.y += d ? 10 : 8;
+  ctx.y += d ? 10 : 10;
   line(ctx, ctx.pad, ctx.y, ctx.width - ctx.pad, ctx.y, theme.ink, 1.25);
-  ctx.y += d ? 52 : 36;
+  ctx.y += d ? 52 : 44;
 }
 
 /* ------------------------------------------------------------------ */
@@ -188,14 +188,14 @@ function renderHero(ctx: Ctx) {
   const d = ctx.device === 'desktop';
 
   kicker(ctx, d ? 'SYSTEM ARCHITECTURE — FIVE PLANES, TECHNOLOGIES IN ROLE' : 'SYSTEM ARCHITECTURE');
-  ctx.y += d ? 26 : 20;
+  ctx.y += d ? 26 : 22;
 
   const cfg = d
-    ? { cx: 470, halfW: 252, halfH: 118, gapPrimary: 248, gap: 186, logoPrimary: 92, logoSmall: 32, stemScale: 1, annX: 936, leadGap: 12 }
-    : { cx: 148, halfW: 124, halfH: 58, gapPrimary: 132, gap: 106, logoPrimary: 50, logoSmall: 19, stemScale: 0.62, annX: 298, leadGap: 8 };
+    ? { cx: 470, halfW: 258, halfH: 128, gapPrimary: 315, gap: 214, logoPrimary: 116, logoSmall: 48, stemScale: 1, annX: 940, leadGap: 12 }
+    : { cx: 116, halfW: 102, halfH: 82, gapPrimary: 238, gap: 178, logoPrimary: 96, logoSmall: 38, stemScale: 0.88, annX: 240, leadGap: 12 };
 
   // First plane center must clear the tallest pin above it (the primary mark).
-  const topClear = cfg.logoPrimary + pinLayout.interface![0]!.stem * cfg.stemScale + cfg.halfH * 0.2 + (d ? 26 : 16);
+  const topClear = cfg.logoPrimary + pinLayout.interface![0]!.stem * cfg.stemScale + cfg.halfH * 0.2 + (d ? 26 : 18);
   const cys: number[] = [];
   let cy = ctx.y + topClear;
   for (let i = 0; i < architecture.length; i++) {
@@ -221,11 +221,11 @@ function renderHero(ctx: Ctx) {
     );
     // Plane title, low on the plane so pins own the upper surface.
     mono(ctx, cx, pcy + halfH * 0.52, plane.label, {
-      size: d ? 12 : 8.5,
+      size: d ? 13.5 : 13,
       weight: 600,
       fill: theme.ink,
       anchor: 'middle',
-      ls: d ? '0.22em' : '0.16em',
+      ls: d ? '0.2em' : '0.13em',
     });
 
     // Pins — back to front.
@@ -240,18 +240,18 @@ function renderHero(ctx: Ctx) {
       const size = mark.primary ? cfg.logoPrimary : cfg.logoSmall * spec.s;
       const stem = spec.stem * cfg.stemScale;
       // Ground contact + stem + mark.
-      ctx.parts.push(`<ellipse cx="${ax}" cy="${ay}" rx="${d ? 7 : 4}" ry="${d ? 2.8 : 1.7}" fill="none" stroke="${theme.rail}" stroke-width="1"/>`);
+      ctx.parts.push(`<ellipse cx="${ax}" cy="${ay}" rx="${d ? 7 : 4.5}" ry="${d ? 2.8 : 1.9}" fill="none" stroke="${theme.rail}" stroke-width="1"/>`);
       const stemId = `st-${plane.id}-${mark.slug}-${ctx.device}`;
-      line(ctx, ax, ay - (d ? 2.4 : 1.5), ax, ay - stem, theme.muted, 1, `class="resolve" id="${stemId}"`);
+      line(ctx, ax, ay - (d ? 2.4 : 1.6), ax, ay - stem, theme.muted, 1, `class="resolve" id="${stemId}"`);
       ctx.motionParts.push(stemId);
-      logo(ctx, mark.slug, ax, ay - stem - size / 2 - (d ? 4 : 2), size);
+      logo(ctx, mark.slug, ax, ay - stem - size / 2 - (d ? 4 : 3), size);
       // Name, set on the plane surface just below the contact point.
-      mono(ctx, ax, ay + (mark.primary ? (d ? 20 : 13) : d ? 15 : 10), mark.name, {
-        size: mark.primary ? (d ? 11.5 : 8.5) : d ? 9.5 : 7,
+      mono(ctx, ax, ay + (mark.primary ? (d ? 24 : 20) : d ? 18 : 15), mark.name, {
+        size: mark.primary ? (d ? 13.5 : 13) : d ? 12 : 11.5,
         weight: mark.primary ? 700 : 400,
         fill: mark.primary ? theme.ink : theme.muted,
         anchor: 'middle',
-        ls: mark.primary ? '0.08em' : undefined,
+        ls: mark.primary ? '0.07em' : undefined,
       });
     }
 
@@ -271,7 +271,7 @@ function renderHero(ctx: Ctx) {
           let cur = '';
           for (const seg of segs) {
             const cand = cur ? `${cur} · ${seg}` : seg;
-            if (estWidth(cand, 8.5, 'mono') > maxW && cur) {
+            if (estWidth(cand, 13, 'mono') > maxW && cur) {
               lines.push(cur);
               cur = seg;
             } else {
@@ -281,10 +281,10 @@ function renderHero(ctx: Ctx) {
           if (cur) lines.push(cur);
           return lines;
         })();
-    let ry = pcy - ((roleLines.length - 1) * (d ? 0 : 12)) / 2 + (d ? 3.5 : 3);
+    let ry = pcy - ((roleLines.length - 1) * (d ? 0 : 17)) / 2 + (d ? 4 : 3.5);
     for (const rl of roleLines) {
-      mono(ctx, cfg.annX, ry, rl, { size: d ? 11.5 : 8.5, fill: theme.muted });
-      ry += d ? 16 : 12;
+      mono(ctx, cfg.annX, ry, rl, { size: d ? 13 : 13, fill: theme.muted });
+      ry += d ? 18 : 17;
     }
   });
 
@@ -297,7 +297,7 @@ function renderHero(ctx: Ctx) {
 
 function markerGlyph(ctx: Ctx, x: number, y: number, entry: SystemEntry): number {
   const t = ctx.theme;
-  const s = 8; // glyph box
+  const s = ctx.device === 'desktop' ? 12 : 10; // glyph box
   const gy = y - s + 1;
   if (entry.marker === 'BUILT') {
     ctx.parts.push(`<rect x="${x}" y="${gy}" width="${s}" height="${s}" fill="${t.ink}"/>`);
@@ -310,8 +310,9 @@ function markerGlyph(ctx: Ctx, x: number, y: number, entry: SystemEntry): number
     );
   }
   const label = entry.markerNote ? `${entry.marker} — ${entry.markerNote}` : entry.marker;
-  mono(ctx, x + s + 7, y, label, { size: ctx.device === 'desktop' ? 10.5 : 9, weight: 700, fill: t.ink, ls: '0.1em' });
-  return x + s + 7 + estWidth(label, ctx.device === 'desktop' ? 10.5 : 9, 'mono');
+  const markerSize = ctx.device === 'desktop' ? 16 : 13;
+  mono(ctx, x + s + 9, y, label, { size: markerSize, weight: 700, fill: t.ink, ls: '0.08em' });
+  return x + s + 9 + estWidth(label, markerSize, 'mono');
 }
 
 // Small dashed control-plane glyph for the concept entry (no technology
@@ -330,75 +331,83 @@ function conceptGlyph(ctx: Ctx, x: number, y: number, w: number) {
       ctx.parts.push(`<circle cx="${nx}" cy="${mid}" r="3" fill="none" stroke="${t.muted}" stroke-width="1" stroke-dasharray="2.2,1.8"/>`);
     }
   }
-  mono(ctx, x + w / 2, mid + 16, 'not built — direction', { size: 8.5, fill: t.faint, anchor: 'middle' });
+  mono(ctx, x + w / 2, mid + 20, 'not built — direction', { size: 11, fill: t.faint, anchor: 'middle' });
 }
 
 function renderSystems(ctx: Ctx) {
   const { theme } = ctx;
   const d = ctx.device === 'desktop';
   kicker(ctx, d ? 'SELECTED SYSTEMS — FOUR, IN ORDER, WITH TRUTH MARKERS' : 'SELECTED SYSTEMS — TRUTH MARKERS');
-  ctx.y += d ? 34 : 26;
+  ctx.y += d ? 34 : 30;
 
-  const bodyX = d ? ctx.pad + 70 : ctx.pad + 44;
-  const logoZoneW = d ? 250 : 0; // desktop reserves a right zone for marks
+  const bodyX = d ? ctx.pad + 82 : ctx.pad + 52;
+  const logoZoneW = d ? 360 : 0; // desktop reserves a right zone for large marks
   const bodyW = ctx.width - ctx.pad - bodyX - (d ? logoZoneW + 40 : 0);
 
   systems.forEach((entry, i) => {
     const top = ctx.y;
     // Index numeral
-    serif(ctx, ctx.pad, top + (d ? 22 : 16), entry.index, { size: d ? 27 : 20, weight: 400, fill: theme.faint });
+    serif(ctx, ctx.pad, top + (d ? 38 : 19), entry.index, { size: d ? 40 : 25, weight: 400, fill: theme.faint });
     // Name + marker
-    serif(ctx, bodyX, top + (d ? 22 : 16), entry.name, { size: d ? 22 : 17, weight: 700, fill: theme.ink });
-    const nameEnd = bodyX + estWidth(entry.name, d ? 22 : 17, 'serif', true);
+    serif(ctx, bodyX, top + (d ? 36 : 19), entry.name, { size: d ? 36 : 22, weight: 700, fill: theme.ink });
+    const nameEnd = bodyX + estWidth(entry.name, d ? 36 : 22, 'serif', true);
     if (d) {
-      markerGlyph(ctx, nameEnd + 20, top + 21, entry);
+      markerGlyph(ctx, nameEnd + 28, top + 34, entry);
     } else {
-      markerGlyph(ctx, bodyX, top + 34, entry);
+      markerGlyph(ctx, bodyX, top + 46, entry);
     }
-    let ly = top + (d ? 48 : 52);
-    const sumLines = wrap(entry.summary, bodyW, d ? 14.5 : 12, 'serif');
+    let ly = top + (d ? 82 : 72);
+    const sumLines = wrap(entry.summary, bodyW, d ? 22 : 16, 'serif');
     for (const l of sumLines) {
-      serif(ctx, bodyX, ly, l, { size: d ? 14.5 : 12, fill: theme.text });
-      ly += d ? 20 : 16;
+      serif(ctx, bodyX, ly, l, { size: d ? 22 : 16, fill: theme.text });
+      ly += d ? 30 : 23;
     }
-    ly += d ? 6 : 4;
-    const bndLines = wrap(`BOUNDARY — ${entry.boundary}`, bodyW, d ? 10.5 : 9, 'mono');
+    ly += d ? 12 : 8;
+    const bndLines = wrap(`BOUNDARY — ${entry.boundary}`, bodyW, d ? 16 : 13, 'mono');
     for (const l of bndLines) {
-      mono(ctx, bodyX, ly, l, { size: d ? 10.5 : 9, fill: theme.muted });
-      ly += d ? 15 : 13;
+      mono(ctx, bodyX, ly, l, { size: d ? 16 : 13, fill: theme.muted });
+      ly += d ? 23 : 18;
     }
 
     // Technology marks for this system.
     if (d) {
       const zoneRight = ctx.width - ctx.pad;
       if (entry.marks.length === 0) {
-        conceptGlyph(ctx, zoneRight - 200, top + 26, 160);
+        conceptGlyph(ctx, zoneRight - 275, top + 46, 230);
       } else {
-        const step = 84;
-        const firstCx = zoneRight - 30 - (entry.marks.length - 1) * step;
+        const step = 120;
+        const firstCx = zoneRight - 48 - (entry.marks.length - 1) * step;
         entry.marks.forEach((m, j) => {
           const mcx = firstCx + j * step;
-          logo(ctx, m.slug, mcx, top + 22, 24);
-          mono(ctx, mcx, top + 48, m.name, { size: 8.5, fill: theme.faint, anchor: 'middle' });
+          logo(ctx, m.slug, mcx, top + 52, 70);
+          mono(ctx, mcx, top + 98, m.name, { size: 16, fill: theme.faint, anchor: 'middle' });
         });
       }
     } else if (entry.marks.length > 0) {
-      let mx = bodyX + 10;
+      const rowRight = ctx.width - ctx.pad;
+      const rowStart = bodyX + 10;
+      let mx = rowStart;
+      let rowY = ly;
       entry.marks.forEach((m) => {
-        logo(ctx, m.slug, mx, ly + 8, 17);
-        mono(ctx, mx + 13, ly + 12, m.name, { size: 8.5, fill: theme.faint });
-        mx += 26 + estWidth(m.name, 8.5, 'mono') + 22;
+        const w = 42 + estWidth(m.name, 13, 'mono') + 16;
+        if (mx + w > rowRight && mx > rowStart) {
+          mx = rowStart;
+          rowY += 48;
+        }
+        logo(ctx, m.slug, mx, rowY + 17, 38);
+        mono(ctx, mx + 22, rowY + 22, m.name, { size: 13, fill: theme.faint });
+        mx += w;
       });
-      ly += 26;
+      ly = rowY + 46;
     }
 
-    ctx.y = Math.max(ly, top + (d ? 64 : 56)) + (d ? 18 : 14);
+    ctx.y = Math.max(ly, top + (d ? 132 : 82)) + (d ? 30 : 18);
     if (i < systems.length - 1) {
       line(ctx, ctx.pad, ctx.y, ctx.width - ctx.pad, ctx.y, theme.hair, 1);
-      ctx.y += d ? 26 : 20;
+      ctx.y += d ? 34 : 24;
     }
   });
-  ctx.y += d ? 48 : 34;
+  ctx.y += d ? 48 : 40;
 }
 
 /* ------------------------------------------------------------------ */
@@ -409,7 +418,7 @@ function renderDeliveryPath(ctx: Ctx) {
   const { theme } = ctx;
   const d = ctx.device === 'desktop';
   kicker(ctx, deliveryPath.kicker);
-  ctx.y += d ? 58 : 26;
+  ctx.y += d ? 58 : 30;
 
   const nodes = deliveryPath.nodes;
   const idxFrom = nodes.findIndex((n) => n.label === deliveryPath.repair.from);
@@ -429,48 +438,48 @@ function renderDeliveryPath(ctx: Ctx) {
       } else {
         ctx.parts.push(`<circle cx="${nx}" cy="${py}" r="4.4" fill="${theme.bg}" stroke="${theme.ink}" stroke-width="1.4"/>`);
       }
-      mono(ctx, nx, py - 18, n.label, { size: 11, weight: 700, fill: theme.ink, anchor: 'middle', ls: '0.08em' });
+      mono(ctx, nx, py - 22, n.label, { size: 12.5, weight: 700, fill: theme.ink, anchor: 'middle', ls: '0.07em' });
       const below = n.humanGate ? 'HUMAN GATE' : n.note;
       if (below) {
-        mono(ctx, nx, py + 26, below, {
-          size: 9,
+        mono(ctx, nx, py + 30, below, {
+          size: 11.5,
           weight: n.humanGate ? 700 : 400,
           fill: n.humanGate ? theme.ink : theme.faint,
           anchor: 'middle',
-          ls: n.humanGate ? '0.1em' : undefined,
+          ls: n.humanGate ? '0.09em' : undefined,
         });
       }
     });
     // Repair return: review -> implement.
     const fx = x0 + idxFrom * step;
     const tx = x0 + idxTo * step;
-    const dip = py + 58;
+    const dip = py + 62;
     const repairId = `rp-${ctx.device}`;
     ctx.parts.push(
       `<path id="${repairId}" class="resolve" d="M${fx} ${py + 34} C ${fx} ${dip}, ${tx} ${dip}, ${tx} ${py + 12}" fill="none" stroke="${theme.muted}" stroke-width="1" stroke-dasharray="4,3"/>`,
     );
     ctx.parts.push(`<path d="M${tx} ${py + 10} l-3.6 5.4 h7.2 Z" fill="${theme.muted}"/>`);
-    mono(ctx, (fx + tx) / 2, dip + 16, deliveryPath.repair.label, { size: 9.5, fill: theme.muted, anchor: 'middle' });
-    ctx.y = dip + 34;
+    mono(ctx, (fx + tx) / 2, dip + 18, deliveryPath.repair.label, { size: 11.5, fill: theme.muted, anchor: 'middle' });
+    ctx.y = dip + 36;
   } else {
-    const lx = ctx.pad + 16;
-    const step = 50;
-    const py0 = ctx.y + 6;
+    const lx = ctx.pad + 20;
+    const step = 64;
+    const py0 = ctx.y + 8;
     const py1 = py0 + (nodes.length - 1) * step;
     line(ctx, lx, py0 - 16, lx, py1 + 18, theme.ink, 1.25);
     ctx.parts.push(`<path d="M${lx} ${py1 + 18} l-4 -6 h8 Z" fill="${theme.ink}"/>`);
     nodes.forEach((n, i) => {
       const ny = py0 + i * step;
       if (n.humanGate) {
-        ctx.parts.push(`<rect x="${lx - 5}" y="${ny - 5}" width="10" height="10" transform="rotate(45 ${lx} ${ny})" fill="${theme.bg}" stroke="${theme.ink}" stroke-width="1.3"/>`);
+        ctx.parts.push(`<rect x="${lx - 6.8}" y="${ny - 6.8}" width="13.6" height="13.6" transform="rotate(45 ${lx} ${ny})" fill="${theme.bg}" stroke="${theme.ink}" stroke-width="1.4"/>`);
       } else {
-        ctx.parts.push(`<circle cx="${lx}" cy="${ny}" r="4" fill="${theme.bg}" stroke="${theme.ink}" stroke-width="1.3"/>`);
+        ctx.parts.push(`<circle cx="${lx}" cy="${ny}" r="5.6" fill="${theme.bg}" stroke="${theme.ink}" stroke-width="1.4"/>`);
       }
-      mono(ctx, lx + 22, ny + 3.5, n.label, { size: 10.5, weight: 700, fill: theme.ink, ls: '0.06em' });
+      mono(ctx, lx + 28, ny + 4, n.label, { size: 14, weight: 700, fill: theme.ink, ls: '0.05em' });
       const below = n.humanGate ? 'HUMAN GATE' : n.note;
       if (below) {
-        mono(ctx, lx + 22 + estWidth(n.label, 10.5, 'mono') + 14, ny + 3.5, below, {
-          size: 8.5,
+        mono(ctx, lx + 28 + estWidth(n.label, 14, 'mono') + 16, ny + 4, below, {
+          size: 13,
           weight: n.humanGate ? 700 : 400,
           fill: n.humanGate ? theme.ink : theme.faint,
         });
@@ -481,13 +490,13 @@ function renderDeliveryPath(ctx: Ctx) {
     const ty = py0 + idxTo * step;
     const bulge = ctx.width - ctx.pad - 24;
     ctx.parts.push(
-      `<path class="resolve" id="rp-${ctx.device}" d="M${lx + 150} ${fy} C ${bulge} ${fy}, ${bulge} ${ty}, ${lx + 165} ${ty}" fill="none" stroke="${theme.muted}" stroke-width="1" stroke-dasharray="4,3"/>`,
+      `<path class="resolve" id="rp-${ctx.device}" d="M${lx + 158} ${fy} C ${bulge} ${fy}, ${bulge} ${ty}, ${lx + 173} ${ty}" fill="none" stroke="${theme.muted}" stroke-width="1" stroke-dasharray="4,3"/>`,
     );
-    ctx.parts.push(`<path d="M${lx + 162} ${ty} l6 -3.6 v7.2 Z" fill="${theme.muted}"/>`);
-    mono(ctx, bulge - 2, (fy + ty) / 2 + 3, deliveryPath.repair.label, { size: 8.5, fill: theme.muted, anchor: 'end' });
-    ctx.y = py1 + 40;
+    ctx.parts.push(`<path d="M${lx + 170} ${ty} l6 -3.6 v7.2 Z" fill="${theme.muted}"/>`);
+    mono(ctx, bulge - 2, (fy + ty) / 2 + 3, deliveryPath.repair.label, { size: 12.5, fill: theme.muted, anchor: 'end' });
+    ctx.y = py1 + 44;
   }
-  ctx.y += d ? 30 : 22;
+  ctx.y += d ? 30 : 24;
 }
 
 /* ------------------------------------------------------------------ */
@@ -498,21 +507,23 @@ function renderFooter(ctx: Ctx) {
   const { theme } = ctx;
   const d = ctx.device === 'desktop';
   line(ctx, ctx.pad, ctx.y, ctx.width - ctx.pad, ctx.y, theme.hair, 1);
-  ctx.y += d ? 24 : 18;
+  ctx.y += d ? 24 : 24;
+  mono(ctx, ctx.pad, ctx.y, footer.contact, { size: d ? 13 : 15, weight: 700, fill: theme.ink, ls: '0.03em' });
+  ctx.y += d ? 26 : 28;
   if (d) {
-    mono(ctx, ctx.pad, ctx.y, footer.left, { size: 10, fill: theme.faint });
-    mono(ctx, ctx.width - ctx.pad, ctx.y, footer.right, { size: 10, fill: theme.faint, anchor: 'end' });
-    ctx.y += 20;
+    mono(ctx, ctx.pad, ctx.y, footer.left, { size: 11.5, fill: theme.faint });
+    mono(ctx, ctx.width - ctx.pad, ctx.y, footer.right, { size: 11.5, fill: theme.faint, anchor: 'end' });
+    ctx.y += 22;
   } else {
     for (const s of [footer.left, footer.right]) {
-      for (const l of wrap(s, ctx.width - ctx.pad * 2, 8.5, 'mono')) {
-        mono(ctx, ctx.pad, ctx.y, l, { size: 8.5, fill: theme.faint });
-        ctx.y += 13;
+      for (const l of wrap(s, ctx.width - ctx.pad * 2, 13, 'mono')) {
+        mono(ctx, ctx.pad, ctx.y, l, { size: 13, fill: theme.faint });
+        ctx.y += 18;
       }
-      ctx.y += 4;
+      ctx.y += 6;
     }
   }
-  ctx.y += d ? 26 : 16;
+  ctx.y += d ? 26 : 18;
 }
 
 /* ------------------------------------------------------------------ */
@@ -539,8 +550,8 @@ function motionStyle(ids: string[]): string {
 
 export function generateVariant(mode: Mode, device: Device): { svg: string; width: number; height: number } {
   const theme = themes[mode];
-  const width = device === 'desktop' ? 1240 : 430;
-  const pad = device === 'desktop' ? 72 : 26;
+  const width = device === 'desktop' ? 1240 : 390;
+  const pad = device === 'desktop' ? 72 : 22;
 
   const ctx: Ctx = { parts: [], y: 0, width, pad, device, mode, theme, motionParts: [] };
 
@@ -556,7 +567,7 @@ export function generateVariant(mode: Mode, device: Device): { svg: string; widt
     `Exploded architectural section of five planes — interface (React), application (TypeScript), ` +
     `data (PostgreSQL, Redis, Elasticsearch), delivery (Docker, Kubernetes, Nginx, Apache), ` +
     `runtime (Linux, Ubuntu, Debian) — followed by four systems with concept/built/contribution ` +
-    `truth markers and one AI-assisted delivery path with two human gates.`;
+    `truth markers and one AI-assisted delivery path with two human gates. Contact: ${footer.contact.split(' · ')[1]}.`;
 
   const svg = [
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="${esc(label)}">`,

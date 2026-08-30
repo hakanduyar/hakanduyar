@@ -152,6 +152,7 @@ export const deliveryPath = {
 };
 
 export const footer = {
-  left: 'V7.1 visual proof · deterministic source · static-first, safe under prefers-reduced-motion',
+  contact: 'Hakan Duyar · iamhakanduyar@gmail.com',
+  left: 'V7.1 dark visual proof · deterministic source · static-first, safe under prefers-reduced-motion',
   right: 'Logo marks vendored locally (simple-icons) and belong to their respective projects',
 };
