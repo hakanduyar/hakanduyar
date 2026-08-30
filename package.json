@@ -19,12 +19,16 @@
     "test": "node --require ./scripts/node-runtime.cjs ./node_modules/vitest/vitest.mjs run tests/v5-profile.test.ts tests/v5-theme.test.ts",
     "check": "npm run typecheck && npm run build && npm test",
     "v6:validate": "node scripts/validate-v6.mjs",
-    "v6:qa:github": "node scripts/qa-github-render.mjs"
+    "v6:qa:github": "node scripts/qa-github-render.mjs",
+    "v7:logos": "node --require ./scripts/node-runtime.cjs --import tsx v7/scripts/vendor-logos.ts",
+    "v7:build": "node --require ./scripts/node-runtime.cjs --import tsx v7/scripts/build.ts",
+    "v7:qa": "node --require ./scripts/node-runtime.cjs --import tsx v7/scripts/qa.ts"
   },
   "devDependencies": {
     "@types/node": "^24.5.2",
     "fast-xml-parser": "^5.2.5",
     "sharp": "^0.35.4",
+    "simple-icons": "^16.29.0",
     "svgo": "^4.0.0",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
