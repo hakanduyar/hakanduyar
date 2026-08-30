@@ -1,4 +1,4 @@
-name: Profile V6 static asset integrity
+name: Profile V7 architecture asset integrity
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  verify-v6:
+  verify-v7:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,7 +19,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run v6:validate
-      - run: npm run v6:qa:github
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm run v7:build
+      - run: npm run v7:qa
+      - run: npm run typecheck
