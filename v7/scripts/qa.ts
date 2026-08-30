@@ -7,7 +7,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { XMLValidator } from 'fast-xml-parser';
-import { architecture, systems, deliveryPath } from '../data/content.js';
+import { architecture, systems, deliveryPath, footer } from '../data/content.js';
 import { logoMarks, type LogoSlug } from '../src/logos.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -54,11 +54,10 @@ expect(
   'systems must appear in the exact required order',
 );
 
+// Production ships dark mode only — no light-source variant is validated.
 const variants = [
-  { device: 'desktop', mode: 'light', maxWidth: Infinity },
   { device: 'desktop', mode: 'dark', maxWidth: Infinity },
-  { device: 'mobile', mode: 'light', maxWidth: 480 },
-  { device: 'mobile', mode: 'dark', maxWidth: 480 },
+  { device: 'mobile', mode: 'dark', maxWidth: 390 },
 ];
 
 for (const v of variants) {
@@ -129,6 +128,11 @@ for (const v of variants) {
     expect(svg.includes(node.label), `${name} missing delivery-path node "${node.label}"`);
   }
   expect((svg.match(/HUMAN GATE/g) ?? []).length >= 2, `${name} must show two human gates`);
+
+  // Contact email inside the art must be the current address, exclusively.
+  const contactEmail = footer.contact.split(' · ')[1]!;
+  expect(svg.includes(contactEmail), `${name} missing contact email ${contactEmail}`);
+  expect(!/hakanbtgm@gmail\.com/.test(svg), `${name} still references the retired hakanbtgm@gmail.com address`);
 
   // Motion safety: any animation must be opt-in via prefers-reduced-motion,
   // and the base (unanimated) geometry must be the resolved drawing.

@@ -10,10 +10,9 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SVG_DIR = resolve(ROOT, 'assets/generated');
 const EVIDENCE_DIR = resolve(ROOT, 'evidence/v7.1-visual-proof');
 
+// Production ships dark mode only — no light-source variant is generated.
 const variants: Array<{ mode: Mode; device: Device }> = [
-  { mode: 'light', device: 'desktop' },
   { mode: 'dark', device: 'desktop' },
-  { mode: 'light', device: 'mobile' },
   { mode: 'dark', device: 'mobile' },
 ];
 
