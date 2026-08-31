@@ -8,12 +8,14 @@ import { generateVariant, type Device, type Mode } from '../src/generate.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SVG_DIR = resolve(ROOT, 'assets/generated');
-const EVIDENCE_DIR = resolve(ROOT, 'evidence/v7.1-visual-proof');
+const EVIDENCE_DIR = resolve(ROOT, 'evidence/v7.2-dual-motion');
 
-// Production ships dark mode only — no light-source variant is generated.
+// Both themes ship, switched by `prefers-color-scheme` in the README.
 const variants: Array<{ mode: Mode; device: Device }> = [
   { mode: 'dark', device: 'desktop' },
   { mode: 'dark', device: 'mobile' },
+  { mode: 'light', device: 'desktop' },
+  { mode: 'light', device: 'mobile' },
 ];
 
 async function main() {
