@@ -1,4 +1,4 @@
-// V7.1 visual-proof generator.
+// V7.2 dual-theme visual-proof generator.
 // Pure and deterministic: same input -> byte-identical SVG. No browser, no
 // network fonts, no external hosts. Extends the V6 editorial print language
 // (warm paper, hairline rules, monospace annotations, axonometric planes)
@@ -21,6 +21,20 @@ export type Mode = 'light' | 'dark';
 const SERIF = "Georgia, 'Times New Roman', serif";
 const MONO = "Consolas, 'Courier New', monospace";
 
+// Motion timing. `delay` is an explicit override in seconds (used to sync an
+// emphasis to a point along an in-progress draw animation); items without it
+// get the next sequential slot, so the composition resolves top-to-bottom in
+// document order — restrained stagger, not simultaneous or randomised.
+interface MotionItem {
+  id: string;
+  kind: 'draw' | 'reveal' | 'emphasize';
+  delay?: number;
+}
+const MOTION_STEP = 0.06;
+const DRAW_DURATION = 1.4;
+const REVEAL_DURATION = 0.5;
+const EMPHASIZE_DURATION = 0.6;
+
 function esc(input: string): string {
   return input
     .replace(/&/g, '&amp;')
@@ -30,19 +44,22 @@ function esc(input: string): string {
     .replace(/'/g, '&apos;');
 }
 
-// Rough width estimate (px) — authored layout, not font metrics.
-function estWidth(s: string, size: number, family: 'serif' | 'mono', bold = false): number {
+// Rough width estimate (px) — authored layout, not font metrics. `ls` is
+// tracking in em units (letter-spacing), which matters for the tracked
+// mono kickers — ignoring it under-estimates their width enough to let a
+// wrapped line run past the mobile viewBox.
+function estWidth(s: string, size: number, family: 'serif' | 'mono', bold = false, ls = 0): number {
   const f = family === 'mono' ? 0.55 : bold ? 0.52 : 0.47;
-  return s.length * size * f;
+  return s.length * size * f + Math.max(0, s.length - 1) * ls * size;
 }
 
-function wrap(text: string, maxWidth: number, size: number, family: 'serif' | 'mono'): string[] {
+function wrap(text: string, maxWidth: number, size: number, family: 'serif' | 'mono', ls = 0): string[] {
   const words = text.split(' ');
   const lines: string[] = [];
   let current = '';
   for (const word of words) {
     const candidate = current ? `${current} ${word}` : word;
-    if (estWidth(candidate, size, family) > maxWidth && current) {
+    if (estWidth(candidate, size, family, false, ls) > maxWidth && current) {
       lines.push(current);
       current = word;
     } else {
@@ -50,6 +67,32 @@ function wrap(text: string, maxWidth: number, size: number, family: 'serif' | 'm
     }
   }
   if (current) lines.push(current);
+  return lines;
+}
+
+// Wrap a " · "-joined role note onto its dot separators first, so notes read
+// as short natural phrases; a segment with no dot to break on (e.g. a single
+// phrase like "operating foundation") falls back to word-wrap instead of
+// overflowing, since it would otherwise never be split.
+function wrapRoleNote(text: string, maxWidth: number, size: number): string[] {
+  const segs = text.split(' · ');
+  const lines: string[] = [];
+  let cur = '';
+  for (const seg of segs) {
+    const cand = cur ? `${cur} · ${seg}` : seg;
+    if (estWidth(cand, size, 'mono') <= maxWidth) {
+      cur = cand;
+      continue;
+    }
+    if (cur) lines.push(cur);
+    if (estWidth(seg, size, 'mono') > maxWidth) {
+      lines.push(...wrap(seg, maxWidth, size, 'mono'));
+      cur = '';
+    } else {
+      cur = seg;
+    }
+  }
+  if (cur) lines.push(cur);
   return lines;
 }
 
@@ -61,7 +104,7 @@ interface Ctx {
   device: Device;
   mode: Mode;
   theme: Theme;
-  motionParts: string[]; // ids of connection strokes that may resolve
+  motion: MotionItem[];
 }
 
 interface TextOpts {
@@ -97,28 +140,37 @@ function line(ctx: Ctx, x1: number, y1: number, x2: number, y2: number, stroke: 
   ctx.parts.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${w}"${extra ? ` ${extra}` : ''}/>`);
 }
 
-// A technology mark, centered on (cx, cy) at pixel size px.
-function logo(ctx: Ctx, slug: LogoSlug, cx: number, cy: number, px: number) {
+// A technology mark, centered on (cx, cy) at pixel size px. When `revealId`
+// is given, the mark fades/lifts in with a short stagger once other marks in
+// the same composition have appeared (guarded by prefers-reduced-motion).
+function logo(ctx: Ctx, slug: LogoSlug, cx: number, cy: number, px: number, revealId?: string) {
   const mark = logoMarks[slug];
   const fill = logoFill[slug]?.[ctx.mode] ?? ctx.theme.ink;
   const s = px / 24;
   const tx = +(cx - px / 2).toFixed(2);
   const ty = +(cy - px / 2).toFixed(2);
+  const reveal = revealId ? ` class="reveal" id="${revealId}"` : '';
   ctx.parts.push(
-    `<g data-logo="${slug}" data-px="${px}" transform="translate(${tx} ${ty}) scale(${+s.toFixed(4)})">` +
+    `<g data-logo="${slug}" data-px="${px}"${reveal} transform="translate(${tx} ${ty}) scale(${+s.toFixed(4)})">` +
       `<path fill="${fill}" d="${mark.path}"/></g>`,
   );
+  if (revealId) ctx.motion.push({ id: revealId, kind: 'reveal' });
 }
 
 function kicker(ctx: Ctx, label: string, opts?: { rule?: boolean }) {
   const small = ctx.device === 'mobile';
-  mono(ctx, ctx.pad, ctx.y, label, {
-    size: small ? 13.5 : 13,
-    weight: 700,
-    fill: ctx.theme.muted,
-    ls: small ? '0.13em' : '0.16em',
-  });
-  ctx.y += small ? 14 : 14;
+  const size = small ? 13.5 : 13;
+  const lsEm = small ? 0.13 : 0.16;
+  const ls = `${lsEm}em`;
+  // Mobile kickers wrap instead of running past the 390px viewBox — some
+  // section kickers share the same long label across both devices. The
+  // tracking (letter-spacing) has to be included in the wrap width, or a
+  // wrapped line can still run past the edge once tracking is applied.
+  const lines = small ? wrap(label, ctx.width - ctx.pad * 2, size, 'mono', lsEm) : [label];
+  for (const l of lines) {
+    mono(ctx, ctx.pad, ctx.y, l, { size, weight: 700, fill: ctx.theme.muted, ls });
+    ctx.y += 16;
+  }
   if (opts?.rule !== false) {
     line(ctx, ctx.pad, ctx.y, ctx.width - ctx.pad, ctx.y, ctx.theme.hair, 1);
   }
@@ -191,8 +243,8 @@ function renderHero(ctx: Ctx) {
   ctx.y += d ? 26 : 22;
 
   const cfg = d
-    ? { cx: 470, halfW: 258, halfH: 128, gapPrimary: 315, gap: 214, logoPrimary: 116, logoSmall: 48, stemScale: 1, annX: 940, leadGap: 12 }
-    : { cx: 116, halfW: 102, halfH: 82, gapPrimary: 238, gap: 178, logoPrimary: 96, logoSmall: 38, stemScale: 0.88, annX: 240, leadGap: 12 };
+    ? { cx: 470, halfW: 258, halfH: 128, gapPrimary: 214, gap: 214, logoPrimary: 116, logoSmall: 48, stemScale: 1, annX: 940, leadGap: 12 }
+    : { cx: 116, halfW: 102, halfH: 82, gapPrimary: 178, gap: 178, logoPrimary: 96, logoSmall: 38, stemScale: 0.88, annX: 240, leadGap: 12 };
 
   // First plane center must clear the tallest pin above it (the primary mark).
   const topClear = cfg.logoPrimary + pinLayout.interface![0]!.stem * cfg.stemScale + cfg.halfH * 0.2 + (d ? 26 : 18);
@@ -206,8 +258,12 @@ function renderHero(ctx: Ctx) {
   const lastCy = cys[cys.length - 1]!;
   const heroBottom = lastCy + cfg.halfH + (d ? 30 : 20);
 
-  // Central axis + side rails (the V6 exploded-section skeleton).
-  line(ctx, cfg.cx, ctx.y - (d ? 8 : 4), cfg.cx, heroBottom, theme.rail, 1);
+  // Central axis + side rails (the V6 exploded-section skeleton). The axis
+  // draws top-to-bottom once — the request/data path travelling downward
+  // through the five planes.
+  const spineId = `spine-${ctx.device}`;
+  line(ctx, cfg.cx, ctx.y - (d ? 8 : 4), cfg.cx, heroBottom, theme.rail, 1, `class="resolve" id="${spineId}"`);
+  ctx.motion.push({ id: spineId, kind: 'draw' });
   ctx.parts.push(`<path d="M${cfg.cx - 5} ${heroBottom - 6} L${cfg.cx} ${heroBottom} L${cfg.cx + 5} ${heroBottom - 6}" stroke="${theme.ink}" fill="none" stroke-width="1"/>`);
   line(ctx, cfg.cx - cfg.halfW, cys[0]!, cfg.cx - cfg.halfW, lastCy, theme.rail, 1);
   line(ctx, cfg.cx + cfg.halfW, cys[0]!, cfg.cx + cfg.halfW, lastCy, theme.rail, 1);
@@ -237,14 +293,16 @@ function renderHero(ctx: Ctx) {
       // Mobile pulls pins toward the axis so name labels stay on the plane.
       const ax = cx + spec.fx * halfW * (d ? 1 : 0.78);
       const ay = pcy + spec.fy * halfH;
-      const size = mark.primary ? cfg.logoPrimary : cfg.logoSmall * spec.s;
+      const primaryScale = plane.id === 'application' ? 0.88 : 1;
+      const size = mark.primary ? cfg.logoPrimary * primaryScale : cfg.logoSmall * spec.s;
+      const logoDrop = plane.id === 'application' ? (d ? 10 : 7) : 0;
       const stem = spec.stem * cfg.stemScale;
       // Ground contact + stem + mark.
       ctx.parts.push(`<ellipse cx="${ax}" cy="${ay}" rx="${d ? 7 : 4.5}" ry="${d ? 2.8 : 1.9}" fill="none" stroke="${theme.rail}" stroke-width="1"/>`);
       const stemId = `st-${plane.id}-${mark.slug}-${ctx.device}`;
       line(ctx, ax, ay - (d ? 2.4 : 1.6), ax, ay - stem, theme.muted, 1, `class="resolve" id="${stemId}"`);
-      ctx.motionParts.push(stemId);
-      logo(ctx, mark.slug, ax, ay - stem - size / 2 - (d ? 4 : 3), size);
+      ctx.motion.push({ id: stemId, kind: 'draw' });
+      logo(ctx, mark.slug, ax, ay - stem - size / 2 - (d ? 4 : 3) + logoDrop, size);
       // Name, set on the plane surface just below the contact point.
       mono(ctx, ax, ay + (mark.primary ? (d ? 24 : 20) : d ? 18 : 15), mark.name, {
         size: mark.primary ? (d ? 13.5 : 13) : d ? 12 : 11.5,
@@ -260,27 +318,11 @@ function renderHero(ctx: Ctx) {
     const leadEnd = cfg.annX - (d ? 14 : 8);
     const leadId = `ld-${plane.id}-${ctx.device}`;
     line(ctx, leadStart, pcy, leadEnd, pcy, theme.hair, 1, `class="resolve" id="${leadId}"`);
-    ctx.motionParts.push(leadId);
-    // Wrap role notes on their " · " separators so no line orphans a dot.
-    const roleLines = d
-      ? [plane.roleNote]
-      : (() => {
-          const maxW = ctx.width - ctx.pad - cfg.annX;
-          const segs = plane.roleNote.split(' · ');
-          const lines: string[] = [];
-          let cur = '';
-          for (const seg of segs) {
-            const cand = cur ? `${cur} · ${seg}` : seg;
-            if (estWidth(cand, 13, 'mono') > maxW && cur) {
-              lines.push(cur);
-              cur = seg;
-            } else {
-              cur = cand;
-            }
-          }
-          if (cur) lines.push(cur);
-          return lines;
-        })();
+    ctx.motion.push({ id: leadId, kind: 'draw' });
+    // Wrap role notes on their " · " separators so no line orphans a dot;
+    // any segment that still doesn't fit (no dot to break on) falls back to
+    // plain word-wrap so it can never run past the mobile viewBox edge.
+    const roleLines = d ? [plane.roleNote] : wrapRoleNote(plane.roleNote, ctx.width - ctx.pad - cfg.annX, 13);
     let ry = pcy - ((roleLines.length - 1) * (d ? 0 : 17)) / 2 + (d ? 4 : 3.5);
     for (const rl of roleLines) {
       mono(ctx, cfg.annX, ry, rl, { size: d ? 13 : 13, fill: theme.muted });
@@ -379,7 +421,7 @@ function renderSystems(ctx: Ctx) {
         const firstCx = zoneRight - 48 - (entry.marks.length - 1) * step;
         entry.marks.forEach((m, j) => {
           const mcx = firstCx + j * step;
-          logo(ctx, m.slug, mcx, top + 52, 70);
+          logo(ctx, m.slug, mcx, top + 52, 70, `pm-${i}-${m.slug}-${ctx.device}`);
           mono(ctx, mcx, top + 98, m.name, { size: 16, fill: theme.faint, anchor: 'middle' });
         });
       }
@@ -394,7 +436,7 @@ function renderSystems(ctx: Ctx) {
           mx = rowStart;
           rowY += 48;
         }
-        logo(ctx, m.slug, mx, rowY + 17, 38);
+        logo(ctx, m.slug, mx, rowY + 17, 38, `pm-${i}-${m.slug}-${ctx.device}`);
         mono(ctx, mx + 22, rowY + 22, m.name, { size: 13, fill: theme.faint });
         mx += w;
       });
@@ -429,12 +471,17 @@ function renderDeliveryPath(ctx: Ctx) {
     const x1 = ctx.width - ctx.pad - 30;
     const py = ctx.y + 14;
     const step = (x1 - x0) / (nodes.length - 1);
-    line(ctx, x0 - 22, py, x1 + 22, py, theme.ink, 1.25);
+    const pathId = `path-${ctx.device}`;
+    line(ctx, x0 - 22, py, x1 + 22, py, theme.ink, 1.25, `class="resolve" id="${pathId}"`);
+    ctx.motion.push({ id: pathId, kind: 'draw' });
+    const pathDelay = (ctx.motion.length - 1) * MOTION_STEP;
     ctx.parts.push(`<path d="M${x1 + 22} ${py} l-6 -4 v8 Z" fill="${theme.ink}"/>`);
     nodes.forEach((n, i) => {
       const nx = x0 + i * step;
       if (n.humanGate) {
-        ctx.parts.push(`<rect x="${nx - 5.6}" y="${py - 5.6}" width="11.2" height="11.2" transform="rotate(45 ${nx} ${py})" fill="${theme.bg}" stroke="${theme.ink}" stroke-width="1.4"/>`);
+        const gateId = `gate-${n.label.toLowerCase()}-${ctx.device}`;
+        ctx.motion.push({ id: gateId, kind: 'emphasize', delay: pathDelay + (i / (nodes.length - 1)) * DRAW_DURATION });
+        ctx.parts.push(`<rect class="emphasize" id="${gateId}" x="${nx - 5.6}" y="${py - 5.6}" width="11.2" height="11.2" transform="rotate(45 ${nx} ${py})" fill="${theme.bg}" stroke="${theme.ink}" stroke-width="1.4"/>`);
       } else {
         ctx.parts.push(`<circle cx="${nx}" cy="${py}" r="4.4" fill="${theme.bg}" stroke="${theme.ink}" stroke-width="1.4"/>`);
       }
@@ -455,6 +502,7 @@ function renderDeliveryPath(ctx: Ctx) {
     const tx = x0 + idxTo * step;
     const dip = py + 62;
     const repairId = `rp-${ctx.device}`;
+    ctx.motion.push({ id: repairId, kind: 'draw' });
     ctx.parts.push(
       `<path id="${repairId}" class="resolve" d="M${fx} ${py + 34} C ${fx} ${dip}, ${tx} ${dip}, ${tx} ${py + 12}" fill="none" stroke="${theme.muted}" stroke-width="1" stroke-dasharray="4,3"/>`,
     );
@@ -466,12 +514,17 @@ function renderDeliveryPath(ctx: Ctx) {
     const step = 64;
     const py0 = ctx.y + 8;
     const py1 = py0 + (nodes.length - 1) * step;
-    line(ctx, lx, py0 - 16, lx, py1 + 18, theme.ink, 1.25);
+    const pathId = `path-${ctx.device}`;
+    line(ctx, lx, py0 - 16, lx, py1 + 18, theme.ink, 1.25, `class="resolve" id="${pathId}"`);
+    ctx.motion.push({ id: pathId, kind: 'draw' });
+    const pathDelay = (ctx.motion.length - 1) * MOTION_STEP;
     ctx.parts.push(`<path d="M${lx} ${py1 + 18} l-4 -6 h8 Z" fill="${theme.ink}"/>`);
     nodes.forEach((n, i) => {
       const ny = py0 + i * step;
       if (n.humanGate) {
-        ctx.parts.push(`<rect x="${lx - 6.8}" y="${ny - 6.8}" width="13.6" height="13.6" transform="rotate(45 ${lx} ${ny})" fill="${theme.bg}" stroke="${theme.ink}" stroke-width="1.4"/>`);
+        const gateId = `gate-${n.label.toLowerCase()}-${ctx.device}`;
+        ctx.motion.push({ id: gateId, kind: 'emphasize', delay: pathDelay + (i / (nodes.length - 1)) * DRAW_DURATION });
+        ctx.parts.push(`<rect class="emphasize" id="${gateId}" x="${lx - 6.8}" y="${ny - 6.8}" width="13.6" height="13.6" transform="rotate(45 ${lx} ${ny})" fill="${theme.bg}" stroke="${theme.ink}" stroke-width="1.4"/>`);
       } else {
         ctx.parts.push(`<circle cx="${lx}" cy="${ny}" r="5.6" fill="${theme.bg}" stroke="${theme.ink}" stroke-width="1.4"/>`);
       }
@@ -489,6 +542,7 @@ function renderDeliveryPath(ctx: Ctx) {
     const fy = py0 + idxFrom * step;
     const ty = py0 + idxTo * step;
     const bulge = ctx.width - ctx.pad - 24;
+    ctx.motion.push({ id: `rp-${ctx.device}`, kind: 'draw' });
     ctx.parts.push(
       `<path class="resolve" id="rp-${ctx.device}" d="M${lx + 158} ${fy} C ${bulge} ${fy}, ${bulge} ${ty}, ${lx + 173} ${ty}" fill="none" stroke="${theme.muted}" stroke-width="1" stroke-dasharray="4,3"/>`,
     );
@@ -511,9 +565,21 @@ function renderFooter(ctx: Ctx) {
   mono(ctx, ctx.pad, ctx.y, footer.contact, { size: d ? 13 : 15, weight: 700, fill: theme.ink, ls: '0.03em' });
   ctx.y += d ? 26 : 28;
   if (d) {
-    mono(ctx, ctx.pad, ctx.y, footer.left, { size: 11.5, fill: theme.faint });
-    mono(ctx, ctx.width - ctx.pad, ctx.y, footer.right, { size: 11.5, fill: theme.faint, anchor: 'end' });
-    ctx.y += 22;
+    // Side-by-side only if both strings fit without touching; otherwise
+    // stack them so neither is ever overlapped or truncated.
+    const gap = 32;
+    const fits =
+      ctx.pad + estWidth(footer.left, 11.5, 'mono') + gap <= ctx.width - ctx.pad - estWidth(footer.right, 11.5, 'mono');
+    if (fits) {
+      mono(ctx, ctx.pad, ctx.y, footer.left, { size: 11.5, fill: theme.faint });
+      mono(ctx, ctx.width - ctx.pad, ctx.y, footer.right, { size: 11.5, fill: theme.faint, anchor: 'end' });
+      ctx.y += 22;
+    } else {
+      mono(ctx, ctx.pad, ctx.y, footer.left, { size: 11.5, fill: theme.faint });
+      ctx.y += 20;
+      mono(ctx, ctx.pad, ctx.y, footer.right, { size: 11.5, fill: theme.faint });
+      ctx.y += 22;
+    }
   } else {
     for (const s of [footer.left, footer.right]) {
       for (const l of wrap(s, ctx.width - ctx.pad * 2, 13, 'mono')) {
@@ -528,21 +594,33 @@ function renderFooter(ctx: Ctx) {
 
 /* ------------------------------------------------------------------ */
 
-// Motion: connections (pin stems, leader lines, repair return) resolve once.
-// The base attribute state is the fully-resolved drawing, so any renderer
-// that ignores CSS (librsvg/sharp for the PNG proof) and any viewer with
-// prefers-reduced-motion set sees the identical final image with zero loss.
-function motionStyle(ids: string[]): string {
-  if (ids.length === 0) return '';
-  const delays = ids
-    .map((id, i) => `#${esc(id)}{animation-delay:${(i * 60) / 1000}s}`)
+// Motion: architecture connectors, the request/data spine, technology marks,
+// the AI delivery path and its repair return all resolve once; human gates
+// receive a restrained emphasis only once the path has reached them. The
+// base attribute state is the fully-resolved, fully-visible drawing, so any
+// renderer that ignores CSS (librsvg/sharp for the PNG proof) and any viewer
+// with prefers-reduced-motion set sees the identical final image with zero
+// information loss — nothing here is expressed only through animation.
+function motionStyle(items: MotionItem[]): string {
+  if (items.length === 0) return '';
+  let autoIndex = 0;
+  const delays = items
+    .map((item) => {
+      const delay = item.delay ?? autoIndex * MOTION_STEP;
+      if (item.delay === undefined) autoIndex++;
+      return `#${esc(item.id)}{animation-delay:${delay.toFixed(3)}s}`;
+    })
     .join('');
   return (
     `<style>` +
     `@media (prefers-reduced-motion: no-preference){` +
-    `.resolve{stroke-dasharray:420;stroke-dashoffset:420;animation:v7resolve 0.9s ease-out forwards}` +
+    `.resolve{stroke-dasharray:1800;stroke-dashoffset:1800;animation:v7resolve ${DRAW_DURATION}s ease-out forwards}` +
+    `.reveal{opacity:0;animation:v7reveal ${REVEAL_DURATION}s ease-out forwards}` +
+    `.emphasize{animation:v7emphasize ${EMPHASIZE_DURATION}s ease-out forwards}` +
     delays +
     `@keyframes v7resolve{to{stroke-dashoffset:0}}` +
+    `@keyframes v7reveal{to{opacity:1}}` +
+    `@keyframes v7emphasize{0%{stroke-width:1.4}45%{stroke-width:2.6}100%{stroke-width:1.4}}` +
     `}` +
     `</style>`
   );
@@ -553,7 +631,7 @@ export function generateVariant(mode: Mode, device: Device): { svg: string; widt
   const width = device === 'desktop' ? 1240 : 390;
   const pad = device === 'desktop' ? 72 : 22;
 
-  const ctx: Ctx = { parts: [], y: 0, width, pad, device, mode, theme, motionParts: [] };
+  const ctx: Ctx = { parts: [], y: 0, width, pad, device, mode, theme, motion: [] };
 
   renderMasthead(ctx);
   renderHero(ctx);
@@ -563,7 +641,7 @@ export function generateVariant(mode: Mode, device: Device): { svg: string; widt
 
   const height = Math.ceil(ctx.y);
   const label =
-    `${identity.name} — V7.1 architecture-led profile, ${device} ${mode}. ` +
+    `${identity.name} — V7.2 architecture-led profile, ${device} ${mode}. ` +
     `Exploded architectural section of five planes — interface (React), application (TypeScript), ` +
     `data (PostgreSQL, Redis, Elasticsearch), delivery (Docker, Kubernetes, Nginx, Apache), ` +
     `runtime (Linux, Ubuntu, Debian) — followed by four systems with concept/built/contribution ` +
@@ -571,7 +649,7 @@ export function generateVariant(mode: Mode, device: Device): { svg: string; widt
 
   const svg = [
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="${esc(label)}">`,
-    motionStyle(ctx.motionParts),
+    motionStyle(ctx.motion),
     `<rect x="0" y="0" width="${width}" height="${height}" fill="${theme.bg}"/>`,
     ...ctx.parts,
     `</svg>`,

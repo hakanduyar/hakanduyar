@@ -1,10 +1,10 @@
-// V7.1 content model — single source of truth for the deterministic generator.
+// V7.2 content model — single source of truth for the deterministic generator.
 // Every claim string here must stay truthful and match v7/docs/handoff.md.
 import type { LogoSlug } from '../src/logos.js';
 
 export const identity = {
   name: 'Hakan Duyar',
-  kicker: 'ENGINEERING PROFILE — V7.1 VISUAL PROOF',
+  kicker: 'ENGINEERING PROFILE — V7.2 VISUAL PROOF',
   role: 'Front-end & systems engineering — React and TypeScript at the core, carried through data, delivery, and runtime to verified, human-gated release.',
 };
 
@@ -153,6 +153,6 @@ export const deliveryPath = {
 
 export const footer = {
   contact: 'Hakan Duyar · iamhakanduyar@gmail.com',
-  left: 'V7.1 dark visual proof · deterministic source · static-first, safe under prefers-reduced-motion',
+  left: 'V7.2 dual-theme visual proof · deterministic source · static-first, safe under prefers-reduced-motion',
   right: 'Logo marks vendored locally (simple-icons) and belong to their respective projects',
 };

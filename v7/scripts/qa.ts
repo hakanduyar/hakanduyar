@@ -1,8 +1,9 @@
-// Offline structural QA for the V7.1 visual-proof evidence set.
+// Offline structural QA for the V7.2 visual-proof evidence set.
 // No network, no browser. Validates the generated SVGs against the owner's
-// V7.1 requirements: real local logo marks for every displayed technology,
+// requirements: real local logo marks for every displayed technology,
 // React + TypeScript as the two largest marks, exact project order with
-// truth markers, one integrated delivery path, and motion safety.
+// truth markers, one integrated delivery path, mobile viewBox safety, and
+// motion safety across both light and dark themes.
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,7 +13,7 @@ import { logoMarks, type LogoSlug } from '../src/logos.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SVG_DIR = resolve(ROOT, 'assets/generated');
-const EVIDENCE_DIR = resolve(ROOT, 'evidence/v7.1-visual-proof');
+const EVIDENCE_DIR = resolve(ROOT, 'evidence/v7.2-dual-motion');
 const LOGO_DIR = resolve(ROOT, 'assets/logos');
 
 const failures: string[] = [];
@@ -54,10 +55,12 @@ expect(
   'systems must appear in the exact required order',
 );
 
-// Production ships dark mode only — no light-source variant is validated.
+// Both themes ship — validate all four desktop/mobile × light/dark variants.
 const variants = [
   { device: 'desktop', mode: 'dark', maxWidth: Infinity },
   { device: 'mobile', mode: 'dark', maxWidth: 390 },
+  { device: 'desktop', mode: 'light', maxWidth: Infinity },
+  { device: 'mobile', mode: 'light', maxWidth: 390 },
 ];
 
 for (const v of variants) {
@@ -83,6 +86,34 @@ for (const v of variants) {
   expect(!!vb, `${name} missing viewBox`);
   if (vb && Number.isFinite(v.maxWidth)) {
     expect(Number(vb[1]) <= v.maxWidth, `${name} width ${vb[1]} exceeds mobile ceiling ${v.maxWidth}`);
+  }
+
+  // Mobile only: estimate every <text> run's horizontal extent with the same
+  // rough per-character ratios the generator uses for its own wrapping, and
+  // fail if any run could land outside the viewBox. Coarse, but it is exactly
+  // the regression guard the "no text may exit the mobile viewBox" rule needs.
+  if (vb && Number.isFinite(v.maxWidth)) {
+    const vbWidth = Number(vb[1]);
+    for (const m of svg.matchAll(/<text ([^>]*)>([^<]*)<\/text>/g)) {
+      const attrs = m[1]!;
+      const raw = m[2]!;
+      const xMatch = attrs.match(/x="(-?[\d.]+)"/);
+      const sizeMatch = attrs.match(/font-size="([\d.]+)"/);
+      if (!xMatch || !sizeMatch) continue;
+      const x = Number(xMatch[1]);
+      const size = Number(sizeMatch[1]);
+      const weight = Number(attrs.match(/font-weight="(\d+)"/)?.[1] ?? '400');
+      const isMono = /Consolas/.test(attrs.match(/font-family="([^"]+)"/)?.[1] ?? '');
+      const anchor = attrs.match(/text-anchor="(\w+)"/)?.[1] ?? 'start';
+      const lsEm = Number(attrs.match(/letter-spacing="([\d.]+)em"/)?.[1] ?? '0');
+      const text = raw.replace(/&(amp|lt|gt|quot|apos);/g, 'x');
+      const charW = isMono ? 0.55 : weight >= 700 ? 0.52 : 0.47;
+      const width = text.length * size * charW + Math.max(0, text.length - 1) * lsEm * size;
+      const left = anchor === 'middle' ? x - width / 2 : anchor === 'end' ? x - width : x;
+      const right = left + width;
+      expect(right <= vbWidth + 1, `${name} text "${text}" estimated right edge ${right.toFixed(1)} exceeds viewBox width ${vbWidth}`);
+      expect(left >= -1, `${name} text "${text}" estimated left edge ${left.toFixed(1)} is left of the viewBox`);
+    }
   }
 
   // Logo marks: every required technology rendered as a real vendored path.
@@ -152,8 +183,8 @@ for (const v of variants) {
 }
 
 if (failures.length) {
-  console.error(`V7.1 QA: ${failures.length} failure(s)`);
+  console.error(`V7.2 QA: ${failures.length} failure(s)`);
   for (const f of failures) console.error(` - ${f}`);
   process.exit(1);
 }
-console.log(`V7.1 QA: all checks passed across ${variants.length} variants`);
+console.log(`V7.2 QA: all checks passed across ${variants.length} variants`);

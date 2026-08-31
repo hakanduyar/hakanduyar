@@ -1,5 +1,23 @@
 # V7.1 visual proof — handoff
 
+## V7.2 update (dual-theme + corporate motion)
+
+Implements `v7/docs/v7.2-dual-motion-task.md` on top of the V7.1 composition below, without changing the visual identity:
+
+- **Mobile overflow fixed** — the RUNTIME plane's "operating foundation" annotation was a single un-hyphenated phrase, so the mobile role-note wrapper (which only splits on ` · `) never wrapped it, letting it run past the 390px viewBox. `wrapRoleNote` in `v7/src/generate.ts` now falls back to word-wrap when a segment has no dot to break on. No font or logo size changed.
+- **Desktop footer collision fixed** — the left/right footer lines were long enough to overlap on desktop (visible in the previously shipped dark asset). `renderFooter` now measures both strings and stacks them instead of overlapping when they don't fit side by side.
+- **Light theme restored** — `v7/scripts/build.ts` and `v7/scripts/qa.ts` generate and validate all four `desktop/mobile × light/dark` variants again (V7.1's "dark ships alone" restriction is lifted). The README `<picture>` now switches on `prefers-color-scheme` (combined with the existing `max-width` mobile breakpoint) instead of shipping dark-only.
+- **Corporate motion pass** — `v7/src/generate.ts` adds, all CSS-only and guarded by `@media (prefers-reduced-motion: no-preference)`, with the base SVG attribute state remaining the fully resolved drawing:
+  - a `spine-*` draw-in of the hero's central axis (the request/data path travelling down through the five planes);
+  - a `reveal` fade/lift stagger on each system's technology marks (`pm-*` ids);
+  - a `path-*` draw-in of the AI delivery line (specify → release);
+  - a restrained `emphasize` stroke-width pulse on the two human-gate diamonds, timed to when the delivery line reaches them;
+  - the existing per-plane connector resolve and review→implement repair-loop draw are unchanged.
+- Evidence now builds to `v7/evidence/v7.2-dual-motion/` (four PNGs); `v7/preview/index.html` shows all four variants side by side for local review.
+- Version labels inside the artwork (masthead kicker, footer, `aria-label`) were bumped V7.1 → V7.2; the V6-derived visual language, architecture, systems order, and delivery path are unchanged.
+
+---
+
 ## Scope and status
 
 Isolated visual proof on `feat/hdu-profile-v7-visual-proof`, replacing the rejected first V7 draft. It does not replace `README.md`, modify `main`, or publish anything. **Stops at the owner visual-proof gate.**
