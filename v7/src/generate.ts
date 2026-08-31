@@ -276,7 +276,9 @@ function renderHero(ctx: Ctx) {
       `<polygon points="${cx},${pcy - halfH} ${cx + halfW},${pcy} ${cx},${pcy + halfH} ${cx - halfW},${pcy}" fill="${theme.plane}" stroke="${theme.ink}" stroke-width="1.25"/>`,
     );
     // Plane title, low on the plane so pins own the upper surface.
-    mono(ctx, cx, pcy + halfH * 0.52, plane.label, {
+    // Keep the INTERFACE caption clear of the TypeScript pin on the next plane.
+    const titleLift = plane.id === 'interface' ? (d ? 18 : 12) : 0;
+    mono(ctx, cx, pcy + halfH * 0.52 - titleLift, plane.label, {
       size: d ? 13.5 : 13,
       weight: 600,
       fill: theme.ink,
@@ -293,9 +295,9 @@ function renderHero(ctx: Ctx) {
       // Mobile pulls pins toward the axis so name labels stay on the plane.
       const ax = cx + spec.fx * halfW * (d ? 1 : 0.78);
       const ay = pcy + spec.fy * halfH;
-      const primaryScale = plane.id === 'application' ? 0.88 : 1;
+      const primaryScale = plane.id === 'application' ? 0.82 : 1;
       const size = mark.primary ? cfg.logoPrimary * primaryScale : cfg.logoSmall * spec.s;
-      const logoDrop = plane.id === 'application' ? (d ? 10 : 7) : 0;
+      const logoDrop = plane.id === 'application' ? (d ? 16 : 7) : 0;
       const stem = spec.stem * cfg.stemScale;
       // Ground contact + stem + mark.
       ctx.parts.push(`<ellipse cx="${ax}" cy="${ay}" rx="${d ? 7 : 4.5}" ry="${d ? 2.8 : 1.9}" fill="none" stroke="${theme.rail}" stroke-width="1"/>`);
